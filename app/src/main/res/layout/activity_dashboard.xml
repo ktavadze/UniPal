@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.ramapo.ktavadze.unipal.DashboardActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/email_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email" />
+
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/uid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UID" />
+
+        <Button
+            android:id="@+id/get_user_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get User" />
+
+        <EditText
+            android:id="@+id/school_name_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="Name" />
+
+        <Button
+            android:id="@+id/add_school_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add School" />
+
+        <ListView
+            android:id="@+id/schools_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/event_name_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:hint="Name" />
+
+        <Button
+            android:id="@+id/add_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Event" />
+
+        <ListView
+            android:id="@+id/events_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

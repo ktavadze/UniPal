@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "230947627817",
+    "firebase_url": "https://unipal-80f81.firebaseio.com",
+    "project_id": "unipal-80f81",
+    "storage_bucket": "unipal-80f81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230947627817:android:56e2ee2a050f3a8a",
+        "android_client_info": {
+          "package_name": "edu.ramapo.ktavadze.unipal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230947627817-gdkid2d0c8hbm394hm55brk279ge7sf4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.ramapo.ktavadze.unipal",
+            "certificate_hash": "f224bc4d51800baa5959e94a9e440e8b0ac12b42"
+          }
+        },
+        {
+          "client_id": "230947627817-p8tvfsq9hqic7981v54dsdg11m3o1jgo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY1g1IUSmRPJmzoDxzmZfM8_DiiWagFss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230947627817-p8tvfsq9hqic7981v54dsdg11m3o1jgo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

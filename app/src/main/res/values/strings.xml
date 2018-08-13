@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">UniPal</string>
+    <string name="action_sign_out">Sign Out</string>
+</resources>
