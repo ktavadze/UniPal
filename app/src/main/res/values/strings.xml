@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">UniPal</string>
     <string name="action_user">User</string>
+    <string name="action_schools">Schools</string>
     <string name="action_sign_out">Sign Out</string>
 </resources>
