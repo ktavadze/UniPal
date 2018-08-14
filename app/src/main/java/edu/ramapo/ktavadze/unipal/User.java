@@ -2,8 +2,6 @@ package edu.ramapo.ktavadze.unipal;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.ArrayList;
-
 /**
  * User class.
  */
@@ -11,30 +9,26 @@ import java.util.ArrayList;
 @IgnoreExtraProperties
 public class User {
 
-    private String displayName;
-    private String email;
-    private String uid;
+    private static String displayName;
+    private static String email;
+    private static String uid;
 
-    public User() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+    public static void setUser(String a_displayName, String a_email, String a_uid) {
+        displayName = a_displayName;
+        email = a_email;
+        uid = a_uid;
     }
 
-    public User(String displayName, String email, String uid) {
-        this.displayName = displayName;
-        this.email = email;
-        this.uid = uid;
+    public static String getDisplayName() {
+        return displayName;
     }
 
-    public String getDisplayName() {
-        return this.displayName;
+    public static String getEmail() {
+        return email;
     }
 
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getUid() {
-        return this.uid;
+    public static String getUid() {
+        return uid;
     }
 
 }

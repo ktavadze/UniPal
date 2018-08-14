@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,7 +31,6 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
-    private User mUser;
 
     private DatabaseReference mDatabase;
     private DatabaseReference mUserData;
@@ -53,35 +51,8 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
-            getUserData();
-            writeUserData();
+            setUserData();
         }
-
-        // Read user data from DB
-        final TextView email_text = findViewById(R.id.email_text);
-        final TextView name_text = findViewById(R.id.name_text);
-        final TextView uid_text = findViewById(R.id.uid_text);
-        final Button get_user_button = findViewById(R.id.get_user_button);
-        get_user_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mUserData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-
-                        name_text.setText(user.getDisplayName());
-                        email_text.setText(user.getEmail());
-                        uid_text.setText(user.getUid());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
 
         // Write school to DB
         final EditText school_name_edit = findViewById(R.id.school_name_edit);
@@ -227,6 +198,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_user:
+                startActivity(new Intent(DashboardActivity.this, UserActivity.class));
+                return true;
             case R.id.action_sign_out:
                 mAuth.signOut();
                 return true;
@@ -236,23 +210,21 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public void getUserData() {
+    public void setUserData() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
 
-        String displayName = profile.getDisplayName();
-        String email = profile.getEmail();
-        String uid = profile.getUid();
+        final String displayName = profile.getDisplayName();
+        final String email = profile.getEmail();
+        final String uid = profile.getUid();
 
-        mUser = new User(displayName, email, uid);
+        User.setUser(displayName, email, uid);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mUserData = mDatabase.child("users").child(mUser.getUid());
-        mSchoolData = mDatabase.child("schools").child(mUser.getUid());
-        mEventData = mDatabase.child("events").child(mUser.getUid());
-    }
+        mUserData = mDatabase.child("users").child(uid);
+        mSchoolData = mDatabase.child("schools").child(uid);
+        mEventData = mDatabase.child("events").child(uid);
 
-    public void writeUserData() {
         mUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -260,7 +232,10 @@ public class DashboardActivity extends AppCompatActivity {
                     System.out.println("User exists");
                 }
                 else {
-                    mUserData.setValue(mUser);
+                    mUserData.child("displayName").setValue(displayName);
+                    mUserData.child("email").setValue(email);
+                    mUserData.child("uid").setValue(uid);
+
                     System.out.println("User added");
                 }
             }

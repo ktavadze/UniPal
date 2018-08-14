@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.ramapo.ktavadze.unipal.DashboardActivity">
+    tools:context="edu.ramapo.ktavadze.unipal.UserActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,43 +14,29 @@
         app:layout_constraintStart_toStartOf="parent"
         android:gravity="center">
 
-        <EditText
-            android:id="@+id/school_name_edit"
+        <TextView
+            android:id="@+id/user_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="Name" />
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/user_email_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email" />
+
+        <TextView
+            android:id="@+id/user_uid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UID" />
 
         <Button
-            android:id="@+id/add_school_button"
+            android:id="@+id/get_user_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add School" />
-
-        <ListView
-            android:id="@+id/schools_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/event_name_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="Name" />
-
-        <Button
-            android:id="@+id/add_event_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Event" />
-
-        <ListView
-            android:id="@+id/events_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:text="Get User" />
 
     </LinearLayout>
 
