@@ -31,13 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private final static int RC_SIGN_IN = 2;
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -70,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     private void signIn() {

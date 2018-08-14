@@ -1,5 +1,6 @@
 package edu.ramapo.ktavadze.unipal;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,9 @@ public class SchoolsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schools);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Schools");
 
         mSchoolData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
 
