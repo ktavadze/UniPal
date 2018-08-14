@@ -14,20 +14,6 @@
         app:layout_constraintStart_toStartOf="parent"
         android:gravity="center">
 
-        <EditText
-            android:id="@+id/event_name_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="Name" />
-
-        <Button
-            android:id="@+id/add_event_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Event" />
-
         <ListView
             android:id="@+id/events_list"
             android:layout_width="wrap_content"

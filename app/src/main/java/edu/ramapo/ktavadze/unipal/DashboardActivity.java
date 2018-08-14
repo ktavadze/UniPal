@@ -1,16 +1,18 @@
 package edu.ramapo.ktavadze.unipal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -53,34 +55,6 @@ public class DashboardActivity extends AppCompatActivity {
         if (mCurrentUser != null) {
             setUserData();
         }
-
-        // Write event to DB
-        final EditText event_name_edit = findViewById(R.id.event_name_edit);
-        final Button add_event_button = findViewById(R.id.add_event_button);
-        add_event_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mEventData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String name = event_name_edit.getText().toString().trim();
-                        String uid = mEventData.push().getKey();
-
-                        Event event = new Event(name, uid);
-
-                        mEventData.child(uid).setValue(event);
-                        System.out.println("Event added");
-
-                        event_name_edit.setText("");
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
 
         // Read event data from DB
         final ArrayList<String> eventsArray = new ArrayList<>();
@@ -135,6 +109,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_new_event:
+                respondNewEvent();
+                return true;
             case R.id.action_user:
                 startActivity(new Intent(DashboardActivity.this, UserActivity.class));
                 return true;
@@ -185,5 +162,48 @@ public class DashboardActivity extends AppCompatActivity {
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    public void respondNewEvent() {
+        // Build new event dialog
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_event_new, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle(R.string.title_new_event);
+
+        // Define responses
+        final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Write event to DB
+                mEventData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String name = event_name_edit.getText().toString().trim();
+                        String uid = mEventData.push().getKey();
+
+                        Event event = new Event(name, uid);
+                        mEventData.child(uid).setValue(event);
+
+                        System.out.println("Event added");
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // TODO: Cancel
+            }
+        });
+
+        // Show new event dialog
+        AlertDialog settingsDialog = dialogBuilder.create();
+        settingsDialog.show();
     }
 }
