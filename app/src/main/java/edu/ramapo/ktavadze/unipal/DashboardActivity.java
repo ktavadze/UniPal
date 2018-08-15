@@ -7,15 +7,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,16 +55,17 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         // Read event data from DB
-        final ArrayList<String> eventsArray = new ArrayList<>();
-        final ArrayAdapter<String> eventsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventsArray);
-        ListView events_list = findViewById(R.id.events_list);
-        events_list.setAdapter(eventsAdapter);
+        final ArrayList<Event> eventsArray = new ArrayList<>();
+        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, eventsArray);
+        RecyclerView events_recycler = findViewById(R.id.events_recycler);
+        events_recycler.setAdapter(eventsAdapter);
+        events_recycler.setLayoutManager(new LinearLayoutManager(this));
         mEventData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event event = dataSnapshot.getValue(Event.class);
 
-                eventsArray.add(event.getName());
+                eventsArray.add(event);
                 eventsAdapter.notifyDataSetChanged();
             }
 
