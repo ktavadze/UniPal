@@ -1,6 +1,7 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,14 +36,21 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Event event = mEvents.get(position);
+        final String name = event.getName();
+        final String uid = event.getUid();
 
-        holder.recycler_event_name.setText(event.getName());
-        holder.recycler_event_uid.setText(event.getUid());
+        holder.recycler_event_name.setText(name);
+        holder.recycler_event_uid.setText(uid);
 
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on: " + event.getName());
+                Log.d(TAG, "onClick: clicked on: " + name);
+
+                Intent intent = new Intent(mContext, EventActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("uid", uid);
+                mContext.startActivity(intent);
             }
         });
     }

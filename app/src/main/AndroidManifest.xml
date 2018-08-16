@@ -17,10 +17,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".DashboardActivity" />
-        <activity android:name=".UserActivity"
-            android:parentActivityName=".DashboardActivity" />
-        <activity android:name=".SchoolsActivity"
-            android:parentActivityName=".DashboardActivity" />
+        <activity
+            android:name=".UserActivity"
+            android:parentActivityName=".DashboardActivity">
+        </activity>
+        <activity
+            android:name=".SchoolsActivity"
+            android:parentActivityName=".DashboardActivity">
+        </activity>
+        <activity
+            android:name=".EventActivity"
+            android:parentActivityName=".DashboardActivity">
+        </activity>
     </application>
 
 </manifest>
