@@ -4,11 +4,24 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class EventActivity extends AppCompatActivity {
 
     private static final String TAG = "EventActivity";
+
+    private String mName;
+    private String mUid;
+    private DatabaseReference mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,18 +31,49 @@ public class EventActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Event");
 
-        Intent intent = getIntent();
-        String name = "EVENT_NAME";
-        String uid = "EVENT_UID";
+        getEventData();
+
+        displayEventData();
+
+        // Delete event from DB
+        final Button delete_event_button = findViewById(R.id.delete_event_button);
+        delete_event_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        mData.removeValue();
+
+                        System.out.println("Event deleted");
+
+                        startActivity(new Intent(EventActivity.this, DashboardActivity.class));
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+        });
+    }
+
+    public void getEventData() {
+        final Intent intent = getIntent();
         if (intent.hasExtra("name") && intent.hasExtra("uid")) {
-            name = intent.getStringExtra("name");
-            uid = intent.getStringExtra("uid");
+            mName = intent.getStringExtra("name");
+            mUid = intent.getStringExtra("uid");
+
+            mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(mUid);
         }
+    }
 
-        TextView event_name_text = findViewById(R.id.event_name_text);
-        TextView event_uid_text = findViewById(R.id.event_uid_text);
+    public void displayEventData() {
+        final TextView event_name_text = findViewById(R.id.event_name_text);
+        final TextView event_uid_text = findViewById(R.id.event_uid_text);
 
-        event_name_text.setText(name);
-        event_uid_text.setText(uid);
+        event_name_text.setText(mName);
+        event_uid_text.setText(mUid);
     }
 }
