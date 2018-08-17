@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 public class SchoolsActivity extends AppCompatActivity {
 
+    private static final String TAG = "SchoolsActivity";
+
     private DatabaseReference mSchoolData;
 
     @Override
@@ -46,16 +48,16 @@ public class SchoolsActivity extends AppCompatActivity {
                         String uid = mSchoolData.push().getKey();
 
                         School school = new School(name, uid);
-
                         mSchoolData.child(uid).setValue(school);
-                        System.out.println("School added");
+
+                        Log.d(TAG, "onDataChange: New school added");
 
                         school_name_edit.setText("");
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                     }
                 });
             }
@@ -73,6 +75,8 @@ public class SchoolsActivity extends AppCompatActivity {
 
                 schoolsArray.add(school.getName());
                 schoolsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildAdded: New school read");
             }
 
             @Override
@@ -92,7 +96,7 @@ public class SchoolsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
     }

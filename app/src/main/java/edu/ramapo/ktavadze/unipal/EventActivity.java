@@ -45,7 +45,7 @@ public class EventActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         mData.removeValue();
 
-                        System.out.println("Event deleted");
+                        Log.d(TAG, "onDataChange: Event deleted");
 
                         startActivity(new Intent(EventActivity.this, DashboardActivity.class));
                     }

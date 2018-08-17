@@ -31,6 +31,8 @@ import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
 
+    private static final String TAG = "DashboardActivity";
+
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
@@ -51,44 +53,10 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
-            setUserData();
+            getUserData();
+
+            getEventData();
         }
-
-        // Read event data from DB
-        final ArrayList<Event> eventsArray = new ArrayList<>();
-        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, eventsArray);
-        RecyclerView events_recycler = findViewById(R.id.events_recycler);
-        events_recycler.setAdapter(eventsAdapter);
-        events_recycler.setLayoutManager(new LinearLayoutManager(this));
-        mEventData.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Event event = dataSnapshot.getValue(Event.class);
-
-                eventsArray.add(event);
-                eventsAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -133,7 +101,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public void setUserData() {
+    public void getUserData() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
 
@@ -152,20 +120,59 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    System.out.println("User exists");
+                    Log.d(TAG, "onDataChange: User exists");
                 }
                 else {
                     mUserData.child("displayName").setValue(displayName);
                     mUserData.child("email").setValue(email);
                     mUserData.child("uid").setValue(uid);
 
-                    System.out.println("User added");
+                    Log.d(TAG, "onDataChange: User added");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void getEventData() {
+        final ArrayList<Event> eventsArray = new ArrayList<>();
+        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, eventsArray);
+        final RecyclerView events_recycler = findViewById(R.id.events_recycler);
+        events_recycler.setAdapter(eventsAdapter);
+        events_recycler.setLayoutManager(new LinearLayoutManager(this));
+        mEventData.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Event event = dataSnapshot.getValue(Event.class);
+
+                eventsArray.add(event);
+                eventsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildAdded: New event read");
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
     }
@@ -192,12 +199,12 @@ public class DashboardActivity extends AppCompatActivity {
                         Event event = new Event(name, uid);
                         mEventData.child(uid).setValue(event);
 
-                        System.out.println("Event added");
+                        Log.d(TAG, "onDataChange: New event added");
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                     }
                 });
             }

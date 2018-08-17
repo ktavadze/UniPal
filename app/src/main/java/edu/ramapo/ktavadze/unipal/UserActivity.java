@@ -16,6 +16,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class UserActivity extends AppCompatActivity {
 
+    private static final String TAG = "UserActivity";
+
     private DatabaseReference mUserData;
 
     @Override
@@ -52,12 +54,12 @@ public class UserActivity extends AppCompatActivity {
                         user_email_text.setText(email);
                         user_uid_text.setText(uid);
 
-                        System.out.println("User read");
+                        Log.d(TAG, "onDataChange: User read");
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
                     }
                 });
             }

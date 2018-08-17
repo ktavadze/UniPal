@@ -45,7 +45,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on: " + name);
+                Log.d(TAG, "onClick: Clicked on " + name);
 
                 Intent intent = new Intent(mContext, EventActivity.class);
                 intent.putExtra("name", name);
