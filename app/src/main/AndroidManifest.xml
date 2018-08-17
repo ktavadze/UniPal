@@ -18,17 +18,17 @@
         </activity>
         <activity android:name=".DashboardActivity" />
         <activity
+            android:name=".EventActivity"
+            android:parentActivityName=".DashboardActivity" />
+        <activity
             android:name=".UserActivity"
-            android:parentActivityName=".DashboardActivity">
-        </activity>
+            android:parentActivityName=".DashboardActivity" />
         <activity
             android:name=".SchoolsActivity"
-            android:parentActivityName=".DashboardActivity">
-        </activity>
+            android:parentActivityName=".DashboardActivity" />
         <activity
-            android:name=".EventActivity"
-            android:parentActivityName=".DashboardActivity">
-        </activity>
+            android:name=".CalendarActivity"
+            android:parentActivityName=".DashboardActivity" />
     </application>
 
 </manifest>

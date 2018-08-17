@@ -92,6 +92,9 @@ public class DashboardActivity extends AppCompatActivity {
             case R.id.action_schools:
                 startActivity(new Intent(DashboardActivity.this, SchoolsActivity.class));
                 return true;
+            case R.id.action_calendar:
+                startActivity(new Intent(DashboardActivity.this, CalendarActivity.class));
+                return true;
             case R.id.action_sign_out:
                 mAuth.signOut();
                 return true;
