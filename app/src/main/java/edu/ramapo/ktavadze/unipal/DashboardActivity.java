@@ -2,6 +2,7 @@ package edu.ramapo.ktavadze.unipal;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,9 +44,10 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
 
     private DatabaseReference mEventsData;
-    
+
     private ArrayList<Event> mEvents;
     private String mNewDate;
+    private String mNewTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,8 +180,10 @@ public class DashboardActivity extends AppCompatActivity {
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(R.string.title_new_event);
 
-        // Build input fields
+        // Name
         final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
+
+        // Date
         final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
         event_date_pick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,6 +209,43 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        // Time
+        final TextView event_time_pick = dialogView.findViewById(R.id.event_time_pick);
+        event_time_pick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Build time picker
+                Calendar cal = Calendar.getInstance();
+                TimePickerDialog time_picker = new TimePickerDialog(DashboardActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hour, int minute) {
+                                if (hour < 10 && minute < 10) {
+                                    mNewTime = "0" + hour + ":0" + minute;
+                                }
+                                else if (hour < 10) {
+                                    mNewTime = "0" + hour + ":" + minute;
+                                }
+                                else if (minute < 10) {
+                                    mNewTime = "" + hour + ":0" + minute;
+                                }
+                                else {
+                                    mNewTime = "" + hour + ":" + minute;
+                                }
+
+                                event_time_pick.setText(mNewTime);
+
+                                Log.d(TAG, "onTimeSet: Time set to " + mNewTime);
+                            }
+                        },
+                        cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
+
+                // Show time picker
+                time_picker.getWindow();
+                time_picker.show();
+            }
+        });
+
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -214,7 +256,7 @@ public class DashboardActivity extends AppCompatActivity {
                         String name = event_name_edit.getText().toString().trim();
                         String uid = mEventsData.push().getKey();
 
-                        Event event = new Event(name, mNewDate, uid);
+                        Event event = new Event(name, mNewDate, mNewTime, uid);
                         mEventsData.child(uid).setValue(event);
 
                         Log.d(TAG, "onDataChange: Event added");

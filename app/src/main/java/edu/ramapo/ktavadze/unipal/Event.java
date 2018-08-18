@@ -11,15 +11,17 @@ public class Event {
 
     private String name;
     private String date;
+    private String time;
     private String uid;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String name, String date, String uid) {
+    public Event(String name, String date, String time, String uid) {
         this.name = name;
         this.date = date;
+        this.time = time;
         this.uid = uid;
     }
 
@@ -38,6 +40,10 @@ public class Event {
 
     public String getDate() {
         return this.date;
+    }
+
+    public String getTime() {
+        return this.time;
     }
 
     public String getUid() {

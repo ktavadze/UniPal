@@ -22,6 +22,7 @@ public class EventActivity extends AppCompatActivity {
 
     private String mName;
     private String mDate;
+    private String mTime;
     private String mUid;
     private DatabaseReference mData;
 
@@ -75,9 +76,10 @@ public class EventActivity extends AppCompatActivity {
 
     public void getEventData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("uid")) {
+        if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("time") && intent.hasExtra("uid")) {
             mName = intent.getStringExtra("name");
             mDate = intent.getStringExtra("date");
+            mTime = intent.getStringExtra("time");
             mUid = intent.getStringExtra("uid");
 
             mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(mUid);
@@ -87,10 +89,12 @@ public class EventActivity extends AppCompatActivity {
     public void displayEventData() {
         final TextView event_name_text = findViewById(R.id.event_name_text);
         final TextView event_date_text = findViewById(R.id.event_date_text);
+        final TextView event_time_text = findViewById(R.id.event_time_text);
         final TextView event_uid_text = findViewById(R.id.event_uid_text);
 
         event_name_text.setText(mName);
         event_date_text.setText(mDate);
+        event_time_text.setText(mTime);
         event_uid_text.setText(mUid);
     }
 }
