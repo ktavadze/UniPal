@@ -20,6 +20,12 @@
             android:textSize="25sp" />
 
         <TextView
+            android:id="@+id/event_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/event_uid_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

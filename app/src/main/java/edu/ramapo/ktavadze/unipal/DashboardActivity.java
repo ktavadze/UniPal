@@ -1,6 +1,7 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -15,7 +16,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -41,6 +45,8 @@ public class DashboardActivity extends AppCompatActivity {
     private DatabaseReference mUserData;
     private DatabaseReference mSchoolData;
     private DatabaseReference mEventData;
+
+    private String mNewDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,8 +194,34 @@ public class DashboardActivity extends AppCompatActivity {
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(R.string.title_new_event);
 
-        // Define responses
+        // Build input fields
         final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
+        final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
+        event_date_pick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Build date picker
+                Calendar cal = Calendar.getInstance();
+                DatePickerDialog date_picker = new DatePickerDialog(DashboardActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                mNewDate = "" + year + "/" + month + "/" + dayOfMonth;
+
+                                event_date_pick.setText(mNewDate);
+
+                                Log.d(TAG, "onDateSet: Date set to " + mNewDate);
+                            }
+                        },
+                        cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+
+                // Show date picker
+                date_picker.getWindow();
+                date_picker.show();
+            }
+        });
+
+        // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Write event to DB
@@ -199,7 +231,7 @@ public class DashboardActivity extends AppCompatActivity {
                         String name = event_name_edit.getText().toString().trim();
                         String uid = mEventData.push().getKey();
 
-                        Event event = new Event(name, uid);
+                        Event event = new Event(name, mNewDate, uid);
                         mEventData.child(uid).setValue(event);
 
                         Log.d(TAG, "onDataChange: New event added");

@@ -37,9 +37,11 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Event event = mEvents.get(position);
         final String name = event.getName();
+        final String date = event.getDate();
         final String uid = event.getUid();
 
         holder.recycler_event_name.setText(name);
+        holder.recycler_event_date.setText(date);
         holder.recycler_event_uid.setText(uid);
 
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +51,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
                 Intent intent = new Intent(mContext, EventActivity.class);
                 intent.putExtra("name", name);
+                intent.putExtra("date", date);
                 intent.putExtra("uid", uid);
                 mContext.startActivity(intent);
             }
@@ -64,6 +67,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
         LinearLayout recycler_event;
         TextView recycler_event_name;
+        TextView recycler_event_date;
         TextView recycler_event_uid;
 
         public ViewHolder(View itemView) {
@@ -71,6 +75,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
             recycler_event = itemView.findViewById(R.id.recycler_event);
             recycler_event_name = itemView.findViewById(R.id.recycler_event_name);
+            recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_uid = itemView.findViewById(R.id.recycler_event_uid);
         }
     }
