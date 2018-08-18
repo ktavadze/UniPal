@@ -41,13 +41,10 @@ public class DashboardActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
 
-    private DatabaseReference mDatabase;
-    private DatabaseReference mUserData;
-    private DatabaseReference mSchoolData;
-    private DatabaseReference mEventData;
-
-    private String mNewDate;
+    private DatabaseReference mEventsData;
+    
     private ArrayList<Event> mEvents;
+    private String mNewDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +57,9 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
-            getUserData();
+            getUser();
+
+            mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
         }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -84,7 +83,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        getEventData();
+        getEvents();
     }
 
     @Override
@@ -98,7 +97,7 @@ public class DashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_event:
-                respondNewEvent();
+                actionNewEvent();
                 return true;
             case R.id.action_user:
                 startActivity(new Intent(DashboardActivity.this, UserActivity.class));
@@ -118,7 +117,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    public void getUserData() {
+    public void getUser() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
 
@@ -126,42 +125,16 @@ public class DashboardActivity extends AppCompatActivity {
         final String email = profile.getEmail();
         final String uid = profile.getUid();
 
-        User.setUser(displayName, email, uid);
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mUserData = mDatabase.child("users").child(uid);
-        mSchoolData = mDatabase.child("schools").child(uid);
-        mEventData = mDatabase.child("events").child(uid);
-
-        mUserData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Log.d(TAG, "onDataChange: User exists");
-                }
-                else {
-                    mUserData.child("displayName").setValue(displayName);
-                    mUserData.child("email").setValue(email);
-                    mUserData.child("uid").setValue(uid);
-
-                    Log.d(TAG, "onDataChange: User added");
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
+        User.init(displayName, email, uid);
     }
 
-    public void getEventData() {
+    public void getEvents() {
         mEvents = new ArrayList<>();
         final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, mEvents);
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
         events_recycler.setAdapter(eventsAdapter);
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
-        mEventData.addChildEventListener(new ChildEventListener() {
+        mEventsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event event = dataSnapshot.getValue(Event.class);
@@ -196,7 +169,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    public void respondNewEvent() {
+    public void actionNewEvent() {
         // Build new event dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -235,14 +208,14 @@ public class DashboardActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Write event to DB
-                mEventData.addListenerForSingleValueEvent(new ValueEventListener() {
+                mEventsData.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String name = event_name_edit.getText().toString().trim();
-                        String uid = mEventData.push().getKey();
+                        String uid = mEventsData.push().getKey();
 
                         Event event = new Event(name, mNewDate, uid);
-                        mEventData.child(uid).setValue(event);
+                        mEventsData.child(uid).setValue(event);
 
                         Log.d(TAG, "onDataChange: Event added");
                     }

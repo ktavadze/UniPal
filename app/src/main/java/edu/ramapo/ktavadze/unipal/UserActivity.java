@@ -34,6 +34,7 @@ public class UserActivity extends AppCompatActivity {
         final TextView user_name_text = findViewById(R.id.user_name_text);
         final TextView user_email_text = findViewById(R.id.user_email_text);
         final TextView user_uid_text = findViewById(R.id.user_uid_text);
+
         user_name_text.setText(User.getDisplayName());
         user_email_text.setText(User.getEmail());
         user_uid_text.setText(User.getUid());
