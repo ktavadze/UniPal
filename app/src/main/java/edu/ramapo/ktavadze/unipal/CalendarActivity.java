@@ -1,5 +1,6 @@
 package edu.ramapo.ktavadze.unipal;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -21,7 +22,6 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
 public class CalendarActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
@@ -48,7 +48,13 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        Log.d(TAG, "onDateSelected: Selected " + date.toString());
+        String dateString = "" + date.getYear() + "/" + date.getMonth() + "/" + date.getDay();
+
+        Intent intent = new Intent(CalendarActivity.this, DateActivity.class);
+        intent.putExtra("date", dateString);
+        startActivity(intent);
+
+        Log.d(TAG, "onDateSelected: Selected " + dateString);
     }
 
     @Override

@@ -17,9 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DashboardActivity" />
-        <activity
-            android:name=".EventActivity"
-            android:parentActivityName=".DashboardActivity" />
+        <activity android:name=".EventActivity" />
         <activity
             android:name=".UserActivity"
             android:parentActivityName=".DashboardActivity" />
@@ -29,6 +27,9 @@
         <activity
             android:name=".CalendarActivity"
             android:parentActivityName=".DashboardActivity" />
+        <activity
+            android:name=".DateActivity"
+            android:parentActivityName=".CalendarActivity" />
     </application>
 
 </manifest>

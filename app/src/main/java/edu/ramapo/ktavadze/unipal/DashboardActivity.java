@@ -47,6 +47,7 @@ public class DashboardActivity extends AppCompatActivity {
     private DatabaseReference mEventData;
 
     private String mNewDate;
+    private ArrayList<Event> mEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,6 @@ public class DashboardActivity extends AppCompatActivity {
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
             getUserData();
-
-            getEventData();
         }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -81,12 +80,21 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getEventData();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_event:
@@ -148,8 +156,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void getEventData() {
-        final ArrayList<Event> eventsArray = new ArrayList<>();
-        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, eventsArray);
+        mEvents = new ArrayList<>();
+        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, mEvents);
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
         events_recycler.setAdapter(eventsAdapter);
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -157,11 +165,13 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event event = dataSnapshot.getValue(Event.class);
+                if (!mEvents.contains(event)) {
+                    mEvents.add(event);
 
-                eventsArray.add(event);
-                eventsAdapter.notifyDataSetChanged();
+                    eventsAdapter.notifyDataSetChanged();
 
-                Log.d(TAG, "onChildAdded: New event read");
+                    Log.d(TAG, "onChildAdded: Event read");
+                }
             }
 
             @Override
@@ -234,7 +244,7 @@ public class DashboardActivity extends AppCompatActivity {
                         Event event = new Event(name, mNewDate, uid);
                         mEventData.child(uid).setValue(event);
 
-                        Log.d(TAG, "onDataChange: New event added");
+                        Log.d(TAG, "onDataChange: Event added");
                     }
 
                     @Override

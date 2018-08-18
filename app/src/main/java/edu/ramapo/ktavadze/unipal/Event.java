@@ -23,6 +23,15 @@ public class Event {
         this.uid = uid;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Event event = (Event) obj;
+        if (uid.equals(event.getUid())) {
+            return true;
+        }
+        return false;
+    }
+
     public String getName() {
         return this.name;
     }

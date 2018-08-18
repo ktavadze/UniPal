@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Event");
 
         getEventData();
@@ -46,9 +48,9 @@ public class EventActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         mData.removeValue();
 
-                        Log.d(TAG, "onDataChange: Event deleted");
+                        finish();
 
-                        startActivity(new Intent(EventActivity.this, DashboardActivity.class));
+                        Log.d(TAG, "onDataChange: Event deleted");
                     }
 
                     @Override
@@ -58,6 +60,17 @@ public class EventActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+            default:
+                // Invoke superclass to handle unrecognized action.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void getEventData() {
