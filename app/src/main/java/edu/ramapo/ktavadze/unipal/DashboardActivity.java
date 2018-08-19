@@ -46,8 +46,6 @@ public class DashboardActivity extends AppCompatActivity {
     private DatabaseReference mEventsData;
 
     private ArrayList<Event> mEvents;
-    private String mNewDate;
-    private String mNewTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +171,9 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void actionNewEvent() {
+        final Event newEvent = new Event();
+        final Calendar cal = Calendar.getInstance();
+
         // Build new event dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -189,16 +190,33 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Build date picker
-                Calendar cal = Calendar.getInstance();
                 DatePickerDialog date_picker = new DatePickerDialog(DashboardActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                mNewDate = "" + year + "/" + month + "/" + dayOfMonth;
+                            public void onDateSet(DatePicker view, int year, int month, int day) {
+                                // Format date
+                                month++;
+                                String date;
+                                if (month < 10 && day < 10) {
+                                    date = "0" + month + "/0" + day + "/" + year;
+                                }
+                                else if (month < 10) {
+                                    date = "0" + month + "/" + day + "/" + year;
+                                }
+                                else if (day < 10) {
+                                    date = "" + month + "/0" + day + "/" + year;
+                                }
+                                else {
+                                    date = "" + month + "/" + day + "/" + year;
+                                }
 
-                                event_date_pick.setText(mNewDate);
+                                // Set date
+                                newEvent.setDate(date);
 
-                                Log.d(TAG, "onDateSet: Date set to " + mNewDate);
+                                // Preview date
+                                event_date_pick.setText(date);
+
+                                Log.d(TAG, "onDateSet: Date set to " + date);
                             }
                         },
                         cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
@@ -215,27 +233,32 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Build time picker
-                Calendar cal = Calendar.getInstance();
                 TimePickerDialog time_picker = new TimePickerDialog(DashboardActivity.this,
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hour, int minute) {
+                                // Format time
+                                String time;
                                 if (hour < 10 && minute < 10) {
-                                    mNewTime = "0" + hour + ":0" + minute;
+                                    time = "0" + hour + ":0" + minute;
                                 }
                                 else if (hour < 10) {
-                                    mNewTime = "0" + hour + ":" + minute;
+                                    time = "0" + hour + ":" + minute;
                                 }
                                 else if (minute < 10) {
-                                    mNewTime = "" + hour + ":0" + minute;
+                                    time = "" + hour + ":0" + minute;
                                 }
                                 else {
-                                    mNewTime = "" + hour + ":" + minute;
+                                    time = "" + hour + ":" + minute;
                                 }
 
-                                event_time_pick.setText(mNewTime);
+                                // Set time
+                                newEvent.setTime(time);
 
-                                Log.d(TAG, "onTimeSet: Time set to " + mNewTime);
+                                // Preview time
+                                event_time_pick.setText(time);
+
+                                Log.d(TAG, "onTimeSet: Time set to " + time);
                             }
                         },
                         cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
@@ -253,11 +276,16 @@ public class DashboardActivity extends AppCompatActivity {
                 mEventsData.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Set name
                         String name = event_name_edit.getText().toString().trim();
-                        String uid = mEventsData.push().getKey();
+                        newEvent.setName(name);
 
-                        Event event = new Event(name, mNewDate, mNewTime, uid);
-                        mEventsData.child(uid).setValue(event);
+                        // Set uid
+                        String uid = mEventsData.push().getKey();
+                        newEvent.setUid(uid);
+
+                        // Add event
+                        mEventsData.child(uid).setValue(newEvent);
 
                         Log.d(TAG, "onDataChange: Event added");
                     }

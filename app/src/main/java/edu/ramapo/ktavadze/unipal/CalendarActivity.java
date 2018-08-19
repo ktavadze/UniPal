@@ -48,8 +48,25 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        String dateString = "" + date.getYear() + "/" + date.getMonth() + "/" + date.getDay();
+        // Format date
+        Integer month = date.getMonth() + 1;
+        Integer day = date.getDay();
+        Integer year = date.getYear();
+        String dateString;
+        if (month < 10 && day < 10) {
+            dateString = "0" + month + "/0" + day + "/" + year;
+        }
+        else if (month < 10) {
+            dateString = "0" + month + "/" + day + "/" + year;
+        }
+        else if (day < 10) {
+            dateString = "" + month + "/0" + day + "/" + year;
+        }
+        else {
+            dateString = "" + month + "/" + day + "/" + year;
+        }
 
+        // Pass date
         Intent intent = new Intent(CalendarActivity.this, DateActivity.class);
         intent.putExtra("date", dateString);
         startActivity(intent);
@@ -93,16 +110,19 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
         mEventData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // Get event
                 Event event = dataSnapshot.getValue(Event.class);
                 mEvents.add(event);
 
+                // Get date
                 String [] dateTokens = event.getDate().split("/");
-                Integer year = Integer.parseInt(dateTokens[0]);
-                Integer month = Integer.parseInt(dateTokens[1]);
-                Integer day = Integer.parseInt(dateTokens[2]);
-                CalendarDay date = CalendarDay.from(year, month, day);
+                Integer month = Integer.parseInt(dateTokens[0]);
+                Integer day = Integer.parseInt(dateTokens[1]);
+                Integer year = Integer.parseInt(dateTokens[2]);
+                CalendarDay date = CalendarDay.from(year, month - 1, day);
                 mDates.add(date);
 
+                // Add decorator
                 events_calendar.removeDecorators();
                 events_calendar.addDecorator(new EventDecorator(mDates));
 

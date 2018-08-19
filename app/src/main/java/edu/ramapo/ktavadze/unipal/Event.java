@@ -2,6 +2,10 @@ package edu.ramapo.ktavadze.unipal;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Event class.
  */
@@ -9,10 +13,10 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Event {
 
-    private String name;
-    private String date;
-    private String time;
-    private String uid;
+    private String name = null;
+    private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
+    private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
+    private String uid = null;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
@@ -38,16 +42,32 @@ public class Event {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDate() {
         return this.date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTime() {
         return this.time;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public String getUid() {
         return this.uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
 }
