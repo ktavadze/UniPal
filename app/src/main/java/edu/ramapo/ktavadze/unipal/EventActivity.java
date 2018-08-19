@@ -20,10 +20,8 @@ public class EventActivity extends AppCompatActivity {
 
     private static final String TAG = "EventActivity";
 
-    private String mName;
-    private String mDate;
-    private String mTime;
-    private String mUid;
+    private Event mEvent;
+
     private DatabaseReference mData;
 
     @Override
@@ -31,11 +29,11 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
+        getIntentData();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Event");
-
-        getEventData();
+        actionBar.setTitle(mEvent.getName());
 
         displayEventData();
 
@@ -74,15 +72,23 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
-    public void getEventData() {
+    public void getIntentData() {
         final Intent intent = getIntent();
         if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("time") && intent.hasExtra("uid")) {
-            mName = intent.getStringExtra("name");
-            mDate = intent.getStringExtra("date");
-            mTime = intent.getStringExtra("time");
-            mUid = intent.getStringExtra("uid");
+            String name = intent.getStringExtra("name");
+            String date = intent.getStringExtra("date");
+            String time = intent.getStringExtra("time");
+            String uid = intent.getStringExtra("uid");
+            mEvent = new Event(name, date, time, uid);
 
-            mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(mUid);
+            mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(uid);
+
+            Log.d(TAG, "getIntentData: Intent received");
+        }
+        else {
+            finish();
+
+            Log.d(TAG, "getIntentData: Intent rejected");
         }
     }
 
@@ -92,9 +98,9 @@ public class EventActivity extends AppCompatActivity {
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final TextView event_uid_text = findViewById(R.id.event_uid_text);
 
-        event_name_text.setText(mName);
-        event_date_text.setText(mDate);
-        event_time_text.setText(mTime);
-        event_uid_text.setText(mUid);
+        event_name_text.setText(mEvent.getName());
+        event_date_text.setText(mEvent.getDate());
+        event_time_text.setText(mEvent.getTime());
+        event_uid_text.setText(mEvent.getUid());
     }
 }

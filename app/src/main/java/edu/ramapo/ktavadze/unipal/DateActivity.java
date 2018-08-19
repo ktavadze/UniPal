@@ -20,9 +20,10 @@ public class DateActivity extends AppCompatActivity {
 
     private static final String TAG = "DateActivity";
 
+    private String mDate;
+
     private DatabaseReference mEventData;
 
-    private String mDate;
     private ArrayList<Event> mEvents;
 
     @Override
@@ -30,15 +31,10 @@ public class DateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_date);
 
+        getIntentData();
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Date");
-
-        mEventData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
-
-        final Intent intent = getIntent();
-        if (intent.hasExtra("date")) {
-            mDate = intent.getStringExtra("date");
-        }
+        actionBar.setTitle(mDate);
     }
 
     @Override
@@ -46,6 +42,22 @@ public class DateActivity extends AppCompatActivity {
         super.onResume();
 
         getEventData();
+    }
+
+    public void getIntentData() {
+        final Intent intent = getIntent();
+        if (intent.hasExtra("date")) {
+            mDate = intent.getStringExtra("date");
+
+            mEventData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
+
+            Log.d(TAG, "getIntentData: Intent accepted");
+        }
+        else {
+            finish();
+
+            Log.d(TAG, "getIntentData: Intent rejected");
+        }
     }
 
     public void getEventData() {
