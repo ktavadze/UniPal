@@ -8,13 +8,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder> {
-
     private static final String TAG = "EventsRecyclerAdapter";
 
     private Context mContext;
@@ -25,50 +32,10 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         this.mEvents = mEvents;
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_event, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Event event = mEvents.get(position);
-        final String name = event.getName();
-        final String date = event.getDate();
-        final String time = event.getTime();
-        final String uid = event.getUid();
-
-        holder.recycler_event_name.setText(name);
-        holder.recycler_event_date.setText(date);
-        holder.recycler_event_time.setText(time);
-        holder.recycler_event_uid.setText(uid);
-
-        holder.recycler_event.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Clicked on " + name);
-
-                Intent intent = new Intent(mContext, EventActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("date", date);
-                intent.putExtra("time", time);
-                intent.putExtra("uid", uid);
-                mContext.startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mEvents.size();
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-
-        LinearLayout recycler_event;
+        FrameLayout recycler_event;
+        RelativeLayout recycler_event_background;
+        LinearLayout recycler_event_foreground;
         TextView recycler_event_name;
         TextView recycler_event_date;
         TextView recycler_event_time;
@@ -78,6 +45,8 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             super(itemView);
 
             recycler_event = itemView.findViewById(R.id.recycler_event);
+            recycler_event_background = itemView.findViewById(R.id.recycler_event_background);
+            recycler_event_foreground = itemView.findViewById(R.id.recycler_event_foreground);
             recycler_event_name = itemView.findViewById(R.id.recycler_event_name);
             recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_time = itemView.findViewById(R.id.recycler_event_time);
@@ -85,4 +54,95 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         }
     }
 
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recycler_event, parent, false);
+
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Get event info
+        final Event event = mEvents.get(position);
+        final String name = event.getName();
+        final String date = event.getDate();
+        final String time = event.getTime();
+        final String uid = event.getUid();
+
+        // Display event info
+        holder.recycler_event_name.setText(name);
+        holder.recycler_event_date.setText(date);
+        holder.recycler_event_time.setText(time);
+        holder.recycler_event_uid.setText(uid);
+
+        // Set event click listener
+        holder.recycler_event.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, EventActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("date", date);
+                intent.putExtra("time", time);
+                intent.putExtra("uid", uid);
+                mContext.startActivity(intent);
+
+                Log.d(TAG, "onClick: Clicked on " + name);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mEvents.size();
+    }
+
+    public void removeEvent(int position) {
+        // Delete event from DB
+        final String uid = mEvents.get(position).getUid();
+        final DatabaseReference data = FirebaseDatabase.getInstance().getReference()
+                .child("events").child(User.getUid()).child(uid);
+        data.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                data.removeValue();
+
+                Log.d(TAG, "onDataChange: Event removed");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Remove event in recycler
+        mEvents.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreEvent(final Event event, int position) {
+        // Write event to DB
+        final DatabaseReference eventsData = FirebaseDatabase.getInstance().getReference()
+                .child("events").child(User.getUid());
+        eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                eventsData.child(event.getUid()).setValue(event);
+
+                Log.d(TAG, "onDataChange: Event restored");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        // Restore event in recycler
+        mEvents.add(position, event);
+        notifyItemInserted(position);
+    }
 }

@@ -1,33 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/recycler_event"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/recycler_event"
-    android:padding="25dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/recycler_event_name"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/recycler_event_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent">
+
+        <ImageView
+            android:id="@+id/recycler_event_delete"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_delete" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@id/recycler_event_delete"
+            android:text="DELETE"
+            android:textSize="25sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/recycler_event_foreground"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp" />
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="25dp">
 
-    <TextView
-        android:id="@+id/recycler_event_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/recycler_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
 
-    <TextView
-        android:id="@+id/recycler_event_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/recycler_event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/recycler_event_uid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/recycler_event_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/recycler_event_uid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

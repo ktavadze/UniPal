@@ -5,12 +5,16 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,9 +39,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class DashboardActivity extends AppCompatActivity {
-
+public class DashboardActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = "DashboardActivity";
+
+    private ConstraintLayout mDashboard;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -46,6 +51,7 @@ public class DashboardActivity extends AppCompatActivity {
     private DatabaseReference mEventsData;
 
     private ArrayList<Event> mEvents;
+    private EventsRecyclerAdapter mEventsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +61,15 @@ public class DashboardActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Dashboard");
 
+        mDashboard = findViewById(R.id.dashboard);
+
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
             getUser();
 
-            mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
+            mEventsData = FirebaseDatabase.getInstance().getReference()
+                    .child("events").child(User.getUid());
         }
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -121,6 +130,26 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
+        // Backup removed event
+        final Event event = mEvents.get(position);
+
+        // Remove event
+        mEventsAdapter.removeEvent(position);
+
+        // Show undo snack bar
+        Snackbar snackbar = Snackbar.make(mDashboard, "Event removed", Snackbar.LENGTH_SHORT);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Restore event
+                mEventsAdapter.restoreEvent(event, position);
+            }
+        });
+        snackbar.show();
+    }
+
     public void getUser() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
@@ -133,10 +162,12 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     public void getEvents() {
+        // Get events and attach adapter
         mEvents = new ArrayList<>();
-        final EventsRecyclerAdapter eventsAdapter = new EventsRecyclerAdapter(this, mEvents);
+        mEventsAdapter = new EventsRecyclerAdapter(this, mEvents);
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
-        events_recycler.setAdapter(eventsAdapter);
+        events_recycler.setAdapter(mEventsAdapter);
+        events_recycler.setItemAnimator(new DefaultItemAnimator());
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
         mEventsData.addChildEventListener(new ChildEventListener() {
             @Override
@@ -145,7 +176,7 @@ public class DashboardActivity extends AppCompatActivity {
                 if (!mEvents.contains(event)) {
                     mEvents.add(event);
 
-                    eventsAdapter.notifyDataSetChanged();
+                    mEventsAdapter.notifyDataSetChanged();
 
                     Log.d(TAG, "onChildAdded: Event read");
                 }
@@ -171,6 +202,11 @@ public class DashboardActivity extends AppCompatActivity {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+
+        // Attach item touch helper
+        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
+                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
     }
 
     public void actionNewEvent() {
