@@ -1,14 +1,19 @@
 package edu.ramapo.ktavadze.unipal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +28,9 @@ public class SchoolsActivity extends AppCompatActivity {
 
     private static final String TAG = "SchoolsActivity";
 
-    private DatabaseReference mSchoolData;
+    private DatabaseReference mSchoolsData;
+
+    private ArrayList<School> mSchools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,50 +40,52 @@ public class SchoolsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Schools");
 
-        mSchoolData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+    }
 
-        // Write school to DB
-        final EditText school_name_edit = findViewById(R.id.school_name_edit);
-        final Button add_school_button = findViewById(R.id.add_school_button);
-        add_school_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSchoolData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String name = school_name_edit.getText().toString().trim();
-                        String uid = mSchoolData.push().getKey();
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-                        School school = new School(name, uid);
-                        mSchoolData.child(uid).setValue(school);
+        getSchools();
+    }
 
-                        Log.d(TAG, "onDataChange: New school added");
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_schools, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-                        school_name_edit.setText("");
-                    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_new_school:
+                actionNewSchool();
+                return true;
+            default:
+                // Invoke superclass to handle unrecognized action.
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
-
-        // Read school data from DB
-        final ArrayList<String> schoolsArray = new ArrayList<>();
-        final ArrayAdapter<String> schoolsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, schoolsArray);
-        ListView schools_list = findViewById(R.id.schools_list);
-        schools_list.setAdapter(schoolsAdapter);
-        mSchoolData.addChildEventListener(new ChildEventListener() {
+    public void getSchools() {
+        mSchools = new ArrayList<>();
+        final SchoolsRecyclerAdapter schoolsAdapter = new SchoolsRecyclerAdapter(this, mSchools);
+        final RecyclerView schools_recycler = findViewById(R.id.schools_recycler);
+        schools_recycler.setAdapter(schoolsAdapter);
+        schools_recycler.setLayoutManager(new LinearLayoutManager(this));
+        mSchoolsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 School school = dataSnapshot.getValue(School.class);
+                if (!mSchools.contains(school)) {
+                    mSchools.add(school);
 
-                schoolsArray.add(school.getName());
-                schoolsAdapter.notifyDataSetChanged();
+                    schoolsAdapter.notifyDataSetChanged();
 
-                Log.d(TAG, "onChildAdded: New school read");
+                    Log.d(TAG, "onChildAdded: School read");
+                }
             }
 
             @Override
@@ -99,5 +108,57 @@ public class SchoolsActivity extends AppCompatActivity {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    public void actionNewSchool() {
+        final School newSchool = new School();
+
+        // Build new school dialog
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_school_new, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle(R.string.title_new_school);
+
+        // Name
+        final EditText school_name_edit = dialogView.findViewById(R.id.school_name_edit);
+
+        // Define responses
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Write school to DB
+                mSchoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Set name
+                        String name = school_name_edit.getText().toString().trim();
+                        newSchool.setName(name);
+
+                        // Set uid
+                        String uid = mSchoolsData.push().getKey();
+                        newSchool.setUid(uid);
+
+                        // Add school
+                        mSchoolsData.child(uid).setValue(newSchool);
+
+                        Log.d(TAG, "onDataChange: School added");
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // TODO: Cancel
+            }
+        });
+
+        // Show new school dialog
+        AlertDialog schoolDialog = dialogBuilder.create();
+        schoolDialog.show();
     }
 }

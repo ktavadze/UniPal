@@ -7,33 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".SchoolsActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/schools_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center">
-
-        <EditText
-            android:id="@+id/school_name_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="Name" />
-
-        <Button
-            android:id="@+id/add_school_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add School" />
-
-        <ListView
-            android:id="@+id/schools_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

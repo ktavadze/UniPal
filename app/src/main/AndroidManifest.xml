@@ -25,6 +25,9 @@
             android:name=".SchoolsActivity"
             android:parentActivityName=".DashboardActivity" />
         <activity
+            android:name=".SchoolActivity"
+            android:parentActivityName=".SchoolsActivity" />
+        <activity
             android:name=".CalendarActivity"
             android:parentActivityName=".DashboardActivity" />
         <activity

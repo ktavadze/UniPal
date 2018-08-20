@@ -21,12 +21,29 @@ public class School {
         this.uid = uid;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        School school = (School) obj;
+        if (uid.equals(school.getUid())) {
+            return true;
+        }
+        return false;
+    }
+
     public String getName() {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getUid() {
         return this.uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
 }

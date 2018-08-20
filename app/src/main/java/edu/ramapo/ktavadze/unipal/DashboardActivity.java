@@ -304,7 +304,7 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         // Show new event dialog
-        AlertDialog settingsDialog = dialogBuilder.create();
-        settingsDialog.show();
+        AlertDialog eventDialog = dialogBuilder.create();
+        eventDialog.show();
     }
 }
