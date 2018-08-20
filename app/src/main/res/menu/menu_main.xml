@@ -17,6 +17,10 @@
         android:title="@string/action_schools"
         app:showAsAction="never"/>
 
+    <item android:id="@+id/action_courses"
+        android:title="@string/action_courses"
+        app:showAsAction="never"/>
+
     <item android:id="@+id/action_calendar"
         android:title="@string/action_calendar"
         app:showAsAction="never"/>
