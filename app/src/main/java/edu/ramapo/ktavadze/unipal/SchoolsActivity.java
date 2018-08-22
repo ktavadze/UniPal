@@ -2,9 +2,9 @@ package edu.ramapo.ktavadze.unipal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,12 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class SchoolsActivity extends AppCompatActivity {
-
     private static final String TAG = "SchoolsActivity";
 
     private DatabaseReference mSchoolsData;
+    private ChildEventListener mSchoolsListener;
 
     private ArrayList<School> mSchools;
+    private SchoolsRecyclerAdapter mSchoolsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +41,14 @@ public class SchoolsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Schools");
 
-        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+        addSchoolsListener();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        getSchools();
+        removeSchoolsListener();
     }
 
     @Override
@@ -69,23 +70,25 @@ public class SchoolsActivity extends AppCompatActivity {
         }
     }
 
-    public void getSchools() {
+    public void addSchoolsListener() {
+        // Init schools
         mSchools = new ArrayList<>();
-        final SchoolsRecyclerAdapter schoolsAdapter = new SchoolsRecyclerAdapter(this, mSchools);
+        mSchoolsAdapter = new SchoolsRecyclerAdapter(this, mSchools);
         final RecyclerView schools_recycler = findViewById(R.id.schools_recycler);
-        schools_recycler.setAdapter(schoolsAdapter);
+        schools_recycler.setAdapter(mSchoolsAdapter);
         schools_recycler.setLayoutManager(new LinearLayoutManager(this));
-        mSchoolsData.addChildEventListener(new ChildEventListener() {
+
+        // Add schools listener
+        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+        mSchoolsListener = mSchoolsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 School school = dataSnapshot.getValue(School.class);
-                if (!mSchools.contains(school)) {
-                    mSchools.add(school);
+                mSchools.add(school);
 
-                    schoolsAdapter.notifyDataSetChanged();
+                mSchoolsAdapter.notifyDataSetChanged();
 
-                    Log.d(TAG, "onChildAdded: School read");
-                }
+                Log.d(TAG, "onChildAdded: School read: " + school.getName());
             }
 
             @Override
@@ -95,7 +98,12 @@ public class SchoolsActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                mSchools.remove(school);
 
+                mSchoolsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildChanged: School removed: " + school.getName());
             }
 
             @Override
@@ -108,6 +116,15 @@ public class SchoolsActivity extends AppCompatActivity {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+
+        Log.d(TAG, "addSchoolsListener: Listener added");
+    }
+
+    public void removeSchoolsListener() {
+        // Remove schools listener
+        mSchoolsData.removeEventListener(mSchoolsListener);
+
+        Log.d(TAG, "removeSchoolsListener: Listener removed");
     }
 
     public void actionNewSchool() {
@@ -141,7 +158,7 @@ public class SchoolsActivity extends AppCompatActivity {
                         // Add school
                         mSchoolsData.child(uid).setValue(newSchool);
 
-                        Log.d(TAG, "onDataChange: School added");
+                        Log.d(TAG, "onDataChange: School added: " + name);
                     }
 
                     @Override
