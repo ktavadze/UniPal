@@ -282,7 +282,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
                                 // Preview date
                                 event_date_pick.setText(date);
 
-                                Log.d(TAG, "onDateSet: Date set to " + date);
+                                Log.d(TAG, "onDateSet: Date set: " + date);
                             }
                         },
                         cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
