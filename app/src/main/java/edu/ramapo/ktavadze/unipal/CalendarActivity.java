@@ -28,10 +28,11 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
     private static final String TAG = "CalendarActivity";
 
-    private DatabaseReference mEventData;
+    private DatabaseReference mEventsData;
+    private ChildEventListener mEventsListener;
 
-    private ArrayList<Event> mEvents = new ArrayList<>();
-    private HashSet<CalendarDay> mDates = new HashSet<>();
+    private ArrayList<Event> mEvents;
+    private HashSet<CalendarDay> mDates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +42,14 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Calendar");
 
-        mEventData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
+        addEventsListener();
+    }
 
-        getEventData();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        removeEventsListener();
     }
 
     @Override
@@ -71,12 +77,12 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
         intent.putExtra("date", dateString);
         startActivity(intent);
 
-        Log.d(TAG, "onDateSelected: Selected " + dateString);
+        Log.d(TAG, "onDateSelected: Date selected: " + dateString);
     }
 
     @Override
     public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
-        Log.d(TAG, "onMonthChanged: Month changed to " + calendarDay.getMonth());
+        Log.d(TAG, "onMonthChanged: Month changed: " + (calendarDay.getMonth() + 1));
     }
 
     public class EventDecorator implements DayViewDecorator {
@@ -103,18 +109,26 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
         }
     }
 
-    public void getEventData() {
+    public void addEventsListener() {
+        // Set calendar listeners
         final MaterialCalendarView events_calendar = findViewById(R.id.events_calendar);
         events_calendar.setOnDateChangedListener(this);
         events_calendar.setOnMonthChangedListener(this);
-        mEventData.addChildEventListener(new ChildEventListener() {
+
+        // Init events and dates
+        mEvents = new ArrayList<>();
+        mDates = new HashSet<>();
+
+        // Add events listener
+        mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
+        mEventsListener = mEventsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // Get event
+                // Read event
                 Event event = dataSnapshot.getValue(Event.class);
                 mEvents.add(event);
 
-                // Get date
+                // Read date
                 String [] dateTokens = event.getDate().split("/");
                 Integer month = Integer.parseInt(dateTokens[0]);
                 Integer day = Integer.parseInt(dateTokens[1]);
@@ -122,11 +136,11 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
                 CalendarDay date = CalendarDay.from(year, month - 1, day);
                 mDates.add(date);
 
-                // Add decorator
+                // Update decorator
                 events_calendar.removeDecorators();
                 events_calendar.addDecorator(new EventDecorator(mDates));
 
-                Log.d(TAG, "onChildAdded: Event read");
+                Log.d(TAG, "onChildAdded: Event read: " + event.getName());
             }
 
             @Override
@@ -136,7 +150,23 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                // Remove event
+                Event event = dataSnapshot.getValue(Event.class);
+                mEvents.remove(event);
 
+                // Remove date
+                String [] dateTokens = event.getDate().split("/");
+                Integer month = Integer.parseInt(dateTokens[0]);
+                Integer day = Integer.parseInt(dateTokens[1]);
+                Integer year = Integer.parseInt(dateTokens[2]);
+                CalendarDay date = CalendarDay.from(year, month - 1, day);
+                mDates.remove(date);
+
+                // Update decorator
+                events_calendar.removeDecorators();
+                events_calendar.addDecorator(new EventDecorator(mDates));
+
+                Log.d(TAG, "onChildChanged: Event removed: " + event.getName());
             }
 
             @Override
@@ -149,5 +179,14 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+
+        Log.d(TAG, "addEventsListener: Listener added");
+    }
+
+    public void removeEventsListener() {
+        // Remove events listener
+        mEventsData.removeEventListener(mEventsListener);
+
+        Log.d(TAG, "removeEventsListener: Listener removed");
     }
 }

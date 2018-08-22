@@ -67,8 +67,6 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         if (mCurrentUser != null) {
             initUser();
 
-            initEvents();
-
             addEventsListener();
         }
     }
@@ -171,8 +169,8 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         User.init(displayName, email, uid);
     }
 
-    public void initEvents() {
-        // Init events and attach adapter
+    public void addEventsListener() {
+        // Init events
         mEvents = new ArrayList<>();
         mEventsAdapter = new EventsRecyclerAdapter(this, mEvents);
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
@@ -180,13 +178,6 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         events_recycler.setItemAnimator(new DefaultItemAnimator());
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
 
-        // Attach item touch helper
-        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
-                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
-    }
-
-    public void addEventsListener() {
         // Add events listener
         mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
         mEventsListener = mEventsData.addChildEventListener(new ChildEventListener() {
@@ -227,6 +218,11 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         });
 
         Log.d(TAG, "addEventsListener: Listener added");
+
+        // Attach item touch helper
+        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
+                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
     }
 
     public void removeEventsListener() {
