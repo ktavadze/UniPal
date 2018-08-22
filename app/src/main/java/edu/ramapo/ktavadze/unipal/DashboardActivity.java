@@ -42,13 +42,12 @@ import java.util.Calendar;
 public class DashboardActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = "DashboardActivity";
 
-    private ConstraintLayout mDashboard;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
 
     private DatabaseReference mEventsData;
+    private ChildEventListener mEventsListener;
 
     private ArrayList<Event> mEvents;
     private EventsRecyclerAdapter mEventsAdapter;
@@ -61,39 +60,26 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Dashboard");
 
-        mDashboard = findViewById(R.id.dashboard);
+        addAuthListener();
 
-        mAuth = FirebaseAuth.getInstance();
+        // Initialize
         mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
-            getUser();
+            initUser();
 
-            mEventsData = FirebaseDatabase.getInstance().getReference()
-                    .child("events").child(User.getUid());
+            initEvents();
+
+            addEventsListener();
         }
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-                    startActivity(new Intent(DashboardActivity.this, MainActivity.class));
-                }
-            }
-        };
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        mAuth.addAuthStateListener(mAuthListener);
-    }
+        removeAuthListener();
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        getEvents();
+        removeEventsListener();
     }
 
     @Override
@@ -139,7 +125,8 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         mEventsAdapter.removeEvent(position);
 
         // Show undo snack bar
-        Snackbar snackbar = Snackbar.make(mDashboard, "Event removed", Snackbar.LENGTH_SHORT);
+        ConstraintLayout dashboard = findViewById(R.id.dashboard);
+        Snackbar snackbar = Snackbar.make(dashboard, "Event removed", Snackbar.LENGTH_SHORT);
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,7 +137,30 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         snackbar.show();
     }
 
-    public void getUser() {
+    public void addAuthListener() {
+        // Add auth state listener
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    startActivity(new Intent(DashboardActivity.this, MainActivity.class));
+                }
+            }
+        };
+        mAuth.addAuthStateListener(mAuthListener);
+
+        Log.d(TAG, "addAuthListener: Listener added");
+    }
+
+    public void removeAuthListener() {
+        // remove auth listener
+        mAuth.removeAuthStateListener(mAuthListener);
+
+        Log.d(TAG, "removeAuthListener: Listener removed");
+    }
+
+    public void initUser() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
 
@@ -161,25 +171,33 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         User.init(displayName, email, uid);
     }
 
-    public void getEvents() {
-        // Get events and attach adapter
+    public void initEvents() {
+        // Init events and attach adapter
         mEvents = new ArrayList<>();
         mEventsAdapter = new EventsRecyclerAdapter(this, mEvents);
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
         events_recycler.setAdapter(mEventsAdapter);
         events_recycler.setItemAnimator(new DefaultItemAnimator());
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
-        mEventsData.addChildEventListener(new ChildEventListener() {
+
+        // Attach item touch helper
+        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
+                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
+    }
+
+    public void addEventsListener() {
+        // Add events listener
+        mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
+        mEventsListener = mEventsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event event = dataSnapshot.getValue(Event.class);
-                if (!mEvents.contains(event)) {
-                    mEvents.add(event);
+                mEvents.add(event);
 
-                    mEventsAdapter.notifyDataSetChanged();
+                mEventsAdapter.notifyDataSetChanged();
 
-                    Log.d(TAG, "onChildAdded: Event read");
-                }
+                Log.d(TAG, "onChildAdded: Event read: " + event.getName());
             }
 
             @Override
@@ -189,7 +207,12 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Event event = dataSnapshot.getValue(Event.class);
+                mEvents.remove(event);
 
+                mEventsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildRemoved: Event removed: " + event.getName());
             }
 
             @Override
@@ -203,10 +226,14 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
             }
         });
 
-        // Attach item touch helper
-        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
-                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
+        Log.d(TAG, "addEventsListener: Listener added");
+    }
+
+    public void removeEventsListener() {
+        // Remove events listener
+        mEventsData.removeEventListener(mEventsListener);
+
+        Log.d(TAG, "removeEventsListener: Listener removed");
     }
 
     public void actionNewEvent() {
@@ -297,7 +324,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
                                 // Preview time
                                 event_time_pick.setText(time);
 
-                                Log.d(TAG, "onTimeSet: Time set to " + time);
+                                Log.d(TAG, "onTimeSet: Time set: " + time);
                             }
                         },
                         cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
@@ -326,7 +353,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
                         // Add event
                         mEventsData.child(uid).setValue(newEvent);
 
-                        Log.d(TAG, "onDataChange: Event added");
+                        Log.d(TAG, "onDataChange: Event added: " + name);
                     }
 
                     @Override

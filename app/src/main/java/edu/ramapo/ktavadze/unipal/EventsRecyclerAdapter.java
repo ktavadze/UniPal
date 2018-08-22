@@ -89,7 +89,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 intent.putExtra("uid", uid);
                 mContext.startActivity(intent);
 
-                Log.d(TAG, "onClick: Clicked on " + name);
+                Log.d(TAG, "onClick: Clicked on: " + name);
             }
         });
     }
@@ -117,10 +117,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
-
-        // Remove event in recycler
-        mEvents.remove(position);
-        notifyItemRemoved(position);
     }
 
     public void restoreEvent(final Event event, int position) {
@@ -140,9 +136,5 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
-
-        // Restore event in recycler
-        mEvents.add(position, event);
-        notifyItemInserted(position);
     }
 }
