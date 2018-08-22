@@ -103,7 +103,7 @@ public class SchoolsActivity extends AppCompatActivity {
 
                 mSchoolsAdapter.notifyDataSetChanged();
 
-                Log.d(TAG, "onChildChanged: School removed: " + school.getName());
+                Log.d(TAG, "onChildRemoved: School removed: " + school.getName());
             }
 
             @Override

@@ -2,9 +2,9 @@ package edu.ramapo.ktavadze.unipal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,12 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class CoursesActivity extends AppCompatActivity {
-
     private static final String TAG = "CoursesActivity";
 
     private DatabaseReference mCoursesData;
+    private ChildEventListener mCoursesListener;
 
     private ArrayList<Course> mCourses;
+    private CoursesRecyclerAdapter mCoursesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +41,14 @@ public class CoursesActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Courses");
 
-        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
+        addCoursesListener();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        getCourses();
+        removeCoursesListener();
     }
 
     @Override
@@ -69,23 +70,25 @@ public class CoursesActivity extends AppCompatActivity {
         }
     }
 
-    public void getCourses() {
+    public void addCoursesListener() {
+        // Init courses
         mCourses = new ArrayList<>();
-        final CoursesRecyclerAdapter coursesAdapter = new CoursesRecyclerAdapter(this, mCourses);
+        mCoursesAdapter = new CoursesRecyclerAdapter(this, mCourses);
         final RecyclerView courses_recycler = findViewById(R.id.courses_recycler);
-        courses_recycler.setAdapter(coursesAdapter);
+        courses_recycler.setAdapter(mCoursesAdapter);
         courses_recycler.setLayoutManager(new LinearLayoutManager(this));
-        mCoursesData.addChildEventListener(new ChildEventListener() {
+
+        // Add courses listener
+        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
+        mCoursesListener = mCoursesData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Course course = dataSnapshot.getValue(Course.class);
-                if (!mCourses.contains(course)) {
-                    mCourses.add(course);
+                mCourses.add(course);
 
-                    coursesAdapter.notifyDataSetChanged();
+                mCoursesAdapter.notifyDataSetChanged();
 
-                    Log.d(TAG, "onChildAdded: Course read");
-                }
+                Log.d(TAG, "onChildAdded: Course read: " + course.getName());
             }
 
             @Override
@@ -95,7 +98,12 @@ public class CoursesActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Course course = dataSnapshot.getValue(Course.class);
+                mCourses.remove(course);
 
+                mCoursesAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildRemoved: Course removed: " + course.getName());
             }
 
             @Override
@@ -108,6 +116,15 @@ public class CoursesActivity extends AppCompatActivity {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
+
+        Log.d(TAG, "addCoursesListener: Listener added");
+    }
+
+    public void removeCoursesListener() {
+        // Remove courses listener
+        mCoursesData.removeEventListener(mCoursesListener);
+
+        Log.d(TAG, "removeCoursesListener: Listener removed");
     }
 
     public void actionNewCourse() {
@@ -141,7 +158,7 @@ public class CoursesActivity extends AppCompatActivity {
                         // Add course
                         mCoursesData.child(uid).setValue(newCourse);
 
-                        Log.d(TAG, "onDataChange: Course added");
+                        Log.d(TAG, "onDataChange: Course added: " + name);
                     }
 
                     @Override

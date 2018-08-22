@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecyclerAdapter.ViewHolder> {
-
     private static final String TAG = "CoursesRecyclerAdapter";
 
     private Context mContext;
@@ -25,43 +24,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         this.mCourses = mCourses;
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_course, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Course course = mCourses.get(position);
-        final String name = course.getName();
-        final String uid = course.getUid();
-
-        holder.recycler_course_name.setText(name);
-        holder.recycler_course_uid.setText(uid);
-
-        holder.recycler_course.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Clicked on " + name);
-
-                Intent intent = new Intent(mContext, CourseActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("uid", uid);
-                mContext.startActivity(intent);
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return mCourses.size();
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         LinearLayout recycler_course;
         TextView recycler_course_name;
         TextView recycler_course_uid;
@@ -75,4 +38,42 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         }
     }
 
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recycler_course, parent, false);
+
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Get course info
+        final Course course = mCourses.get(position);
+        final String name = course.getName();
+        final String uid = course.getUid();
+
+        // Display course info
+        holder.recycler_course_name.setText(name);
+        holder.recycler_course_uid.setText(uid);
+
+        // Set course click listener
+        holder.recycler_course.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CourseActivity.class);
+                intent.putExtra("name", name);
+                intent.putExtra("uid", uid);
+                mContext.startActivity(intent);
+
+                Log.d(TAG, "onClick: Clicked on: " + name);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mCourses.size();
+    }
 }
