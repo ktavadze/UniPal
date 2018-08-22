@@ -2,10 +2,12 @@ package edu.ramapo.ktavadze.unipal;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -19,13 +21,11 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
-import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class CalendarActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
-
     private static final String TAG = "CalendarActivity";
 
     private DatabaseReference mEventsData;
@@ -86,15 +86,14 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
     }
 
     public class EventDecorator implements DayViewDecorator {
-
         private final HashSet<CalendarDay> dates;
-        private final int color;
-        private final ColorDrawable background;
+        private final int backgroundColor;
+        private final int textColor;
 
         public EventDecorator(HashSet<CalendarDay> dates) {
-            this.dates = new HashSet<>(dates);
-            this.color = R.color.colorPrimary;
-            this.background = new ColorDrawable(color);
+            this.dates = dates;
+            this.backgroundColor = ContextCompat.getColor(CalendarActivity.this, R.color.colorAccent);
+            this.textColor = ContextCompat.getColor(CalendarActivity.this, R.color.colorPrimary);
         }
 
         @Override
@@ -104,8 +103,8 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
         @Override
         public void decorate(DayViewFacade view) {
-            view.addSpan(new DotSpan(5, color));
-            view.setBackgroundDrawable(background);
+            view.addSpan(new ForegroundColorSpan(textColor));
+            view.setBackgroundDrawable(new ColorDrawable(backgroundColor));
         }
     }
 
