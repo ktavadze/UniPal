@@ -5,14 +5,13 @@
     android:id="@+id/recycler_event"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardCornerRadius="10dp">
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:id="@+id/recycler_event_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent">
+        android:background="@color/colorQuaternary">
 
         <ImageView
             android:id="@+id/recycler_event_delete"
@@ -46,6 +45,7 @@
             android:id="@+id/recycler_event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxLines="1"
             android:textSize="25sp" />
 
         <TextView
