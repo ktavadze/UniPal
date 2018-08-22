@@ -1,8 +1,8 @@
 package edu.ramapo.ktavadze.unipal;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,10 +15,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class UserActivity extends AppCompatActivity {
-
     private static final String TAG = "UserActivity";
 
-    private DatabaseReference mUserData;
+    private DatabaseReference mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class UserActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("User");
 
-        mUserData = FirebaseDatabase.getInstance().getReference().child("users").child(User.getUid());
+        mData = FirebaseDatabase.getInstance().getReference().child("users").child(User.getUid());
 
         // Show static user data
         final TextView user_name_text = findViewById(R.id.user_name_text);
@@ -44,7 +43,7 @@ public class UserActivity extends AppCompatActivity {
         get_user_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUserData.addListenerForSingleValueEvent(new ValueEventListener() {
+                mData.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String displayName = dataSnapshot.child("displayName").getValue(String.class);
@@ -55,7 +54,7 @@ public class UserActivity extends AppCompatActivity {
                         user_email_text.setText(email);
                         user_uid_text.setText(uid);
 
-                        Log.d(TAG, "onDataChange: User read");
+                        Log.d(TAG, "onDataChange: User read: " + displayName);
                     }
 
                     @Override

@@ -12,7 +12,6 @@ import java.util.Locale;
 
 @IgnoreExtraProperties
 public class Event {
-
     private String name = null;
     private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
     private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
@@ -69,5 +68,4 @@ public class Event {
     public void setUid(String uid) {
         this.uid = uid;
     }
-
 }

@@ -8,7 +8,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class School {
-
     private String name;
     private String uid;
 
@@ -45,5 +44,4 @@ public class School {
     public void setUid(String uid) {
         this.uid = uid;
     }
-
 }

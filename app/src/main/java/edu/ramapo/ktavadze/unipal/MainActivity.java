@@ -1,9 +1,9 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String TAG = "MainActivity";
 
     private FirebaseAuth mAuth;

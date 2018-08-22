@@ -1,9 +1,9 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class SchoolActivity extends AppCompatActivity {
-
     private static final String TAG = "SchoolActivity";
 
     private School mSchool;
@@ -49,7 +48,7 @@ public class SchoolActivity extends AppCompatActivity {
 
                         finish();
 
-                        Log.d(TAG, "onDataChange: School deleted");
+                        Log.d(TAG, "onDataChange: School deleted: " + mSchool.getName());
                     }
 
                     @Override
@@ -81,7 +80,7 @@ public class SchoolActivity extends AppCompatActivity {
 
             mData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid()).child(uid);
 
-            Log.d(TAG, "getIntentData: Intent received");
+            Log.d(TAG, "getIntentData: Intent accepted");
         }
         else {
             finish();

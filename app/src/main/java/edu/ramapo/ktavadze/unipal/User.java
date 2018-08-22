@@ -15,7 +15,6 @@ import com.google.firebase.database.ValueEventListener;
 
 @IgnoreExtraProperties
 public class User {
-
     private static final String TAG = "User";
 
     private static String displayName;
@@ -68,5 +67,4 @@ public class User {
             }
         });
     }
-
 }
