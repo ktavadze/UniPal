@@ -193,7 +193,13 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Event event = dataSnapshot.getValue(Event.class);
+                int index = mEvents.indexOf(event);
+                mEvents.set(index, event);
 
+                mEventsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildChanged: Event updated: " + event.getName());
             }
 
             @Override
@@ -340,7 +346,12 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Set name
                         String name = event_name_edit.getText().toString().trim();
-                        newEvent.setName(name);
+                        if (name.isEmpty()) {
+                            newEvent.setName("misc");
+                        }
+                        else {
+                            newEvent.setName(name);
+                        }
 
                         // Set uid
                         String uid = mEventsData.push().getKey();

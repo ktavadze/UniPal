@@ -123,11 +123,11 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
         mEventsListener = mEventsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // Read event
+                // Add event
                 Event event = dataSnapshot.getValue(Event.class);
                 mEvents.add(event);
 
-                // Read date
+                // Add date
                 String [] dateTokens = event.getDate().split("/");
                 Integer month = Integer.parseInt(dateTokens[0]);
                 Integer day = Integer.parseInt(dateTokens[1]);
@@ -144,7 +144,33 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                // Update event
+                Event event = dataSnapshot.getValue(Event.class);
+                int index = mEvents.indexOf(event);
+                String oldDate = mEvents.get(index).getDate();
+                mEvents.set(index, event);
 
+                // Add new date
+                String [] dateTokens = event.getDate().split("/");
+                Integer month = Integer.parseInt(dateTokens[0]);
+                Integer day = Integer.parseInt(dateTokens[1]);
+                Integer year = Integer.parseInt(dateTokens[2]);
+                CalendarDay date = CalendarDay.from(year, month - 1, day);
+                mDates.add(date);
+
+                // Remove old date
+                dateTokens = oldDate.split("/");
+                month = Integer.parseInt(dateTokens[0]);
+                day = Integer.parseInt(dateTokens[1]);
+                year = Integer.parseInt(dateTokens[2]);
+                date = CalendarDay.from(year, month - 1, day);
+                mDates.remove(date);
+
+                // Update decorator
+                events_calendar.removeDecorators();
+                events_calendar.addDecorator(new EventDecorator(mDates));
+
+                Log.d(TAG, "onChildChanged: Event updated: " + event.getName());
             }
 
             @Override
