@@ -156,7 +156,9 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
                 Integer day = Integer.parseInt(dateTokens[1]);
                 Integer year = Integer.parseInt(dateTokens[2]);
                 CalendarDay date = CalendarDay.from(year, month - 1, day);
-                mDates.add(date);
+                if (!mDates.contains(date)) {
+                    mDates.add(date);
+                }
 
                 // Remove old date
                 dateTokens = oldDate.split("/");
@@ -164,7 +166,15 @@ public class CalendarActivity extends AppCompatActivity implements OnDateSelecte
                 day = Integer.parseInt(dateTokens[1]);
                 year = Integer.parseInt(dateTokens[2]);
                 date = CalendarDay.from(year, month - 1, day);
-                mDates.remove(date);
+                boolean remove = true;
+                for (Event e : mEvents) {
+                    if (e.getDate().equals(oldDate)) {
+                        remove = false;
+                    }
+                }
+                if (remove) {
+                    mDates.remove(date);
+                }
 
                 // Update decorator
                 events_calendar.removeDecorators();

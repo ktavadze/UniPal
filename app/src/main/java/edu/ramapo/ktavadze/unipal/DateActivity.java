@@ -87,14 +87,18 @@ public class DateActivity extends AppCompatActivity {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Event event = dataSnapshot.getValue(Event.class);
-                if (!mEvents.contains(event)) {
+                if (mEvents.contains(event)) {
                     if (event.getDate().equals(mDate)) {
-                        mEvents.add(event);
+                        int index = mEvents.indexOf(event);
+                        mEvents.set(index, event);
+                    }
+                    else {
+                        mEvents.remove(event);
                     }
                 }
                 else {
-                    if (!event.getDate().equals(mDate)) {
-                        mEvents.remove(event);
+                    if (event.getDate().equals(mDate)) {
+                        mEvents.add(event);
                     }
                 }
 
