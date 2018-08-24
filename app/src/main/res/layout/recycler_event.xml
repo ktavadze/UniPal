@@ -48,10 +48,16 @@
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/recycler_event_date"
+            android:id="@+id/recycler_event_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/recycler_event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/recycler_event_time"

@@ -13,6 +13,7 @@ import java.util.Locale;
 @IgnoreExtraProperties
 public class Event {
     private String name = null;
+    private String type = null;
     private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
     private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
     private String uid = null;
@@ -22,8 +23,9 @@ public class Event {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String name, String date, String time, String uid, boolean complete) {
+    public Event(String name, String type, String date, String time, String uid, boolean complete) {
         this.name = name;
+        this.type = type;
         this.date = date;
         this.time = time;
         this.uid = uid;
@@ -45,6 +47,14 @@ public class Event {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDate() {

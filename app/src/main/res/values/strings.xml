@@ -13,4 +13,14 @@
     <string name="action_new_school">New School</string>
     <string name="title_new_course">New Course</string>
     <string name="action_new_course">New Course</string>
+    <string-array name="event_types">
+        <item>Type</item>
+        <item>Assignment</item>
+        <item>Paper</item>
+        <item>Presentation</item>
+        <item>Project</item>
+        <item>Quiz</item>
+        <item>Report</item>
+        <item>Test</item>
+    </string-array>
 </resources>

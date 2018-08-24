@@ -52,6 +52,32 @@
                 android:padding="25dp">
 
                 <TextView
+                    android:text="Type: "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="50sp" />
+
+                <TextView
+                    android:id="@+id/event_type_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="50sp" />
+
+                <Spinner
+                    android:id="@+id/event_type_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/event_types"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="25dp">
+
+                <TextView
                     android:text="Date: "
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -146,7 +172,7 @@
             android:layout_height="75dp"
             android:layout_weight="1"
             android:textSize="25sp"
-            android:background="@color/colorTertiary"
+            android:background="@color/colorAccent"
             android:visibility="gone"
             android:text="UPDATE" />
 

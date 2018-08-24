@@ -21,8 +21,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -252,6 +254,31 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         // Name
         final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
 
+        // Type
+        final Spinner event_type_spinner = dialogView.findViewById(R.id.event_type_spinner);
+        event_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String type;
+                if (position == 0) {
+                    type = "Other";
+                }
+                else {
+                    type = parent.getItemAtPosition(position).toString();
+                }
+
+                // Set type
+                newEvent.setType(type);
+
+                Log.d(TAG, "onItemSelected: Type selected: " + type);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         // Date
         final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
         event_date_pick.setOnClickListener(new View.OnClickListener() {
@@ -347,7 +374,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
                         // Set name
                         String name = event_name_edit.getText().toString().trim();
                         if (name.isEmpty()) {
-                            newEvent.setName("misc");
+                            newEvent.setName("New event");
                         }
                         else {
                             newEvent.setName(name);

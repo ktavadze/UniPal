@@ -13,10 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -26,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class EventActivity extends AppCompatActivity {
@@ -126,14 +129,15 @@ public class EventActivity extends AppCompatActivity {
 
     public void getIntentData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("time")
-                && intent.hasExtra("uid") && intent.hasExtra("complete")) {
+        if (intent.hasExtra("name") && intent.hasExtra("type") && intent.hasExtra("date")
+                && intent.hasExtra("time") && intent.hasExtra("uid") && intent.hasExtra("complete")) {
             String name = intent.getStringExtra("name");
+            String type = intent.getStringExtra("type");
             String date = intent.getStringExtra("date");
             String time = intent.getStringExtra("time");
             String uid = intent.getStringExtra("uid");
             boolean complete = intent.getBooleanExtra("complete", false);
-            mEvent = new Event(name, date, time, uid, complete);
+            mEvent = new Event(name, type, date, time, uid, complete);
 
             mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(uid);
 
@@ -148,6 +152,7 @@ public class EventActivity extends AppCompatActivity {
 
     public void displayEventData() {
         final TextView event_name_text = findViewById(R.id.event_name_text);
+        final TextView event_type_text = findViewById(R.id.event_type_text);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final TextView event_uid_text = findViewById(R.id.event_uid_text);
@@ -155,6 +160,7 @@ public class EventActivity extends AppCompatActivity {
         final Button toggle_event_button = findViewById(R.id.toggle_event_button);
 
         event_name_text.setText(mEvent.getName());
+        event_type_text.setText(mEvent.getType());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
         event_uid_text.setText(mEvent.getUid());
@@ -174,6 +180,8 @@ public class EventActivity extends AppCompatActivity {
     public void startEditing() {
         final TextView event_name_text = findViewById(R.id.event_name_text);
         final EditText event_name_edit = findViewById(R.id.event_name_edit);
+        final TextView event_type_text = findViewById(R.id.event_type_text);
+        final Spinner event_type_spinner = findViewById(R.id.event_type_spinner);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final Button delete_event_button = findViewById(R.id.delete_event_button);
@@ -184,17 +192,45 @@ public class EventActivity extends AppCompatActivity {
         // Update UI
         mEditIcon.setVisible(false);
         event_name_text.setVisibility(View.GONE);
+        event_type_text.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
         toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
+        event_type_spinner.setVisibility(View.VISIBLE);
         cancel_event_button.setVisibility(View.VISIBLE);
         update_event_button.setVisibility(View.VISIBLE);
 
-        final Event newEvent = new Event();
         final Calendar cal = Calendar.getInstance();
 
         // Name
         event_name_edit.setText(mEvent.getName());
+
+        // Type
+        int index = Arrays.asList("Type", "Assignment", "Paper", "Presentation", "Project",
+                "Quiz", "Report", "Test").indexOf(mEvent.getType());
+        event_type_spinner.setSelection(index);
+        event_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String type;
+                if (position == 0) {
+                    type = "Other";
+                }
+                else {
+                    type = parent.getItemAtPosition(position).toString();
+                }
+
+                // Set type
+                mEvent.setType(type);
+
+                Log.d(TAG, "onItemSelected: Type selected: " + type);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Date
         event_date_text.setOnClickListener(new View.OnClickListener() {
@@ -222,7 +258,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
 
                                 // Set date
-                                newEvent.setDate(date);
+                                mEvent.setDate(date);
 
                                 // Preview date
                                 event_date_text.setText(date);
@@ -263,7 +299,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
 
                                 // Set time
-                                newEvent.setTime(time);
+                                mEvent.setTime(time);
 
                                 // Preview time
                                 event_time_text.setText(time);
@@ -286,9 +322,11 @@ public class EventActivity extends AppCompatActivity {
                 // Update UI
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
+                event_type_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
+                event_type_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
@@ -311,9 +349,11 @@ public class EventActivity extends AppCompatActivity {
                 // Update UI
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
+                event_type_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
+                event_type_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
@@ -330,17 +370,11 @@ public class EventActivity extends AppCompatActivity {
                 // Set name
                 String name = event_name_edit.getText().toString().trim();
                 if (name.isEmpty()) {
-                    newEvent.setName(mEvent.getName());
+                    mEvent.setName(mEvent.getName());
                 }
                 else {
-                    newEvent.setName(name);
+                    mEvent.setName(name);
                 }
-
-                // Set uid
-                String uid = mEvent.getUid();
-                newEvent.setUid(uid);
-
-                mEvent = newEvent;
 
                 displayEventData();
 
@@ -348,7 +382,7 @@ public class EventActivity extends AppCompatActivity {
                 mData.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.setValue(newEvent);
+                        mData.setValue(mEvent);
 
                         Log.d(TAG, "onDataChange: Event updated: " + mEvent.getName());
                     }

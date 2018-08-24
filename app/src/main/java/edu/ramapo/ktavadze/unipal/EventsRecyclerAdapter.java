@@ -38,6 +38,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         RelativeLayout recycler_event_background;
         LinearLayout recycler_event_foreground;
         TextView recycler_event_name;
+        TextView recycler_event_type;
         TextView recycler_event_date;
         TextView recycler_event_time;
         TextView recycler_event_uid;
@@ -49,6 +50,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             recycler_event_background = itemView.findViewById(R.id.recycler_event_background);
             recycler_event_foreground = itemView.findViewById(R.id.recycler_event_foreground);
             recycler_event_name = itemView.findViewById(R.id.recycler_event_name);
+            recycler_event_type = itemView.findViewById(R.id.recycler_event_type);
             recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_time = itemView.findViewById(R.id.recycler_event_time);
             recycler_event_uid = itemView.findViewById(R.id.recycler_event_uid);
@@ -69,6 +71,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         // Get event info
         final Event event = mEvents.get(position);
         final String name = event.getName();
+        final String type = event.getType();
         final String date = event.getDate();
         final String time = event.getTime();
         final String uid = event.getUid();
@@ -76,6 +79,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
 
         // Display event info
         holder.recycler_event_name.setText(name);
+        holder.recycler_event_type.setText(type);
         holder.recycler_event_date.setText(date);
         holder.recycler_event_time.setText(time);
         holder.recycler_event_uid.setText(uid);
@@ -94,6 +98,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, EventActivity.class);
                 intent.putExtra("name", name);
+                intent.putExtra("type", type);
                 intent.putExtra("date", date);
                 intent.putExtra("time", time);
                 intent.putExtra("uid", uid);
