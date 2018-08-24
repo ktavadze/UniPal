@@ -110,25 +110,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="25dp">
-
-                <TextView
-                    android:text="Uid: "
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="50sp" />
-
-                <TextView
-                    android:id="@+id/event_uid_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="50sp" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>

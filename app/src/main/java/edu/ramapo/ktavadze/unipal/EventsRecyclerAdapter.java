@@ -41,7 +41,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         TextView recycler_event_type;
         TextView recycler_event_date;
         TextView recycler_event_time;
-        TextView recycler_event_uid;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -53,7 +52,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             recycler_event_type = itemView.findViewById(R.id.recycler_event_type);
             recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_time = itemView.findViewById(R.id.recycler_event_time);
-            recycler_event_uid = itemView.findViewById(R.id.recycler_event_uid);
         }
     }
 
@@ -82,7 +80,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         holder.recycler_event_type.setText(type);
         holder.recycler_event_date.setText(date);
         holder.recycler_event_time.setText(time);
-        holder.recycler_event_uid.setText(uid);
 
         // Set event background
         if (complete) {

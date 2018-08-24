@@ -155,7 +155,6 @@ public class EventActivity extends AppCompatActivity {
         final TextView event_type_text = findViewById(R.id.event_type_text);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
-        final TextView event_uid_text = findViewById(R.id.event_uid_text);
         final ScrollView event_scroll = findViewById(R.id.event_scroll);
         final Button toggle_event_button = findViewById(R.id.toggle_event_button);
 
@@ -163,7 +162,6 @@ public class EventActivity extends AppCompatActivity {
         event_type_text.setText(mEvent.getType());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
-        event_uid_text.setText(mEvent.getUid());
 
         final int backgroundYellow = ContextCompat.getColor(EventActivity.this, R.color.colorSecondary);
         final int backgroundGreen = ContextCompat.getColor(EventActivity.this, R.color.colorTertiary);
