@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -70,6 +72,31 @@ public class EventActivity extends AppCompatActivity {
                 });
             }
         });
+
+        // Toggle event in DB
+        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
+        toggle_event_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        mEvent.toggleComplete();
+
+                        mData.child("complete").setValue(mEvent.isComplete());
+
+                        displayEventData();
+
+                        Log.d(TAG, "onDataChange: Event toggled: " + mEvent.getName());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -99,12 +126,14 @@ public class EventActivity extends AppCompatActivity {
 
     public void getIntentData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("time") && intent.hasExtra("uid")) {
+        if (intent.hasExtra("name") && intent.hasExtra("date") && intent.hasExtra("time")
+                && intent.hasExtra("uid") && intent.hasExtra("complete")) {
             String name = intent.getStringExtra("name");
             String date = intent.getStringExtra("date");
             String time = intent.getStringExtra("time");
             String uid = intent.getStringExtra("uid");
-            mEvent = new Event(name, date, time, uid);
+            boolean complete = intent.getBooleanExtra("complete", false);
+            mEvent = new Event(name, date, time, uid, complete);
 
             mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(uid);
 
@@ -122,11 +151,24 @@ public class EventActivity extends AppCompatActivity {
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final TextView event_uid_text = findViewById(R.id.event_uid_text);
+        final ScrollView event_scroll = findViewById(R.id.event_scroll);
+        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
 
         event_name_text.setText(mEvent.getName());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
         event_uid_text.setText(mEvent.getUid());
+
+        final int backgroundYellow = ContextCompat.getColor(EventActivity.this, R.color.colorSecondary);
+        final int backgroundGreen = ContextCompat.getColor(EventActivity.this, R.color.colorTertiary);
+        if (mEvent.isComplete()) {
+            event_scroll.setBackgroundColor(backgroundGreen);
+            toggle_event_button.setBackgroundColor(backgroundYellow);
+        }
+        else {
+            event_scroll.setBackgroundColor(backgroundYellow);
+            toggle_event_button.setBackgroundColor(backgroundGreen);
+        }
     }
 
     public void startEditing() {
@@ -135,13 +177,15 @@ public class EventActivity extends AppCompatActivity {
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final Button delete_event_button = findViewById(R.id.delete_event_button);
-        final Button update_event_button = findViewById(R.id.update_event_button);
+        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
         final Button cancel_event_button = findViewById(R.id.cancel_event_button);
+        final Button update_event_button = findViewById(R.id.update_event_button);
 
         // Update UI
         mEditIcon.setVisible(false);
         event_name_text.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
+        toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
         cancel_event_button.setVisibility(View.VISIBLE);
         update_event_button.setVisibility(View.VISIBLE);
@@ -242,10 +286,11 @@ public class EventActivity extends AppCompatActivity {
                 // Update UI
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
-                update_event_button.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
+                update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
+                toggle_event_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
                 event_date_text.setOnClickListener(null);
@@ -266,10 +311,11 @@ public class EventActivity extends AppCompatActivity {
                 // Update UI
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
-                update_event_button.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
+                update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
+                toggle_event_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
                 event_date_text.setOnClickListener(null);

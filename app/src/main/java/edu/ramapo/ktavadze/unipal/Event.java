@@ -16,16 +16,18 @@ public class Event {
     private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
     private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
     private String uid = null;
+    private boolean complete = false;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String name, String date, String time, String uid) {
+    public Event(String name, String date, String time, String uid, boolean complete) {
         this.name = name;
         this.date = date;
         this.time = time;
         this.uid = uid;
+        this.complete = complete;
     }
 
     @Override
@@ -67,5 +69,13 @@ public class Event {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public boolean isComplete() {
+        return this.complete;
+    }
+
+    public void toggleComplete() {
+        this.complete = !this.complete;
     }
 }

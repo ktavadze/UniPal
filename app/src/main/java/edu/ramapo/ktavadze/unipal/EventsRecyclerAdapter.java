@@ -3,6 +3,7 @@ package edu.ramapo.ktavadze.unipal;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -71,12 +72,21 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         final String date = event.getDate();
         final String time = event.getTime();
         final String uid = event.getUid();
+        final boolean complete = event.isComplete();
 
         // Display event info
         holder.recycler_event_name.setText(name);
         holder.recycler_event_date.setText(date);
         holder.recycler_event_time.setText(time);
         holder.recycler_event_uid.setText(uid);
+
+        // Set event background
+        if (complete) {
+            holder.recycler_event_foreground.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorTertiary));
+        }
+        else {
+            holder.recycler_event_foreground.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorSecondary));
+        }
 
         // Set event click listener
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +97,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 intent.putExtra("date", date);
                 intent.putExtra("time", time);
                 intent.putExtra("uid", uid);
+                intent.putExtra("complete", complete);
                 mContext.startActivity(intent);
 
                 Log.d(TAG, "onClick: Clicked on: " + name);
