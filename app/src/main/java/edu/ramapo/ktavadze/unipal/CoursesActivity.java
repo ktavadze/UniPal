@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -137,8 +138,12 @@ public class CoursesActivity extends AppCompatActivity {
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(R.string.title_new_course);
 
-        // Name
+        // Define fields
         final EditText course_name_edit = dialogView.findViewById(R.id.course_name_edit);
+        final EditText course_department_edit = dialogView.findViewById(R.id.course_department_edit);
+        course_department_edit.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
+        final EditText course_number_edit = dialogView.findViewById(R.id.course_number_edit);
+        final EditText course_section_edit = dialogView.findViewById(R.id.course_section_edit);
 
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
@@ -149,7 +154,39 @@ public class CoursesActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Set name
                         String name = course_name_edit.getText().toString().trim();
-                        newCourse.setName(name);
+                        if (name.isEmpty()) {
+                            newCourse.setName("New course");
+                        }
+                        else {
+                            newCourse.setName(name);
+                        }
+
+                        // Set department
+                        String department = course_department_edit.getText().toString().trim();
+                        if (department.isEmpty()) {
+                            newCourse.setDepartment("AAAA");
+                        }
+                        else {
+                            newCourse.setDepartment(department);
+                        }
+
+                        // Set number
+                        String number = course_number_edit.getText().toString().trim();
+                        if (number.isEmpty()) {
+                            newCourse.setNumber("000");
+                        }
+                        else {
+                            newCourse.setNumber(number);
+                        }
+
+                        // Set section
+                        String section = course_section_edit.getText().toString().trim();
+                        if (section.isEmpty()) {
+                            newCourse.setSection("0");
+                        }
+                        else {
+                            newCourse.setSection(section);
+                        }
 
                         // Set uid
                         String uid = mCoursesData.push().getKey();

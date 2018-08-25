@@ -27,14 +27,18 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout recycler_course;
         TextView recycler_course_name;
-        TextView recycler_course_uid;
+        TextView recycler_course_department;
+        TextView recycler_course_number;
+        TextView recycler_course_section;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             recycler_course = itemView.findViewById(R.id.recycler_course);
             recycler_course_name = itemView.findViewById(R.id.recycler_course_name);
-            recycler_course_uid = itemView.findViewById(R.id.recycler_course_uid);
+            recycler_course_department = itemView.findViewById(R.id.recycler_course_department);
+            recycler_course_number = itemView.findViewById(R.id.recycler_course_number);
+            recycler_course_section = itemView.findViewById(R.id.recycler_course_section);
         }
     }
 
@@ -52,11 +56,16 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         // Get course info
         final Course course = mCourses.get(position);
         final String name = course.getName();
+        final String department = course.getDepartment();
+        final String number = course.getNumber();
+        final String section = course.getSection();
         final String uid = course.getUid();
 
         // Display course info
         holder.recycler_course_name.setText(name);
-        holder.recycler_course_uid.setText(uid);
+        holder.recycler_course_department.setText(department);
+        holder.recycler_course_number.setText(number);
+        holder.recycler_course_section.setText(section);
 
         // Set course click listener
         holder.recycler_course.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +73,9 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, CourseActivity.class);
                 intent.putExtra("name", name);
+                intent.putExtra("department", department);
+                intent.putExtra("number", number);
+                intent.putExtra("section", section);
                 intent.putExtra("uid", uid);
                 mContext.startActivity(intent);
 

@@ -15,4 +15,28 @@
         android:inputType="text"
         android:hint="Name" />
 
+    <EditText
+        android:id="@+id/course_department_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="Department" />
+
+    <EditText
+        android:id="@+id/course_number_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Number" />
+
+    <EditText
+        android:id="@+id/course_section_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:hint="Section" />
+
 </LinearLayout>

@@ -73,10 +73,14 @@ public class CourseActivity extends AppCompatActivity {
 
     public void getIntentData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("uid")) {
+        if (intent.hasExtra("name") && intent.hasExtra("department") && intent.hasExtra("number")
+                && intent.hasExtra("section") && intent.hasExtra("uid")) {
             String name = intent.getStringExtra("name");
+            String department = intent.getStringExtra("department");
+            String number = intent.getStringExtra("number");
+            String section = intent.getStringExtra("section");
             String uid = intent.getStringExtra("uid");
-            mCourse = new Course(name, uid);
+            mCourse = new Course(name, department, number, section, uid);
 
             mData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid()).child(uid);
 
@@ -91,9 +95,13 @@ public class CourseActivity extends AppCompatActivity {
 
     public void displayCourseData() {
         final TextView course_name_text = findViewById(R.id.course_name_text);
-        final TextView course_uid_text = findViewById(R.id.course_uid_text);
+        final TextView course_department_text = findViewById(R.id.course_department_text);
+        final TextView course_number_text = findViewById(R.id.course_number_text);
+        final TextView course_section_text = findViewById(R.id.course_section_text);
 
         course_name_text.setText(mCourse.getName());
-        course_uid_text.setText(mCourse.getUid());
+        course_department_text.setText(mCourse.getDepartment());
+        course_number_text.setText(mCourse.getNumber());
+        course_section_text.setText(mCourse.getSection());
     }
 }

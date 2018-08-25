@@ -9,14 +9,20 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Course {
     private String name;
+    private String department;
+    private String number;
+    private String section;
     private String uid;
 
     public Course() {
         // Default constructor required for calls to DataSnapshot.getValue(Course.class)
     }
 
-    public Course(String name, String uid) {
+    public Course(String name, String department, String number, String section, String uid) {
         this.name = name;
+        this.department = department;
+        this.number = number;
+        this.section = section;
         this.uid = uid;
     }
 
@@ -35,6 +41,30 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDepartment() {
+        return this.department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getNumber() {
+        return this.number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getSection() {
+        return this.section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     public String getUid() {

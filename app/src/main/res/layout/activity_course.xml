@@ -20,9 +20,22 @@
             android:textSize="25sp" />
 
         <TextView
-            android:id="@+id/course_uid_text"
+            android:id="@+id/course_department_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/course_number_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/course_section_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
 
     </LinearLayout>
 
