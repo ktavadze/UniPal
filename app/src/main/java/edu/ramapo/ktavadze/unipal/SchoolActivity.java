@@ -73,10 +73,14 @@ public class SchoolActivity extends AppCompatActivity {
 
     public void getIntentData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("uid")) {
+        if (intent.hasExtra("name") && intent.hasExtra("year") && intent.hasExtra("major")
+                && intent.hasExtra("minor") && intent.hasExtra("uid")) {
             String name = intent.getStringExtra("name");
+            String year = intent.getStringExtra("year");
+            String major = intent.getStringExtra("major");
+            String minor = intent.getStringExtra("minor");
             String uid = intent.getStringExtra("uid");
-            mSchool = new School(name, uid);
+            mSchool = new School(name, year, major, minor, uid);
 
             mData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid()).child(uid);
 
@@ -91,9 +95,13 @@ public class SchoolActivity extends AppCompatActivity {
 
     public void displaySchoolData() {
         final TextView school_name_text = findViewById(R.id.school_name_text);
-        final TextView school_uid_text = findViewById(R.id.school_uid_text);
+        final TextView school_year_text = findViewById(R.id.school_year_text);
+        final TextView school_major_text = findViewById(R.id.school_major_text);
+        final TextView school_minor_text = findViewById(R.id.school_minor_text);
 
         school_name_text.setText(mSchool.getName());
-        school_uid_text.setText(mSchool.getUid());
+        school_year_text.setText(mSchool.getYear());
+        school_major_text.setText(mSchool.getMajor());
+        school_minor_text.setText(mSchool.getMinor());
     }
 }

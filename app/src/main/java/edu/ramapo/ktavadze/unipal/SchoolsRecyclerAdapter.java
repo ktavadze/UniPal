@@ -27,14 +27,18 @@ public class SchoolsRecyclerAdapter extends RecyclerView.Adapter<SchoolsRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout recycler_school;
         TextView recycler_school_name;
-        TextView recycler_school_uid;
+        TextView recycler_school_year;
+        TextView recycler_school_major;
+        TextView recycler_school_minor;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             recycler_school = itemView.findViewById(R.id.recycler_school);
             recycler_school_name = itemView.findViewById(R.id.recycler_school_name);
-            recycler_school_uid = itemView.findViewById(R.id.recycler_school_uid);
+            recycler_school_year = itemView.findViewById(R.id.recycler_school_year);
+            recycler_school_major = itemView.findViewById(R.id.recycler_school_major);
+            recycler_school_minor = itemView.findViewById(R.id.recycler_school_minor);
         }
     }
 
@@ -52,11 +56,17 @@ public class SchoolsRecyclerAdapter extends RecyclerView.Adapter<SchoolsRecycler
         // Get school info
         final School school = mSchools.get(position);
         final String name = school.getName();
+        final String year = school.getYear();
+        final String major = school.getMajor();
+        final String minor = school.getMinor();
         final String uid = school.getUid();
 
         // Display school info
         holder.recycler_school_name.setText(name);
-        holder.recycler_school_uid.setText(uid);
+        holder.recycler_school_year.setText(year);
+        holder.recycler_school_major.setText(major);
+        holder.recycler_school_minor.setText(minor);
+        holder.recycler_school_year.setText(year);
 
         // Set school click listener
         holder.recycler_school.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +74,9 @@ public class SchoolsRecyclerAdapter extends RecyclerView.Adapter<SchoolsRecycler
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, SchoolActivity.class);
                 intent.putExtra("name", name);
+                intent.putExtra("year", year);
+                intent.putExtra("major", major);
+                intent.putExtra("minor", minor);
                 intent.putExtra("uid", uid);
                 mContext.startActivity(intent);
 

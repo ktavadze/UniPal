@@ -137,8 +137,11 @@ public class SchoolsActivity extends AppCompatActivity {
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(R.string.title_new_school);
 
-        // Name
+        // Define fields
         final EditText school_name_edit = dialogView.findViewById(R.id.school_name_edit);
+        final EditText school_year_edit = dialogView.findViewById(R.id.school_year_edit);
+        final EditText school_major_edit = dialogView.findViewById(R.id.school_major_edit);
+        final EditText school_minor_edit = dialogView.findViewById(R.id.school_minor_edit);
 
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
@@ -149,7 +152,39 @@ public class SchoolsActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Set name
                         String name = school_name_edit.getText().toString().trim();
-                        newSchool.setName(name);
+                        if (name.isEmpty()) {
+                            newSchool.setName("New school");
+                        }
+                        else {
+                            newSchool.setName(name);
+                        }
+
+                        // Set year
+                        String year = school_year_edit.getText().toString().trim();
+                        if (year.isEmpty()){
+                            newSchool.setYear("0000");
+                        }
+                        else {
+                            newSchool.setYear(year);
+                        }
+
+                        // Set major
+                        String major = school_major_edit.getText().toString().trim();
+                        if (major.isEmpty()){
+                            newSchool.setMajor("Undeclared");
+                        }
+                        else {
+                            newSchool.setMajor(major);
+                        }
+
+                        // Set minor
+                        String minor = school_minor_edit.getText().toString().trim();
+                        if (minor.isEmpty()){
+                            newSchool.setMinor("Undeclared");
+                        }
+                        else {
+                            newSchool.setMinor(minor);
+                        }
 
                         // Set uid
                         String uid = mSchoolsData.push().getKey();
