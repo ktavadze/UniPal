@@ -14,7 +14,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,10 +32,16 @@ public class CoursesActivity extends AppCompatActivity {
     private static final String TAG = "CoursesActivity";
 
     private DatabaseReference mCoursesData;
+    private DatabaseReference mSchoolsData;
+
     private ChildEventListener mCoursesListener;
+    private ChildEventListener mSchoolsListener;
 
     private ArrayList<Course> mCourses;
+    private ArrayList<String> mSchoolNames;
+
     private CoursesRecyclerAdapter mCoursesAdapter;
+    private ArrayAdapter<String> mSchoolNamesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,8 @@ public class CoursesActivity extends AppCompatActivity {
         actionBar.setTitle("Courses");
 
         addCoursesListener();
+
+        addSchoolsListener();
     }
 
     @Override
@@ -50,6 +61,8 @@ public class CoursesActivity extends AppCompatActivity {
         super.onDestroy();
 
         removeCoursesListener();
+
+        removeSchoolsListener();
     }
 
     @Override
@@ -121,11 +134,65 @@ public class CoursesActivity extends AppCompatActivity {
         Log.d(TAG, "addCoursesListener: Listener added");
     }
 
+    public void addSchoolsListener() {
+        // Init schools
+        mSchoolNames = new ArrayList<>();
+        mSchoolNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSchoolNames);
+
+        // Add schools listener
+        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+        mSchoolsListener = mSchoolsData.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                School school = dataSnapshot.getValue(School.class);
+                mSchoolNames.add(school.getName());
+
+                mSchoolNamesAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildAdded: School read: " + school.getName());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                School school = dataSnapshot.getValue(School.class);
+                mSchoolNames.remove(school.getName());
+
+                mSchoolNamesAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildRemoved: School removed: " + school.getName());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        Log.d(TAG, "addSchoolsListener: Listener added");
+    }
+
     public void removeCoursesListener() {
         // Remove courses listener
         mCoursesData.removeEventListener(mCoursesListener);
 
         Log.d(TAG, "removeCoursesListener: Listener removed");
+    }
+
+    public void removeSchoolsListener() {
+        // Remove schools listener
+        mSchoolsData.removeEventListener(mSchoolsListener);
+
+        Log.d(TAG, "removeSchoolsListener: Listener removed");
     }
 
     public void actionNewCourse() {
@@ -144,6 +211,33 @@ public class CoursesActivity extends AppCompatActivity {
         course_department_edit.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
         final EditText course_number_edit = dialogView.findViewById(R.id.course_number_edit);
         final EditText course_section_edit = dialogView.findViewById(R.id.course_section_edit);
+        final Spinner course_school_spinner = dialogView.findViewById(R.id.course_school_spinner);
+
+        // School
+        if (mSchoolNames.isEmpty()) {
+            course_school_spinner.setVisibility(View.GONE);
+
+            newCourse.setSchoolName("Undefined");
+        }
+        else {
+            course_school_spinner.setAdapter(mSchoolNamesAdapter);
+            course_school_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String schoolName = parent.getItemAtPosition(position).toString();
+
+                    // Set school
+                    newCourse.setSchoolName(schoolName);
+
+                    Log.d(TAG, "onItemSelected: School selected: " + schoolName);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
 
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
@@ -155,7 +249,7 @@ public class CoursesActivity extends AppCompatActivity {
                         // Set name
                         String name = course_name_edit.getText().toString().trim();
                         if (name.isEmpty()) {
-                            newCourse.setName("New course");
+                            newCourse.setName("New Course");
                         }
                         else {
                             newCourse.setName(name);
@@ -164,7 +258,7 @@ public class CoursesActivity extends AppCompatActivity {
                         // Set department
                         String department = course_department_edit.getText().toString().trim();
                         if (department.isEmpty()) {
-                            newCourse.setDepartment("AAAA");
+                            newCourse.setDepartment("????");
                         }
                         else {
                             newCourse.setDepartment(department);
@@ -173,7 +267,7 @@ public class CoursesActivity extends AppCompatActivity {
                         // Set number
                         String number = course_number_edit.getText().toString().trim();
                         if (number.isEmpty()) {
-                            newCourse.setNumber("000");
+                            newCourse.setNumber("???");
                         }
                         else {
                             newCourse.setNumber(number);
@@ -182,7 +276,7 @@ public class CoursesActivity extends AppCompatActivity {
                         // Set section
                         String section = course_section_edit.getText().toString().trim();
                         if (section.isEmpty()) {
-                            newCourse.setSection("0");
+                            newCourse.setSection("?");
                         }
                         else {
                             newCourse.setSection(section);

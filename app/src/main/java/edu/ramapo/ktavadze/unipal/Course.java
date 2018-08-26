@@ -12,17 +12,19 @@ public class Course {
     private String department;
     private String number;
     private String section;
+    private String schoolName;
     private String uid;
 
     public Course() {
         // Default constructor required for calls to DataSnapshot.getValue(Course.class)
     }
 
-    public Course(String name, String department, String number, String section, String uid) {
+    public Course(String name, String department, String number, String section, String schoolName, String uid) {
         this.name = name;
         this.department = department;
         this.number = number;
         this.section = section;
+        this.schoolName = schoolName;
         this.uid = uid;
     }
 
@@ -65,6 +67,14 @@ public class Course {
 
     public void setSection(String section) {
         this.section = section;
+    }
+
+    public String getSchoolName() {
+        return this.schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
     }
 
     public String getUid() {

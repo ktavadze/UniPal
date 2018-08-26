@@ -30,6 +30,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         TextView recycler_course_department;
         TextView recycler_course_number;
         TextView recycler_course_section;
+        TextView recycler_course_school;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -39,6 +40,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
             recycler_course_department = itemView.findViewById(R.id.recycler_course_department);
             recycler_course_number = itemView.findViewById(R.id.recycler_course_number);
             recycler_course_section = itemView.findViewById(R.id.recycler_course_section);
+            recycler_course_school = itemView.findViewById(R.id.recycler_course_school);
         }
     }
 
@@ -59,6 +61,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         final String department = course.getDepartment();
         final String number = course.getNumber();
         final String section = course.getSection();
+        final String schoolName = course.getSchoolName();
         final String uid = course.getUid();
 
         // Display course info
@@ -66,6 +69,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         holder.recycler_course_department.setText(department);
         holder.recycler_course_number.setText(number);
         holder.recycler_course_section.setText(section);
+        holder.recycler_course_school.setText(schoolName);
 
         // Set course click listener
         holder.recycler_course.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +80,7 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
                 intent.putExtra("department", department);
                 intent.putExtra("number", number);
                 intent.putExtra("section", section);
+                intent.putExtra("schoolName", schoolName);
                 intent.putExtra("uid", uid);
                 mContext.startActivity(intent);
 

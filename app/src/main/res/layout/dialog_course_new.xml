@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:hint="Name" />
 
     <EditText
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:hint="Department" />
 
     <EditText
@@ -38,5 +38,10 @@
         android:ems="10"
         android:inputType="number"
         android:hint="Section" />
+
+    <Spinner
+        android:id="@+id/course_school_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

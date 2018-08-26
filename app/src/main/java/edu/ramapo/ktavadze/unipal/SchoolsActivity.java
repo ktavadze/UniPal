@@ -153,7 +153,7 @@ public class SchoolsActivity extends AppCompatActivity {
                         // Set name
                         String name = school_name_edit.getText().toString().trim();
                         if (name.isEmpty()) {
-                            newSchool.setName("New school");
+                            newSchool.setName("New School");
                         }
                         else {
                             newSchool.setName(name);
@@ -162,7 +162,7 @@ public class SchoolsActivity extends AppCompatActivity {
                         // Set year
                         String year = school_year_edit.getText().toString().trim();
                         if (year.isEmpty()){
-                            newSchool.setYear("0000");
+                            newSchool.setYear("????");
                         }
                         else {
                             newSchool.setYear(year);
