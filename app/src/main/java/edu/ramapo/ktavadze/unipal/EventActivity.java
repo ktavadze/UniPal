@@ -198,10 +198,11 @@ public class EventActivity extends AppCompatActivity {
         cancel_event_button.setVisibility(View.VISIBLE);
         update_event_button.setVisibility(View.VISIBLE);
 
-        final Calendar cal = Calendar.getInstance();
-
-        // Name
+        // Preview current name
         event_name_edit.setText(mEvent.getName());
+
+        final Event newEvent = new Event();
+        final Calendar cal = Calendar.getInstance();
 
         // Type
         int index = Arrays.asList("Type", "Assignment", "Paper", "Presentation", "Project",
@@ -219,7 +220,7 @@ public class EventActivity extends AppCompatActivity {
                 }
 
                 // Set type
-                mEvent.setType(type);
+                newEvent.setType(type);
 
                 Log.d(TAG, "onItemSelected: Type selected: " + type);
             }
@@ -256,7 +257,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
 
                                 // Set date
-                                mEvent.setDate(date);
+                                newEvent.setDate(date);
 
                                 // Preview date
                                 event_date_text.setText(date);
@@ -297,7 +298,7 @@ public class EventActivity extends AppCompatActivity {
                                 }
 
                                 // Set time
-                                mEvent.setTime(time);
+                                newEvent.setTime(time);
 
                                 // Preview time
                                 event_time_text.setText(time);
@@ -337,6 +338,8 @@ public class EventActivity extends AppCompatActivity {
                 // Hide keyboard
                 InputMethodManager imm = (InputMethodManager)getSystemService(EventActivity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+
+                displayEventData();
             }
         });
 
@@ -368,11 +371,20 @@ public class EventActivity extends AppCompatActivity {
                 // Set name
                 String name = event_name_edit.getText().toString().trim();
                 if (name.isEmpty()) {
-                    mEvent.setName(mEvent.getName());
+                    newEvent.setName(mEvent.getName());
                 }
                 else {
-                    mEvent.setName(name);
+                    newEvent.setName(name);
                 }
+
+                // Set status
+                newEvent.setComplete(mEvent.isComplete());
+
+                // Set uid
+                newEvent.setUid(mEvent.getUid());
+
+                // Update event
+                mEvent = newEvent;
 
                 displayEventData();
 

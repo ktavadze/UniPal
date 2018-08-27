@@ -88,4 +88,8 @@ public class Event {
     public void toggleComplete() {
         this.complete = !this.complete;
     }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 }

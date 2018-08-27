@@ -261,6 +261,8 @@ public class CourseActivity extends AppCompatActivity {
                 // Hide keyboard
                 InputMethodManager imm = (InputMethodManager)getSystemService(CourseActivity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+
+                displayCourseData();
             }
         });
 
