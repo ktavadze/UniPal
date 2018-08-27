@@ -8,11 +8,11 @@
     <string name="title_new_event">New Event</string>
     <string name="action_new_event">New Event</string>
     <string name="action_edit_event">Edit Event</string>
-    <string name="action_save_event">Save Event</string>
     <string name="title_new_school">New School</string>
     <string name="action_new_school">New School</string>
     <string name="title_new_course">New Course</string>
     <string name="action_new_course">New Course</string>
+    <string name="action_edit_course">Edit Course</string>
     <string-array name="event_types">
         <item>Type</item>
         <item>Assignment</item>

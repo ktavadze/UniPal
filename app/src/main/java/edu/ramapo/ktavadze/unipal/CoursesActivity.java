@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +34,6 @@ public class CoursesActivity extends AppCompatActivity {
     private DatabaseReference mSchoolsData;
 
     private ChildEventListener mCoursesListener;
-    private ChildEventListener mSchoolsListener;
 
     private ArrayList<Course> mCourses;
     private ArrayList<String> mSchoolNames;
@@ -53,7 +51,7 @@ public class CoursesActivity extends AppCompatActivity {
 
         addCoursesListener();
 
-        addSchoolsListener();
+        getSchoolNames();
     }
 
     @Override
@@ -61,8 +59,6 @@ public class CoursesActivity extends AppCompatActivity {
         super.onDestroy();
 
         removeCoursesListener();
-
-        removeSchoolsListener();
     }
 
     @Override
@@ -107,7 +103,13 @@ public class CoursesActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Course course = dataSnapshot.getValue(Course.class);
+                int index = mCourses.indexOf(course);
+                mCourses.set(index, course);
 
+                mCoursesAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildChanged: Course updated: " + course.getName());
             }
 
             @Override
@@ -134,53 +136,6 @@ public class CoursesActivity extends AppCompatActivity {
         Log.d(TAG, "addCoursesListener: Listener added");
     }
 
-    public void addSchoolsListener() {
-        // Init schools
-        mSchoolNames = new ArrayList<>();
-        mSchoolNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSchoolNames);
-
-        // Add schools listener
-        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
-        mSchoolsListener = mSchoolsData.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                School school = dataSnapshot.getValue(School.class);
-                mSchoolNames.add(school.getName());
-
-                mSchoolNamesAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildAdded: School read: " + school.getName());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                School school = dataSnapshot.getValue(School.class);
-                mSchoolNames.remove(school.getName());
-
-                mSchoolNamesAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildRemoved: School removed: " + school.getName());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-
-        Log.d(TAG, "addSchoolsListener: Listener added");
-    }
-
     public void removeCoursesListener() {
         // Remove courses listener
         mCoursesData.removeEventListener(mCoursesListener);
@@ -188,11 +143,31 @@ public class CoursesActivity extends AppCompatActivity {
         Log.d(TAG, "removeCoursesListener: Listener removed");
     }
 
-    public void removeSchoolsListener() {
-        // Remove schools listener
-        mSchoolsData.removeEventListener(mSchoolsListener);
+    public void getSchoolNames() {
+        // Init schools
+        mSchoolNames = new ArrayList<>();
+        mSchoolNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSchoolNames);
 
-        Log.d(TAG, "removeSchoolsListener: Listener removed");
+        // Read schools from DB
+        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
+        mSchoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot schoolSnapshot: dataSnapshot.getChildren()) {
+                    String schoolName = schoolSnapshot.child("name").getValue(String.class);
+                    mSchoolNames.add(schoolName);
+
+                    mSchoolNamesAdapter.notifyDataSetChanged();
+
+                    Log.d(TAG, "onDataChange: School read: " + schoolName);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     public void actionNewCourse() {
@@ -208,7 +183,6 @@ public class CoursesActivity extends AppCompatActivity {
         // Define fields
         final EditText course_name_edit = dialogView.findViewById(R.id.course_name_edit);
         final EditText course_department_edit = dialogView.findViewById(R.id.course_department_edit);
-        course_department_edit.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
         final EditText course_number_edit = dialogView.findViewById(R.id.course_number_edit);
         final EditText course_section_edit = dialogView.findViewById(R.id.course_section_edit);
         final Spinner course_school_spinner = dialogView.findViewById(R.id.course_school_spinner);
