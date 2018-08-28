@@ -34,20 +34,20 @@
                         android:text="Name: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/school_name_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Name"
                         android:id="@+id/school_name_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapWords"
                         android:visibility="invisible" />
 
@@ -62,20 +62,20 @@
                         android:text="Year: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/school_year_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Year"
                         android:id="@+id/school_year_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="number"
                         android:visibility="invisible" />
 
@@ -90,20 +90,20 @@
                         android:text="Major: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/school_major_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Major"
                         android:id="@+id/school_major_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapWords"
                         android:visibility="invisible" />
 
@@ -118,20 +118,20 @@
                         android:text="Minor: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/school_minor_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Minor"
                         android:id="@+id/school_minor_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapWords"
                         android:visibility="invisible" />
 

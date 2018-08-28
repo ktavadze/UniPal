@@ -34,20 +34,20 @@
                         android:text="Name: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/course_name_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Name"
                         android:id="@+id/course_name_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapWords"
                         android:visibility="invisible" />
 
@@ -62,20 +62,20 @@
                         android:text="Department: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/course_department_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Department"
                         android:id="@+id/course_department_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapCharacters"
                         android:visibility="invisible" />
 
@@ -90,20 +90,20 @@
                         android:text="Number: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/course_number_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Number"
                         android:id="@+id/course_number_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="number"
                         android:visibility="invisible" />
 
@@ -118,20 +118,20 @@
                         android:text="Section: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/course_section_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Section"
                         android:id="@+id/course_section_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="number"
                         android:visibility="invisible" />
 
@@ -146,13 +146,13 @@
                         android:text="School: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/course_school_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <Spinner
                         android:id="@+id/course_school_spinner"

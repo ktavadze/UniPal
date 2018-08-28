@@ -34,20 +34,20 @@
                         android:text="Name: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/event_name_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <EditText
                         android:hint="Name"
                         android:id="@+id/event_name_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp"
+                        android:textSize="35sp"
                         android:inputType="textCapSentences"
                         android:visibility="invisible" />
 
@@ -62,13 +62,13 @@
                         android:text="Type: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/event_type_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <Spinner
                         android:id="@+id/event_type_spinner"
@@ -88,13 +88,13 @@
                         android:text="Date: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/event_date_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                 </LinearLayout>
 
@@ -107,13 +107,13 @@
                         android:text="Time: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                     <TextView
                         android:id="@+id/event_time_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="50sp" />
+                        android:textSize="35sp" />
 
                 </LinearLayout>
 
