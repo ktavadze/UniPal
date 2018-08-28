@@ -205,19 +205,14 @@ public class EventActivity extends AppCompatActivity {
         final Calendar cal = Calendar.getInstance();
 
         // Type
-        int index = Arrays.asList("Type", "Assignment", "Paper", "Presentation", "Project",
-                "Quiz", "Report", "Test").indexOf(mEvent.getType());
+        newEvent.setType(mEvent.getType());
+        int index = Arrays.asList("Assignment", "Exam", "Other", "Presentation", "Project", "Quiz",
+                "Report", "Test").indexOf(mEvent.getType());
         event_type_spinner.setSelection(index);
         event_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String type;
-                if (position == 0) {
-                    type = "Other";
-                }
-                else {
-                    type = parent.getItemAtPosition(position).toString();
-                }
+                String type = parent.getItemAtPosition(position).toString();
 
                 // Set type
                 newEvent.setType(type);

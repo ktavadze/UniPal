@@ -259,13 +259,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         event_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String type;
-                if (position == 0) {
-                    type = "Other";
-                }
-                else {
-                    type = parent.getItemAtPosition(position).toString();
-                }
+                String type = parent.getItemAtPosition(position).toString();
 
                 // Set type
                 newEvent.setType(type);

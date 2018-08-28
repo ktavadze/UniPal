@@ -15,9 +15,9 @@
     <string name="action_new_course">New Course</string>
     <string name="action_edit_course">Edit Course</string>
     <string-array name="event_types">
-        <item>Type</item>
         <item>Assignment</item>
-        <item>Paper</item>
+        <item>Exam</item>
+        <item>Other</item>
         <item>Presentation</item>
         <item>Project</item>
         <item>Quiz</item>
