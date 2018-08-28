@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -49,10 +50,15 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
     private FirebaseUser mCurrentUser;
 
     private DatabaseReference mEventsData;
+    private DatabaseReference mCoursesData;
+
     private ChildEventListener mEventsListener;
 
     private ArrayList<Event> mEvents;
+    private ArrayList<String> mCourseNames;
+
     private EventsRecyclerAdapter mEventsAdapter;
+    private ArrayAdapter<String> mCourseNamesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,8 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
             initUser();
 
             addEventsListener();
+
+            getCourseNames();
         }
     }
 
@@ -240,6 +248,33 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         Log.d(TAG, "removeEventsListener: Listener removed");
     }
 
+    public void getCourseNames() {
+        // Init courses
+        mCourseNames = new ArrayList<>();
+        mCourseNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mCourseNames);
+
+        // Read courses from DB
+        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
+        mCoursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot courseSnapshot: dataSnapshot.getChildren()) {
+                    String courseName = courseSnapshot.child("name").getValue(String.class);
+                    mCourseNames.add(courseName);
+
+                    mCourseNamesAdapter.notifyDataSetChanged();
+
+                    Log.d(TAG, "onDataChange: Course read: " + courseName);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     public void actionNewEvent() {
         final Event newEvent = new Event();
         final Calendar cal = Calendar.getInstance();
@@ -251,11 +286,14 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(R.string.title_new_event);
 
-        // Name
+        // Define fields
         final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
+        final Spinner event_type_spinner = dialogView.findViewById(R.id.event_type_spinner);
+        final Spinner event_course_spinner = dialogView.findViewById(R.id.event_course_spinner);
+        final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
+        final TextView event_time_pick = dialogView.findViewById(R.id.event_time_pick);
 
         // Type
-        final Spinner event_type_spinner = dialogView.findViewById(R.id.event_type_spinner);
         event_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -273,8 +311,36 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
             }
         });
 
+        // Course
+        if (mCourseNames.isEmpty()) {
+            event_course_spinner.setVisibility(View.GONE);
+
+            newEvent.setCourseName("Undefined");
+        }
+        else {
+            // Set adapter
+            event_course_spinner.setAdapter(mCourseNamesAdapter);
+
+            // Set listener
+            event_course_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String courseName = parent.getItemAtPosition(position).toString();
+
+                    // Set course
+                    newEvent.setCourseName(courseName);
+
+                    Log.d(TAG, "onItemSelected: Course selected: " + courseName);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
+
         // Date
-        final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
         event_date_pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,7 +383,6 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         });
 
         // Time
-        final TextView event_time_pick = dialogView.findViewById(R.id.event_time_pick);
         event_time_pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

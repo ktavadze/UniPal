@@ -22,6 +22,12 @@
         android:layout_marginTop="20dp"
         android:entries="@array/event_types" />
 
+    <Spinner
+        android:id="@+id/event_course_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
+
     <TextView
         android:id="@+id/event_date_pick"
         android:layout_width="wrap_content"

@@ -39,6 +39,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         LinearLayout recycler_event_foreground;
         TextView recycler_event_name;
         TextView recycler_event_type;
+        TextView recycler_event_course;
         TextView recycler_event_date;
         TextView recycler_event_time;
 
@@ -50,6 +51,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             recycler_event_foreground = itemView.findViewById(R.id.recycler_event_foreground);
             recycler_event_name = itemView.findViewById(R.id.recycler_event_name);
             recycler_event_type = itemView.findViewById(R.id.recycler_event_type);
+            recycler_event_course = itemView.findViewById(R.id.recycler_event_course);
             recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_time = itemView.findViewById(R.id.recycler_event_time);
         }
@@ -70,6 +72,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         final Event event = mEvents.get(position);
         final String name = event.getName();
         final String type = event.getType();
+        final String courseName = event.getCourseName();
         final String date = event.getDate();
         final String time = event.getTime();
         final String uid = event.getUid();
@@ -78,6 +81,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         // Display event info
         holder.recycler_event_name.setText(name);
         holder.recycler_event_type.setText(type);
+        holder.recycler_event_course.setText(courseName);
         holder.recycler_event_date.setText(date);
         holder.recycler_event_time.setText(time);
 
@@ -96,6 +100,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 Intent intent = new Intent(mContext, EventActivity.class);
                 intent.putExtra("name", name);
                 intent.putExtra("type", type);
+                intent.putExtra("courseName", courseName);
                 intent.putExtra("date", date);
                 intent.putExtra("time", time);
                 intent.putExtra("uid", uid);

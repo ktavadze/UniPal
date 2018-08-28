@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -37,6 +39,11 @@ public class EventActivity extends AppCompatActivity {
     private Event mEvent;
 
     private DatabaseReference mData;
+    private DatabaseReference mCoursesData;
+
+    private ArrayList<String> mCourseNames;
+
+    private ArrayAdapter<String> mCourseNamesAdapter;
 
     private MenuItem mEditIcon;
 
@@ -52,6 +59,8 @@ public class EventActivity extends AppCompatActivity {
         actionBar.setTitle(mEvent.getName());
 
         displayEventData();
+
+        getCourseNames();
 
         // Delete event from DB
         final Button delete_event_button = findViewById(R.id.delete_event_button);
@@ -129,15 +138,17 @@ public class EventActivity extends AppCompatActivity {
 
     public void getIntentData() {
         final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("type") && intent.hasExtra("date")
-                && intent.hasExtra("time") && intent.hasExtra("uid") && intent.hasExtra("complete")) {
+        if (intent.hasExtra("name") && intent.hasExtra("type") && intent.hasExtra("courseName")
+                && intent.hasExtra("date") && intent.hasExtra("time") && intent.hasExtra("uid")
+                && intent.hasExtra("complete")) {
             String name = intent.getStringExtra("name");
             String type = intent.getStringExtra("type");
+            String courseName = intent.getStringExtra("courseName");
             String date = intent.getStringExtra("date");
             String time = intent.getStringExtra("time");
             String uid = intent.getStringExtra("uid");
             boolean complete = intent.getBooleanExtra("complete", false);
-            mEvent = new Event(name, type, date, time, uid, complete);
+            mEvent = new Event(name, type, courseName, date, time, uid, complete);
 
             mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(uid);
 
@@ -153,6 +164,7 @@ public class EventActivity extends AppCompatActivity {
     public void displayEventData() {
         final TextView event_name_text = findViewById(R.id.event_name_text);
         final TextView event_type_text = findViewById(R.id.event_type_text);
+        final TextView event_course_text = findViewById(R.id.event_course_text);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final ScrollView event_scroll = findViewById(R.id.event_scroll);
@@ -160,6 +172,7 @@ public class EventActivity extends AppCompatActivity {
 
         event_name_text.setText(mEvent.getName());
         event_type_text.setText(mEvent.getType());
+        event_course_text.setText(mEvent.getCourseName());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
 
@@ -175,11 +188,40 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
+    public void getCourseNames() {
+        // Init courses
+        mCourseNames = new ArrayList<>();
+        mCourseNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mCourseNames);
+
+        // Read courses from DB
+        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
+        mCoursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot courseSnapshot: dataSnapshot.getChildren()) {
+                    String courseName = courseSnapshot.child("name").getValue(String.class);
+                    mCourseNames.add(courseName);
+
+                    mCourseNamesAdapter.notifyDataSetChanged();
+
+                    Log.d(TAG, "onDataChange: Course read: " + courseName);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     public void startEditing() {
         final TextView event_name_text = findViewById(R.id.event_name_text);
         final EditText event_name_edit = findViewById(R.id.event_name_edit);
         final TextView event_type_text = findViewById(R.id.event_type_text);
         final Spinner event_type_spinner = findViewById(R.id.event_type_spinner);
+        final TextView event_course_text = findViewById(R.id.event_course_text);
+        final Spinner event_course_spinner = findViewById(R.id.event_course_spinner);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
         final Button delete_event_button = findViewById(R.id.delete_event_button);
@@ -191,10 +233,12 @@ public class EventActivity extends AppCompatActivity {
         mEditIcon.setVisible(false);
         event_name_text.setVisibility(View.GONE);
         event_type_text.setVisibility(View.GONE);
+        event_course_text.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
         toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
         event_type_spinner.setVisibility(View.VISIBLE);
+        event_course_spinner.setVisibility(View.VISIBLE);
         cancel_event_button.setVisibility(View.VISIBLE);
         update_event_button.setVisibility(View.VISIBLE);
 
@@ -225,6 +269,39 @@ public class EventActivity extends AppCompatActivity {
 
             }
         });
+
+        // Course
+        if (mCourseNames.isEmpty()) {
+            event_course_spinner.setVisibility(View.GONE);
+
+            newEvent.setCourseName("Undefined");
+        }
+        else {
+            // Set adapter
+            event_course_spinner.setAdapter(mCourseNamesAdapter);
+
+            // Set current selection
+            index = mCourseNames.indexOf(mEvent.getCourseName());
+            event_course_spinner.setSelection(index);
+
+            // Set listener
+            event_course_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String courseName = parent.getItemAtPosition(position).toString();
+
+                    // Set course
+                    newEvent.setCourseName(courseName);
+
+                    Log.d(TAG, "onItemSelected: Course selected: " + courseName);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
 
         // Date
         event_date_text.setOnClickListener(new View.OnClickListener() {
@@ -317,10 +394,12 @@ public class EventActivity extends AppCompatActivity {
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
                 event_type_spinner.setVisibility(View.GONE);
+                event_course_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
+                event_course_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
@@ -346,10 +425,12 @@ public class EventActivity extends AppCompatActivity {
                 mEditIcon.setVisible(true);
                 event_name_edit.setVisibility(View.GONE);
                 event_type_spinner.setVisibility(View.GONE);
+                event_course_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
+                event_course_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 

@@ -206,7 +206,7 @@ public class CourseActivity extends AppCompatActivity {
 
         final Course newCourse = new Course();
 
-        // Set school
+        // School
         if (mSchoolNames.isEmpty()) {
             course_school_spinner.setVisibility(View.GONE);
 

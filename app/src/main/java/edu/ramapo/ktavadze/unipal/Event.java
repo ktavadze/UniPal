@@ -12,20 +12,22 @@ import java.util.Locale;
 
 @IgnoreExtraProperties
 public class Event {
-    private String name = null;
-    private String type = null;
+    private String name;
+    private String type;
+    private String courseName;
     private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
     private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
-    private String uid = null;
+    private String uid;
     private boolean complete = false;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String name, String type, String date, String time, String uid, boolean complete) {
+    public Event(String name, String type, String courseName, String date, String time, String uid, boolean complete) {
         this.name = name;
         this.type = type;
+        this.courseName = courseName;
         this.date = date;
         this.time = time;
         this.uid = uid;
@@ -55,6 +57,14 @@ public class Event {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getCourseName() {
+        return this.courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public String getDate() {

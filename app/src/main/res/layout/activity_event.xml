@@ -85,6 +85,31 @@
                     android:padding="25dp">
 
                     <TextView
+                        android:text="Course: "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="35sp" />
+
+                    <TextView
+                        android:id="@+id/event_course_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="35sp" />
+
+                    <Spinner
+                        android:id="@+id/event_course_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="invisible" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="25dp">
+
+                    <TextView
                         android:text="Date: "
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
