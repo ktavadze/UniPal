@@ -167,6 +167,7 @@ public class EventActivity extends AppCompatActivity {
         final TextView event_course_text = findViewById(R.id.event_course_text);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
+        final TextView event_status_text = findViewById(R.id.event_status_text);
         final ScrollView event_scroll = findViewById(R.id.event_scroll);
         final Button toggle_event_button = findViewById(R.id.toggle_event_button);
 
@@ -175,6 +176,13 @@ public class EventActivity extends AppCompatActivity {
         event_course_text.setText(mEvent.getCourseName());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
+
+        // Display status
+        String status = "Incomplete";
+        if (mEvent.isComplete()) {
+            status = "Complete";
+        }
+        event_status_text.setText(status);
 
         final int backgroundYellow = ContextCompat.getColor(EventActivity.this, R.color.colorSecondary);
         final int backgroundGreen = ContextCompat.getColor(EventActivity.this, R.color.colorTertiary);
@@ -224,6 +232,7 @@ public class EventActivity extends AppCompatActivity {
         final Spinner event_course_spinner = findViewById(R.id.event_course_spinner);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
+        final TextView event_status_text = findViewById(R.id.event_status_text);
         final Button delete_event_button = findViewById(R.id.delete_event_button);
         final Button toggle_event_button = findViewById(R.id.toggle_event_button);
         final Button cancel_event_button = findViewById(R.id.cancel_event_button);
@@ -234,6 +243,7 @@ public class EventActivity extends AppCompatActivity {
         event_name_text.setVisibility(View.GONE);
         event_type_text.setVisibility(View.GONE);
         event_course_text.setVisibility(View.GONE);
+        event_status_text.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
         toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
@@ -402,6 +412,7 @@ public class EventActivity extends AppCompatActivity {
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
+                event_status_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
@@ -433,6 +444,7 @@ public class EventActivity extends AppCompatActivity {
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
+                event_status_text.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 

@@ -10,7 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,12 +37,13 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView recycler_event;
         RelativeLayout recycler_event_background;
-        LinearLayout recycler_event_foreground;
+        RelativeLayout recycler_event_foreground;
         TextView recycler_event_name;
         TextView recycler_event_type;
         TextView recycler_event_course;
         TextView recycler_event_date;
         TextView recycler_event_time;
+        CheckBox recycler_event_check;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -54,6 +56,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             recycler_event_course = itemView.findViewById(R.id.recycler_event_course);
             recycler_event_date = itemView.findViewById(R.id.recycler_event_date);
             recycler_event_time = itemView.findViewById(R.id.recycler_event_time);
+            recycler_event_check = itemView.findViewById(R.id.recycler_event_check);
         }
     }
 
@@ -76,7 +79,6 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         final String date = event.getDate();
         final String time = event.getTime();
         final String uid = event.getUid();
-        final boolean complete = event.isComplete();
 
         // Display event info
         holder.recycler_event_name.setText(name);
@@ -86,12 +88,42 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         holder.recycler_event_time.setText(time);
 
         // Set event background
-        if (complete) {
+        if (event.isComplete()) {
             holder.recycler_event_foreground.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorTertiary));
         }
         else {
             holder.recycler_event_foreground.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorSecondary));
         }
+
+        // Set check box state
+        holder.recycler_event_check.setChecked(event.isComplete());
+
+        // Set check box listener
+        holder.recycler_event_check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                event.setComplete(isChecked);
+
+                // Update status in DB
+                final DatabaseReference data = FirebaseDatabase.getInstance().getReference()
+                        .child("events").child(User.getUid()).child(uid).child("complete");
+                data.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            data.setValue(isChecked);
+
+                            Log.d(TAG, "onDataChange: Status updated: " + isChecked);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    }
+                });
+            }
+        });
 
         // Set event click listener
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +136,7 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 intent.putExtra("date", date);
                 intent.putExtra("time", time);
                 intent.putExtra("uid", uid);
-                intent.putExtra("complete", complete);
+                intent.putExtra("complete", event.isComplete());
                 mContext.startActivity(intent);
 
                 Log.d(TAG, "onClick: Clicked on: " + name);
