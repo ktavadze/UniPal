@@ -10,6 +10,7 @@
     <string name="action_edit_event">Edit Event</string>
     <string name="title_new_school">New School</string>
     <string name="action_new_school">New School</string>
+    <string name="action_edit_school">Edit School</string>
     <string name="title_new_course">New Course</string>
     <string name="action_new_course">New Course</string>
     <string name="action_edit_course">Edit Course</string>

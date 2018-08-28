@@ -93,7 +93,13 @@ public class SchoolsActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                School school = dataSnapshot.getValue(School.class);
+                int index = mSchools.indexOf(school);
+                mSchools.set(index, school);
 
+                mSchoolsAdapter.notifyDataSetChanged();
+
+                Log.d(TAG, "onChildChanged: School updated: " + school.getName());
             }
 
             @Override
