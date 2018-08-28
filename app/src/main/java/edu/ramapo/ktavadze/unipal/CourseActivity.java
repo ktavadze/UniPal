@@ -210,7 +210,7 @@ public class CourseActivity extends AppCompatActivity {
         if (mSchoolNames.isEmpty()) {
             course_school_spinner.setVisibility(View.GONE);
 
-            newCourse.setSchoolName("Undefined");
+            newCourse.setSchoolName(mCourse.getSchoolName());
         }
         else {
             // Set adapter

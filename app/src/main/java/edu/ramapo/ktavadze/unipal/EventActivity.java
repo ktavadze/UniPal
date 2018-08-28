@@ -274,7 +274,7 @@ public class EventActivity extends AppCompatActivity {
         if (mCourseNames.isEmpty()) {
             event_course_spinner.setVisibility(View.GONE);
 
-            newEvent.setCourseName("Undefined");
+            newEvent.setCourseName(mEvent.getCourseName());
         }
         else {
             // Set adapter
@@ -304,6 +304,7 @@ public class EventActivity extends AppCompatActivity {
         }
 
         // Date
+        newEvent.setDate(mEvent.getDate());
         event_date_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,6 +347,7 @@ public class EventActivity extends AppCompatActivity {
         });
 
         // Time
+        newEvent.setTime(mEvent.getTime());
         event_time_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
