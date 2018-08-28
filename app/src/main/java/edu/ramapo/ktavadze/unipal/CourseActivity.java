@@ -213,9 +213,14 @@ public class CourseActivity extends AppCompatActivity {
             newCourse.setSchoolName("Undefined");
         }
         else {
+            // Set adapter
+            course_school_spinner.setAdapter(mSchoolNamesAdapter);
+
+            // Set current selection
             int index = mSchoolNames.indexOf(mCourse.getSchoolName());
             course_school_spinner.setSelection(index);
-            course_school_spinner.setAdapter(mSchoolNamesAdapter);
+
+            // Set listener
             course_school_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

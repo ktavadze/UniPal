@@ -194,7 +194,10 @@ public class CoursesActivity extends AppCompatActivity {
             newCourse.setSchoolName("Undefined");
         }
         else {
+            // Set adapter
             course_school_spinner.setAdapter(mSchoolNamesAdapter);
+
+            // Set listener
             course_school_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
