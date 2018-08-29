@@ -95,7 +95,8 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
             holder.recycler_event_foreground.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorSecondary));
         }
 
-        // Set check box state
+        // Clear check box listener and set state (ORDER MATTERS)
+        holder.recycler_event_check.setOnCheckedChangeListener(null);
         holder.recycler_event_check.setChecked(event.isComplete());
 
         // Set check box listener
@@ -110,11 +111,9 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
                 data.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            data.setValue(isChecked);
+                        data.setValue(isChecked);
 
-                            Log.d(TAG, "onDataChange: Status updated: " + isChecked);
-                        }
+                        Log.d(TAG, "onDataChange: Status updated: " + isChecked);
                     }
 
                     @Override
