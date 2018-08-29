@@ -31,12 +31,14 @@
             android:name=".CoursesActivity"
             android:parentActivityName=".DashboardActivity" />
         <activity
+            android:name=".CourseActivity"
+            android:parentActivityName=".CoursesActivity" />
+        <activity
             android:name=".CalendarActivity"
             android:parentActivityName=".DashboardActivity" />
         <activity
             android:name=".DateActivity"
             android:parentActivityName=".CalendarActivity" />
-        <activity android:name=".CourseActivity"></activity>
     </application>
 
 </manifest>
