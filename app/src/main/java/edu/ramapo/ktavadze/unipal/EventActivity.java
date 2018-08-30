@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -23,13 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -38,12 +30,7 @@ public class EventActivity extends AppCompatActivity {
 
     private Event mEvent;
 
-    private DatabaseReference mData;
-    private DatabaseReference mCoursesData;
-
-    private ArrayList<String> mCourseNames;
-
-    private ArrayAdapter<String> mCourseNamesAdapter;
+    private Database mDatabase;
 
     private MenuItem mEditIcon;
 
@@ -60,55 +47,21 @@ public class EventActivity extends AppCompatActivity {
 
         displayEventData();
 
-        getCourseNames();
+        mDatabase = new Database(this);
+        mDatabase.addCoursesListener();
 
-        // Delete event from DB
-        final Button delete_event_button = findViewById(R.id.delete_event_button);
-        delete_event_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.removeValue();
+        addDeleteListener();
+        addToggleListener();
+    }
 
-                        finish();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-                        Log.d(TAG, "onDataChange: Event deleted: " + mEvent.getName());
-                    }
+        mDatabase.removeCoursesListener();
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
-
-        // Toggle event in DB
-        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
-        toggle_event_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mEvent.toggleComplete();
-
-                        mData.child("complete").setValue(mEvent.isComplete());
-
-                        displayEventData();
-
-                        Log.d(TAG, "onDataChange: Event toggled: " + mEvent.getName());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
+        removeDeleteListener();
+        removeToggleListener();
     }
 
     @Override
@@ -149,8 +102,6 @@ public class EventActivity extends AppCompatActivity {
             String uid = intent.getStringExtra("uid");
             boolean complete = intent.getBooleanExtra("complete", false);
             mEvent = new Event(name, type, courseName, date, time, uid, complete);
-
-            mData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid()).child(uid);
 
             Log.d(TAG, "getIntentData: Intent accepted");
         }
@@ -196,31 +147,53 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
-    public void getCourseNames() {
-        // Init courses
-        mCourseNames = new ArrayList<>();
-        mCourseNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mCourseNames);
-
-        // Read courses from DB
-        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
-        mCoursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void addDeleteListener() {
+        // Add delete listener
+        final Button delete_event_button = findViewById(R.id.delete_event_button);
+        delete_event_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot courseSnapshot: dataSnapshot.getChildren()) {
-                    String courseName = courseSnapshot.child("name").getValue(String.class);
-                    mCourseNames.add(courseName);
+            public void onClick(View view) {
+                // Remove event
+                mDatabase.removeEvent(mEvent);
 
-                    mCourseNamesAdapter.notifyDataSetChanged();
-
-                    Log.d(TAG, "onDataChange: Course read: " + courseName);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                finish();
             }
         });
+
+        Log.d(TAG, "addDeleteListener: Listener added");
+    }
+
+    public void addToggleListener() {
+        // Add toggle listener
+        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
+        toggle_event_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Update event
+                mEvent.toggleComplete();
+                mDatabase.updateEvent(mEvent);
+
+                displayEventData();
+            }
+        });
+
+        Log.d(TAG, "addToggleListener: Listener added");
+    }
+
+    public void removeDeleteListener() {
+        // Remove delete listener
+        final Button delete_event_button = findViewById(R.id.delete_event_button);
+        delete_event_button.setOnClickListener(null);
+
+        Log.d(TAG, "removeDeleteListener: Listener removed");
+    }
+
+    public void removeToggleListener() {
+        // Remove toggle listener
+        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
+        toggle_event_button.setOnClickListener(null);
+
+        Log.d(TAG, "removeToggleListener: Listener removed");
     }
 
     public void startEditing() {
@@ -281,17 +254,17 @@ public class EventActivity extends AppCompatActivity {
         });
 
         // Course
-        if (mCourseNames.isEmpty()) {
+        if (mDatabase.courses.isEmpty()) {
             event_course_spinner.setVisibility(View.GONE);
 
             newEvent.setCourseName(mEvent.getCourseName());
         }
         else {
             // Set adapter
-            event_course_spinner.setAdapter(mCourseNamesAdapter);
+            event_course_spinner.setAdapter(mDatabase.courseNamesAdapter);
 
             // Set current selection
-            index = mCourseNames.indexOf(mEvent.getCourseName());
+            index = mDatabase.courseNames.indexOf(mEvent.getCourseName());
             event_course_spinner.setSelection(index);
 
             // Set listener
@@ -417,6 +390,8 @@ public class EventActivity extends AppCompatActivity {
                 toggle_event_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
+                event_type_spinner.setOnItemSelectedListener(null);
+                event_course_spinner.setOnItemSelectedListener(null);
                 event_date_text.setOnClickListener(null);
                 event_time_text.setOnClickListener(null);
                 cancel_event_button.setOnClickListener(null);
@@ -449,6 +424,8 @@ public class EventActivity extends AppCompatActivity {
                 toggle_event_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
+                event_type_spinner.setOnItemSelectedListener(null);
+                event_course_spinner.setOnItemSelectedListener(null);
                 event_date_text.setOnClickListener(null);
                 event_time_text.setOnClickListener(null);
                 cancel_event_button.setOnClickListener(null);
@@ -475,23 +452,9 @@ public class EventActivity extends AppCompatActivity {
 
                 // Update event
                 mEvent = newEvent;
+                mDatabase.updateEvent(mEvent);
 
                 displayEventData();
-
-                // Update event in DB
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.setValue(mEvent);
-
-                        Log.d(TAG, "onDataChange: Event updated: " + mEvent.getName());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
             }
         });
     }

@@ -22,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -32,14 +31,7 @@ import android.widget.TimePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class DashboardActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
@@ -49,16 +41,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
 
-    private DatabaseReference mEventsData;
-    private DatabaseReference mCoursesData;
-
-    private ChildEventListener mEventsListener;
-
-    private ArrayList<Event> mEvents;
-    private ArrayList<String> mCourseNames;
-
-    private EventsRecyclerAdapter mEventsAdapter;
-    private ArrayAdapter<String> mCourseNamesAdapter;
+    private Database mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +58,11 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         if (mCurrentUser != null) {
             initUser();
 
-            addEventsListener();
+            mDatabase = new Database(this);
+            mDatabase.addEventsListener();
+            mDatabase.addCoursesListener();
 
-            getCourseNames();
+            initRecycler();
         }
     }
 
@@ -87,7 +72,8 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
 
         removeAuthListener();
 
-        removeEventsListener();
+        mDatabase.removeEventsListener();
+        mDatabase.removeCoursesListener();
     }
 
     @Override
@@ -127,10 +113,10 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
         // Backup removed event
-        final Event event = mEvents.get(position);
+        final Event event = mDatabase.events.get(position);
 
         // Remove event
-        mEventsAdapter.removeEvent(position);
+        mDatabase.eventsAdapter.removeEvent(position);
 
         // Show undo snack bar
         ConstraintLayout dashboard = findViewById(R.id.dashboard);
@@ -139,7 +125,7 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
             @Override
             public void onClick(View view) {
                 // Restore event
-                mEventsAdapter.restoreEvent(event, position);
+                mDatabase.eventsAdapter.restoreEvent(event, position);
             }
         });
         snackbar.show();
@@ -179,100 +165,17 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         User.init(displayName, email, uid);
     }
 
-    public void addEventsListener() {
-        // Init events
-        mEvents = new ArrayList<>();
-        mEventsAdapter = new EventsRecyclerAdapter(this, mEvents);
+    public void initRecycler() {
+        // Init recycler
         final RecyclerView events_recycler = findViewById(R.id.events_recycler);
-        events_recycler.setAdapter(mEventsAdapter);
+        events_recycler.setAdapter(mDatabase.eventsAdapter);
         events_recycler.setItemAnimator(new DefaultItemAnimator());
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
-
-        // Add events listener
-        mEventsData = FirebaseDatabase.getInstance().getReference().child("events").child(User.getUid());
-        mEventsListener = mEventsData.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Event event = dataSnapshot.getValue(Event.class);
-                mEvents.add(event);
-
-                mEventsAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildAdded: Event read: " + event.getName());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Event event = dataSnapshot.getValue(Event.class);
-                int index = mEvents.indexOf(event);
-                mEvents.set(index, event);
-
-                mEventsAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildChanged: Event updated: " + event.getName());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Event event = dataSnapshot.getValue(Event.class);
-                mEvents.remove(event);
-
-                mEventsAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildRemoved: Event removed: " + event.getName());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-
-        Log.d(TAG, "addEventsListener: Listener added");
 
         // Attach item touch helper
         ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
                 new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
-    }
-
-    public void removeEventsListener() {
-        // Remove events listener
-        mEventsData.removeEventListener(mEventsListener);
-
-        Log.d(TAG, "removeEventsListener: Listener removed");
-    }
-
-    public void getCourseNames() {
-        // Init courses
-        mCourseNames = new ArrayList<>();
-        mCourseNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mCourseNames);
-
-        // Read courses from DB
-        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
-        mCoursesData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot courseSnapshot: dataSnapshot.getChildren()) {
-                    String courseName = courseSnapshot.child("name").getValue(String.class);
-                    mCourseNames.add(courseName);
-
-                    mCourseNamesAdapter.notifyDataSetChanged();
-
-                    Log.d(TAG, "onDataChange: Course read: " + courseName);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
     }
 
     public void actionNewEvent() {
@@ -312,14 +215,14 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         });
 
         // Course
-        if (mCourseNames.isEmpty()) {
+        if (mDatabase.courseNames.isEmpty()) {
             event_course_spinner.setVisibility(View.GONE);
 
             newEvent.setCourseName("Undefined");
         }
         else {
             // Set adapter
-            event_course_spinner.setAdapter(mCourseNamesAdapter);
+            event_course_spinner.setAdapter(mDatabase.courseNamesAdapter);
 
             // Set listener
             event_course_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -426,34 +329,17 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // Write event to DB
-                mEventsData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Set name
-                        String name = event_name_edit.getText().toString().trim();
-                        if (name.isEmpty()) {
-                            newEvent.setName("New event");
-                        }
-                        else {
-                            newEvent.setName(name);
-                        }
+                // Set name
+                String name = event_name_edit.getText().toString().trim();
+                if (name.isEmpty()) {
+                    newEvent.setName("New event");
+                }
+                else {
+                    newEvent.setName(name);
+                }
 
-                        // Set uid
-                        String uid = mEventsData.push().getKey();
-                        newEvent.setUid(uid);
-
-                        // Add event
-                        mEventsData.child(uid).setValue(newEvent);
-
-                        Log.d(TAG, "onDataChange: Event added: " + name);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
+                // Add event
+                mDatabase.addEvent(newEvent);
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
