@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.ramapo.ktavadze.unipal">
 
     <application
@@ -9,36 +10,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".SignInActivity" />
+        <activity
+            android:name=".DashboardActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DashboardActivity" />
         <activity android:name=".EventActivity" />
-        <activity
-            android:name=".UserActivity"
-            android:parentActivityName=".DashboardActivity" />
+        <activity android:name=".UserActivity" />
         <activity
             android:name=".SchoolsActivity"
-            android:parentActivityName=".DashboardActivity" />
-        <activity
-            android:name=".SchoolActivity"
-            android:parentActivityName=".SchoolsActivity" />
+            android:launchMode="singleTask" />
+        <activity android:name=".SchoolActivity" />
         <activity
             android:name=".CoursesActivity"
-            android:parentActivityName=".DashboardActivity" />
-        <activity
-            android:name=".CourseActivity"
-            android:parentActivityName=".CoursesActivity" />
+            android:launchMode="singleTask" />
+        <activity android:name=".CourseActivity" />
         <activity
             android:name=".CalendarActivity"
-            android:parentActivityName=".DashboardActivity" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".DateActivity"
-            android:parentActivityName=".CalendarActivity" />
+            android:launchMode="singleTask" />
     </application>
 
 </manifest>

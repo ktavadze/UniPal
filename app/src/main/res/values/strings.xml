@@ -4,6 +4,7 @@
     <string name="action_schools">Schools</string>
     <string name="action_courses">Courses</string>
     <string name="action_calendar">Calendar</string>
+    <string name="action_dashboard">Dashboard</string>
     <string name="action_sign_out">Sign Out</string>
     <string name="title_new_event">New Event</string>
     <string name="action_new_event">New Event</string>

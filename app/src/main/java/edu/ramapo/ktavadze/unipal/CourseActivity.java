@@ -3,10 +3,8 @@ package edu.ramapo.ktavadze.unipal;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class CourseActivity extends AppCompatActivity {
+public class CourseActivity extends BaseActivity {
     private static final String TAG = "CourseActivity";
 
     private Course mCourse;
@@ -33,7 +31,6 @@ public class CourseActivity extends AppCompatActivity {
         getIntentData();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mCourse.getName());
 
         displayCourseData();
@@ -55,10 +52,11 @@ public class CourseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_course, menu);
+        menu.add(0, 0, 0, R.string.action_edit_course)
+                .setIcon(R.drawable.ic_edit)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        mEditIcon = menu.findItem(R.id.action_edit_course);
+        mEditIcon = menu.getItem(0);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -66,10 +64,7 @@ public class CourseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_edit_course:
+            case 0:
                 startEditing();
                 return true;
             default:

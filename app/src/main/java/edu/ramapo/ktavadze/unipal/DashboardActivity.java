@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,12 +32,12 @@ import com.google.firebase.auth.UserInfo;
 
 import java.util.Calendar;
 
-public class DashboardActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class DashboardActivity extends BaseActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = "DashboardActivity";
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mCurrentUser;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private Database mDatabase;
 
@@ -54,7 +52,6 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
         addAuthListener();
 
         // Initialize
-        mCurrentUser = mAuth.getCurrentUser();
         if (mCurrentUser != null) {
             initUser();
 
@@ -72,37 +69,26 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
 
         removeAuthListener();
 
-        mDatabase.removeEventsListener();
-        mDatabase.removeCoursesListener();
+        if (mCurrentUser != null) {
+            mDatabase.removeEventsListener();
+            mDatabase.removeCoursesListener();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        menu.add(0, 0, 0, R.string.action_new_event)
+                .setIcon(R.drawable.ic_add)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_new_event:
+            case 0:
                 actionNewEvent();
-                return true;
-            case R.id.action_user:
-                startActivity(new Intent(DashboardActivity.this, UserActivity.class));
-                return true;
-            case R.id.action_schools:
-                startActivity(new Intent(DashboardActivity.this, SchoolsActivity.class));
-                return true;
-            case R.id.action_courses:
-                startActivity(new Intent(DashboardActivity.this, CoursesActivity.class));
-                return true;
-            case R.id.action_calendar:
-                startActivity(new Intent(DashboardActivity.this, CalendarActivity.class));
-                return true;
-            case R.id.action_sign_out:
-                mAuth.signOut();
                 return true;
             default:
                 // Invoke superclass to handle unrecognized action.
@@ -134,11 +120,14 @@ public class DashboardActivity extends AppCompatActivity implements RecyclerItem
     public void addAuthListener() {
         // Add auth state listener
         mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() == null) {
-                    startActivity(new Intent(DashboardActivity.this, MainActivity.class));
+                    Intent intent = new Intent(DashboardActivity.this, SignInActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }
         };

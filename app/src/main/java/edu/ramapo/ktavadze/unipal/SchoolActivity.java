@@ -3,10 +3,8 @@ package edu.ramapo.ktavadze.unipal;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -14,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SchoolActivity extends AppCompatActivity {
+public class SchoolActivity extends BaseActivity {
     private static final String TAG = "SchoolActivity";
 
     private School mSchool;
@@ -31,7 +29,6 @@ public class SchoolActivity extends AppCompatActivity {
         getIntentData();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mSchool.getName());
 
         displaySchoolData();
@@ -50,22 +47,19 @@ public class SchoolActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_school, menu);
+        menu.add(0, 0, 0, R.string.action_edit_school)
+                .setIcon(R.drawable.ic_edit)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        mEditIcon = menu.findItem(R.id.action_edit_school);
+        mEditIcon = menu.getItem(0);
 
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_edit_school:
+            case 0:
                 startEditing();
                 return true;
             default:

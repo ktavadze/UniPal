@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
@@ -25,7 +24,7 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class CalendarActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
+public class CalendarActivity extends BaseActivity implements OnDateSelectedListener, OnMonthChangedListener {
     private static final String TAG = "CalendarActivity";
 
     private DatabaseReference mEventsData;

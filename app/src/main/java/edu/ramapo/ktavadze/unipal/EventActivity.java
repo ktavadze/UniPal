@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -25,7 +23,7 @@ import android.widget.TimePicker;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class EventActivity extends AppCompatActivity {
+public class EventActivity extends BaseActivity {
     private static final String TAG = "EventActivity";
 
     private Event mEvent;
@@ -42,7 +40,6 @@ public class EventActivity extends AppCompatActivity {
         getIntentData();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mEvent.getName());
 
         displayEventData();
@@ -66,10 +63,11 @@ public class EventActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_event, menu);
+        menu.add(0, 0, 0, R.string.action_edit_event)
+                .setIcon(R.drawable.ic_edit)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        mEditIcon = menu.findItem(R.id.action_edit_event);
+        mEditIcon = menu.getItem(0);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -77,10 +75,7 @@ public class EventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_edit_event:
+            case 0:
                 startEditing();
                 return true;
             default:

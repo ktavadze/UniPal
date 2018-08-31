@@ -4,17 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-public class SchoolsActivity extends AppCompatActivity {
+public class SchoolsActivity extends BaseActivity {
     private static final String TAG = "SchoolsActivity";
 
     private Database mDatabase;
@@ -42,15 +40,17 @@ public class SchoolsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_schools, menu);
+        menu.add(0, 0, 0, R.string.action_new_school)
+                .setIcon(R.drawable.ic_add)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_new_school:
+            case 0:
                 actionNewSchool();
                 return true;
             default:
