@@ -11,31 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class CourseActivity extends AppCompatActivity {
     private static final String TAG = "CourseActivity";
 
     private Course mCourse;
 
-    private DatabaseReference mData;
-    private DatabaseReference mSchoolsData;
-
-    private ArrayList<String> mSchoolNames;
-
-    private ArrayAdapter<String> mSchoolNamesAdapter;
+    private Database mDatabase;
 
     private MenuItem mEditIcon;
 
@@ -52,30 +38,19 @@ public class CourseActivity extends AppCompatActivity {
 
         displayCourseData();
 
-        getSchoolNames();
+        mDatabase = new Database(this);
+        mDatabase.addSchoolsListener();
 
-        // Delete course from DB
-        final Button delete_course_button = findViewById(R.id.delete_course_button);
-        delete_course_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.removeValue();
+        addDeleteListener();
+    }
 
-                        finish();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-                        Log.d(TAG, "onDataChange: Course deleted: " + mCourse.getName());
-                    }
+        mDatabase.removeSchoolsListener();
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
+        removeDeleteListener();
     }
 
     @Override
@@ -115,8 +90,6 @@ public class CourseActivity extends AppCompatActivity {
             String uid = intent.getStringExtra("uid");
             mCourse = new Course(name, department, number, section, schoolName, uid);
 
-            mData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid()).child(uid);
-
             Log.d(TAG, "getIntentData: Intent accepted");
         }
         else {
@@ -140,31 +113,28 @@ public class CourseActivity extends AppCompatActivity {
         course_school_text.setText(mCourse.getSchoolName());
     }
 
-    public void getSchoolNames() {
-        // Init schools
-        mSchoolNames = new ArrayList<>();
-        mSchoolNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSchoolNames);
-
-        // Read schools from DB
-        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
-        mSchoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void addDeleteListener() {
+        // Add delete listener
+        final Button delete_course_button = findViewById(R.id.delete_course_button);
+        delete_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot schoolSnapshot: dataSnapshot.getChildren()) {
-                    String schoolName = schoolSnapshot.child("name").getValue(String.class);
-                    mSchoolNames.add(schoolName);
+            public void onClick(View view) {
+                // Remove course
+                mDatabase.removeCourse(mCourse);
 
-                    mSchoolNamesAdapter.notifyDataSetChanged();
-
-                    Log.d(TAG, "onDataChange: School read: " + schoolName);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                finish();
             }
         });
+
+        Log.d(TAG, "addDeleteListener: Listener added");
+    }
+
+    public void removeDeleteListener() {
+        // Remove delete listener
+        final Button delete_course_button = findViewById(R.id.delete_course_button);
+        delete_course_button.setOnClickListener(null);
+
+        Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
     public void startEditing() {
@@ -207,17 +177,17 @@ public class CourseActivity extends AppCompatActivity {
         final Course newCourse = new Course();
 
         // School
-        if (mSchoolNames.isEmpty()) {
+        if (mDatabase.schools.isEmpty()) {
             course_school_spinner.setVisibility(View.GONE);
 
             newCourse.setSchoolName(mCourse.getSchoolName());
         }
         else {
             // Set adapter
-            course_school_spinner.setAdapter(mSchoolNamesAdapter);
+            course_school_spinner.setAdapter(mDatabase.schoolNamesAdapter);
 
             // Set current selection
-            int index = mSchoolNames.indexOf(mCourse.getSchoolName());
+            int index = mDatabase.schoolNames.indexOf(mCourse.getSchoolName());
             course_school_spinner.setSelection(index);
 
             // Set listener
@@ -260,6 +230,7 @@ public class CourseActivity extends AppCompatActivity {
                 delete_course_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
+                course_school_spinner.setOnItemSelectedListener(null);
                 cancel_course_button.setOnClickListener(null);
                 update_course_button.setOnClickListener(null);
 
@@ -292,6 +263,7 @@ public class CourseActivity extends AppCompatActivity {
                 delete_course_button.setVisibility(View.VISIBLE);
 
                 // Clear listeners
+                course_school_spinner.setOnItemSelectedListener(null);
                 cancel_course_button.setOnClickListener(null);
                 update_course_button.setOnClickListener(null);
 
@@ -340,23 +312,9 @@ public class CourseActivity extends AppCompatActivity {
 
                 // Update course
                 mCourse = newCourse;
+                mDatabase.updateCourse(mCourse);
 
                 displayCourseData();
-
-                // Update course in DB
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.setValue(mCourse);
-
-                        Log.d(TAG, "onDataChange: Course updated: " + mCourse.getName());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
             }
         });
     }

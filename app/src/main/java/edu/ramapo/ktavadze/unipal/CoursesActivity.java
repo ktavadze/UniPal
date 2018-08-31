@@ -14,32 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class CoursesActivity extends AppCompatActivity {
     private static final String TAG = "CoursesActivity";
 
-    private DatabaseReference mCoursesData;
-    private DatabaseReference mSchoolsData;
-
-    private ChildEventListener mCoursesListener;
-
-    private ArrayList<Course> mCourses;
-    private ArrayList<String> mSchoolNames;
-
-    private CoursesRecyclerAdapter mCoursesAdapter;
-    private ArrayAdapter<String> mSchoolNamesAdapter;
+    private Database mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +30,19 @@ public class CoursesActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Courses");
 
-        addCoursesListener();
+        mDatabase = new Database(this);
+        mDatabase.addCoursesListener();
+        mDatabase.addSchoolsListener();
 
-        getSchoolNames();
+        initRecycler();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        removeCoursesListener();
+        mDatabase.removeCoursesListener();
+        mDatabase.removeSchoolsListener();
     }
 
     @Override
@@ -80,94 +64,11 @@ public class CoursesActivity extends AppCompatActivity {
         }
     }
 
-    public void addCoursesListener() {
-        // Init courses
-        mCourses = new ArrayList<>();
-        mCoursesAdapter = new CoursesRecyclerAdapter(this, mCourses);
+    public void initRecycler() {
+        // Init recycler
         final RecyclerView courses_recycler = findViewById(R.id.courses_recycler);
-        courses_recycler.setAdapter(mCoursesAdapter);
+        courses_recycler.setAdapter(mDatabase.coursesAdapter);
         courses_recycler.setLayoutManager(new LinearLayoutManager(this));
-
-        // Add courses listener
-        mCoursesData = FirebaseDatabase.getInstance().getReference().child("courses").child(User.getUid());
-        mCoursesListener = mCoursesData.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Course course = dataSnapshot.getValue(Course.class);
-                mCourses.add(course);
-
-                mCoursesAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildAdded: Course read: " + course.getName());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Course course = dataSnapshot.getValue(Course.class);
-                int index = mCourses.indexOf(course);
-                mCourses.set(index, course);
-
-                mCoursesAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildChanged: Course updated: " + course.getName());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Course course = dataSnapshot.getValue(Course.class);
-                mCourses.remove(course);
-
-                mCoursesAdapter.notifyDataSetChanged();
-
-                Log.d(TAG, "onChildRemoved: Course removed: " + course.getName());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-
-        Log.d(TAG, "addCoursesListener: Listener added");
-    }
-
-    public void removeCoursesListener() {
-        // Remove courses listener
-        mCoursesData.removeEventListener(mCoursesListener);
-
-        Log.d(TAG, "removeCoursesListener: Listener removed");
-    }
-
-    public void getSchoolNames() {
-        // Init schools
-        mSchoolNames = new ArrayList<>();
-        mSchoolNamesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mSchoolNames);
-
-        // Read schools from DB
-        mSchoolsData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid());
-        mSchoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot schoolSnapshot: dataSnapshot.getChildren()) {
-                    String schoolName = schoolSnapshot.child("name").getValue(String.class);
-                    mSchoolNames.add(schoolName);
-
-                    mSchoolNamesAdapter.notifyDataSetChanged();
-
-                    Log.d(TAG, "onDataChange: School read: " + schoolName);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
     }
 
     public void actionNewCourse() {
@@ -188,14 +89,14 @@ public class CoursesActivity extends AppCompatActivity {
         final Spinner course_school_spinner = dialogView.findViewById(R.id.course_school_spinner);
 
         // School
-        if (mSchoolNames.isEmpty()) {
+        if (mDatabase.schools.isEmpty()) {
             course_school_spinner.setVisibility(View.GONE);
 
             newCourse.setSchoolName("Undefined");
         }
         else {
             // Set adapter
-            course_school_spinner.setAdapter(mSchoolNamesAdapter);
+            course_school_spinner.setAdapter(mDatabase.schoolNamesAdapter);
 
             // Set listener
             course_school_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -219,61 +120,44 @@ public class CoursesActivity extends AppCompatActivity {
         // Define responses
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // Write course to DB
-                mCoursesData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Set name
-                        String name = course_name_edit.getText().toString().trim();
-                        if (name.isEmpty()) {
-                            newCourse.setName("New Course");
-                        }
-                        else {
-                            newCourse.setName(name);
-                        }
+                // Set name
+                String name = course_name_edit.getText().toString().trim();
+                if (name.isEmpty()) {
+                    newCourse.setName("New Course");
+                }
+                else {
+                    newCourse.setName(name);
+                }
 
-                        // Set department
-                        String department = course_department_edit.getText().toString().trim();
-                        if (department.isEmpty()) {
-                            newCourse.setDepartment("????");
-                        }
-                        else {
-                            newCourse.setDepartment(department);
-                        }
+                // Set department
+                String department = course_department_edit.getText().toString().trim();
+                if (department.isEmpty()) {
+                    newCourse.setDepartment("????");
+                }
+                else {
+                    newCourse.setDepartment(department);
+                }
 
-                        // Set number
-                        String number = course_number_edit.getText().toString().trim();
-                        if (number.isEmpty()) {
-                            newCourse.setNumber("???");
-                        }
-                        else {
-                            newCourse.setNumber(number);
-                        }
+                // Set number
+                String number = course_number_edit.getText().toString().trim();
+                if (number.isEmpty()) {
+                    newCourse.setNumber("???");
+                }
+                else {
+                    newCourse.setNumber(number);
+                }
 
-                        // Set section
-                        String section = course_section_edit.getText().toString().trim();
-                        if (section.isEmpty()) {
-                            newCourse.setSection("?");
-                        }
-                        else {
-                            newCourse.setSection(section);
-                        }
+                // Set section
+                String section = course_section_edit.getText().toString().trim();
+                if (section.isEmpty()) {
+                    newCourse.setSection("?");
+                }
+                else {
+                    newCourse.setSection(section);
+                }
 
-                        // Set uid
-                        String uid = mCoursesData.push().getKey();
-                        newCourse.setUid(uid);
-
-                        // Add course
-                        mCoursesData.child(uid).setValue(newCourse);
-
-                        Log.d(TAG, "onDataChange: Course added: " + name);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
+                // Add course
+                mDatabase.addCourse(newCourse);
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

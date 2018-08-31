@@ -50,6 +50,57 @@ public class Database {
         this.context = context;
     }
 
+    public void addCourse(final Course course) {
+        coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uid = coursesData.push().getKey();
+                course.setUid(uid);
+
+                coursesData.child(uid).setValue(course);
+
+                Log.d(TAG, "onDataChange: Course added: " + course.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void updateCourse(final Course course) {
+        coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                coursesData.child(course.getUid()).setValue(course);
+
+                Log.d(TAG, "onDataChange: Course updated: " + course.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void removeCourse(final Course course) {
+        coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                coursesData.child(course.getUid()).removeValue();
+
+                Log.d(TAG, "onDataChange: Course deleted: " + course.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     public void addEvent(final Event event) {
         eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
