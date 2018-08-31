@@ -105,8 +105,8 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
         mDatabase.eventsAdapter.removeEvent(position);
 
         // Show undo snack bar
-        ConstraintLayout dashboard = findViewById(R.id.dashboard);
-        Snackbar snackbar = Snackbar.make(dashboard, "Event removed", Snackbar.LENGTH_SHORT);
+        ConstraintLayout dashboard_activity = findViewById(R.id.dashboard_activity);
+        Snackbar snackbar = Snackbar.make(dashboard_activity, "Event removed", Snackbar.LENGTH_SHORT);
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View view) {

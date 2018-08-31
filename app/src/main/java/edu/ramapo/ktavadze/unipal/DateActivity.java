@@ -5,9 +5,12 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +24,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
-public class DateActivity extends BaseActivity {
+public class DateActivity extends BaseActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = "DateActivity";
 
     private String mDate;
@@ -74,6 +77,27 @@ public class DateActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
+        // Backup removed event
+        final Event event = mDatabase.events.get(position);
+
+        // Remove event
+        mDatabase.eventsAdapter.removeEvent(position);
+
+        // Show undo snack bar
+        ConstraintLayout date_activity = findViewById(R.id.date_activity);
+        Snackbar snackbar = Snackbar.make(date_activity, "Event removed", Snackbar.LENGTH_SHORT);
+        snackbar.setAction("UNDO", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Restore event
+                mDatabase.eventsAdapter.restoreEvent(event, position);
+            }
+        });
+        snackbar.show();
+    }
+
     public void getIntentData() {
         final Intent intent = getIntent();
         if (intent.hasExtra("date")) {
@@ -93,6 +117,11 @@ public class DateActivity extends BaseActivity {
         final RecyclerView events_recycler = findViewById(R.id.date_events_recycler);
         events_recycler.setAdapter(mDatabase.eventsAdapter);
         events_recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        // Attach item touch helper
+        ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
+                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
     }
 
     public void actionNewEvent() {
