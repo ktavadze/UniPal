@@ -50,6 +50,57 @@ public class Database {
         this.context = context;
     }
 
+    public void addSchool(final School school) {
+        schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String uid = schoolsData.push().getKey();
+                school.setUid(uid);
+
+                schoolsData.child(uid).setValue(school);
+
+                Log.d(TAG, "onDataChange: School added: " + school.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void updateSchool(final School school) {
+        schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                schoolsData.child(school.getUid()).setValue(school);
+
+                Log.d(TAG, "onDataChange: School updated: " + school.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void removeSchool(final School school) {
+        schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                schoolsData.child(school.getUid()).removeValue();
+
+                Log.d(TAG, "onDataChange: School deleted: " + school.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
     public void addCourse(final Course course) {
         coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

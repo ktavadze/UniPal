@@ -14,18 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 public class SchoolActivity extends AppCompatActivity {
     private static final String TAG = "SchoolActivity";
 
     private School mSchool;
 
-    private DatabaseReference mData;
+    private Database mDatabase;
 
     private MenuItem mEditIcon;
 
@@ -42,28 +36,16 @@ public class SchoolActivity extends AppCompatActivity {
 
         displaySchoolData();
 
-        // Delete school from DB
-        final Button delete_school_button = findViewById(R.id.delete_school_button);
-        delete_school_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.removeValue();
+        mDatabase = new Database(this);
 
-                        finish();
+        addDeleteListener();
+    }
 
-                        Log.d(TAG, "onDataChange: School deleted: " + mSchool.getName());
-                    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
-            }
-        });
+        removeDeleteListener();
     }
 
     @Override
@@ -103,8 +85,6 @@ public class SchoolActivity extends AppCompatActivity {
             String uid = intent.getStringExtra("uid");
             mSchool = new School(name, year, major, minor, uid);
 
-            mData = FirebaseDatabase.getInstance().getReference().child("schools").child(User.getUid()).child(uid);
-
             Log.d(TAG, "getIntentData: Intent accepted");
         }
         else {
@@ -124,6 +104,29 @@ public class SchoolActivity extends AppCompatActivity {
         school_year_text.setText(mSchool.getYear());
         school_major_text.setText(mSchool.getMajor());
         school_minor_text.setText(mSchool.getMinor());
+    }
+
+    public void addDeleteListener() {
+        // Add delete listener
+        final Button delete_school_button = findViewById(R.id.delete_school_button);
+        delete_school_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDatabase.removeSchool(mSchool);
+
+                finish();
+            }
+        });
+
+        Log.d(TAG, "addDeleteListener: Listener added");
+    }
+
+    public void removeDeleteListener() {
+        // Remove delete listener
+        final Button delete_school_button = findViewById(R.id.delete_school_button);
+        delete_school_button.setOnClickListener(null);
+
+        Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
     public void startEditing() {
@@ -258,23 +261,9 @@ public class SchoolActivity extends AppCompatActivity {
 
                 // Update school
                 mSchool = newSchool;
+                mDatabase.updateSchool(mSchool);
 
                 displaySchoolData();
-
-                // Update school in DB
-                mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        mData.setValue(mSchool);
-
-                        Log.d(TAG, "onDataChange: School updated: " + mSchool.getName());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
             }
         });
     }
