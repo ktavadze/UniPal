@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -200,7 +201,7 @@ public class EventActivity extends BaseActivity {
         final Spinner event_course_spinner = findViewById(R.id.event_course_spinner);
         final TextView event_date_text = findViewById(R.id.event_date_text);
         final TextView event_time_text = findViewById(R.id.event_time_text);
-        final TextView event_status_text = findViewById(R.id.event_status_text);
+        final LinearLayout event_status_container = findViewById(R.id.event_status_container);
         final Button delete_event_button = findViewById(R.id.delete_event_button);
         final Button toggle_event_button = findViewById(R.id.toggle_event_button);
         final Button cancel_event_button = findViewById(R.id.cancel_event_button);
@@ -211,7 +212,7 @@ public class EventActivity extends BaseActivity {
         event_name_text.setVisibility(View.GONE);
         event_type_text.setVisibility(View.GONE);
         event_course_text.setVisibility(View.GONE);
-        event_status_text.setVisibility(View.GONE);
+        event_status_container.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
         toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
@@ -380,7 +381,7 @@ public class EventActivity extends BaseActivity {
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
-                event_status_text.setVisibility(View.VISIBLE);
+                event_status_container.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
@@ -414,7 +415,7 @@ public class EventActivity extends BaseActivity {
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
-                event_status_text.setVisibility(View.VISIBLE);
+                event_status_container.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
 
