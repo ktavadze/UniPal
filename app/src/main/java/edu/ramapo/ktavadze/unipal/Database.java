@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class Database {
     public ArrayList<School> schools;
     public ArrayList<Course> courses;
     public ArrayList<Event> events;
+    public ArrayList<CalendarDay> calendarDays;
 
     public SchoolsRecyclerAdapter schoolsAdapter;
     public CoursesRecyclerAdapter coursesAdapter;
@@ -319,11 +321,13 @@ public class Database {
 
     public void addEventsListener() {
         this.events = new ArrayList<>();
+        this.calendarDays = new ArrayList<>();
         this.eventsAdapter = new EventsRecyclerAdapter(context, events);
         eventsListener = eventsData.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 final Event event = dataSnapshot.getValue(Event.class);
+                calendarDays.add(event.getCalendarDay());
                 events.add(event);
 
                 eventsAdapter.notifyDataSetChanged();
@@ -333,18 +337,24 @@ public class Database {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                final Event event = dataSnapshot.getValue(Event.class);
-                final int index = events.indexOf(event);
-                events.set(index, event);
+                final Event newEvent = dataSnapshot.getValue(Event.class);
+                final int index = events.indexOf(newEvent);
+                final Event oldEvent = events.get(index);
+                if (!newEvent.getCalendarDay().equals(oldEvent.getCalendarDay())) {
+                    calendarDays.remove(oldEvent.getCalendarDay());
+                    calendarDays.add(newEvent.getCalendarDay());
+                }
+                events.set(index, newEvent);
 
                 eventsAdapter.notifyDataSetChanged();
 
-                Log.d(TAG, "onChildChanged: Event updated: " + event.getName());
+                Log.d(TAG, "onChildChanged: Event updated: " + newEvent.getName());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 final Event event = dataSnapshot.getValue(Event.class);
+                calendarDays.remove(event.getCalendarDay());
                 events.remove(event);
 
                 eventsAdapter.notifyDataSetChanged();

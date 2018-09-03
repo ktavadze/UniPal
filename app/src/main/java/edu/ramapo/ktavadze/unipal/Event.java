@@ -1,6 +1,8 @@
 package edu.ramapo.ktavadze.unipal;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -101,5 +103,14 @@ public class Event {
 
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+
+    @Exclude
+    public CalendarDay getCalendarDay() {
+        String [] dateTokens = this.date.split("/");
+        Integer month = Integer.parseInt(dateTokens[0]);
+        Integer day = Integer.parseInt(dateTokens[1]);
+        Integer year = Integer.parseInt(dateTokens[2]);
+        return CalendarDay.from(year, month - 1, day);
     }
 }
