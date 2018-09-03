@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -61,31 +62,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.navigation_dashboard:
-                if (currentFragment instanceof DashboardFragment) break;
-                fragment = new DashboardFragment();
-                break;
+                return loadFragment(new DashboardFragment());
             case R.id.navigation_calendar:
-                if (currentFragment instanceof CalendarFragment) break;
-                fragment = new CalendarFragment();
-                break;
+                return loadFragment(new CalendarFragment());
             case R.id.navigation_courses:
-                if (currentFragment instanceof CoursesFragment) break;
-                fragment = new CoursesFragment();
-                break;
+                return loadFragment(new CoursesFragment());
             case R.id.navigation_schools:
-                if (currentFragment instanceof SchoolsFragment) break;
-                fragment = new SchoolsFragment();
-                break;
+                return loadFragment(new SchoolsFragment());
             case R.id.navigation_user:
-                if (currentFragment instanceof UserFragment) break;
-                fragment = new UserFragment();
-                break;
+                return loadFragment(new UserFragment());
+            default:
+                return false;
         }
-        return addFragment(fragment);
     }
 
     private void addAuthListener() {
@@ -134,12 +124,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    private boolean addFragment(Fragment fragment) {
-        if (fragment != null) {
+    private boolean loadFragment(Fragment fragment) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        if (fragment != null && !currentFragment.getClass().equals(fragment.getClass())) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main_container, fragment)
-                    .addToBackStack(null)
                     .commit();
             return true;
         }
