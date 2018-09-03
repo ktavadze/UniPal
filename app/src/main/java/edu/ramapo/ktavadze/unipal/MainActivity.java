@@ -61,21 +61,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.navigation_dashboard:
+                if (currentFragment instanceof DashboardFragment) break;
                 fragment = new DashboardFragment();
                 break;
             case R.id.navigation_calendar:
+                if (currentFragment instanceof CalendarFragment) break;
                 fragment = new CalendarFragment();
                 break;
             case R.id.navigation_courses:
+                if (currentFragment instanceof CoursesFragment) break;
                 fragment = new CoursesFragment();
                 break;
             case R.id.navigation_schools:
+                if (currentFragment instanceof SchoolsFragment) break;
                 fragment = new SchoolsFragment();
                 break;
             case R.id.navigation_user:
+                if (currentFragment instanceof UserFragment) break;
                 fragment = new UserFragment();
                 break;
         }
