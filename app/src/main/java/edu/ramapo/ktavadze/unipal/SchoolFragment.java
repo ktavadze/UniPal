@@ -1,59 +1,86 @@
 package edu.ramapo.ktavadze.unipal;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SchoolActivity extends BaseActivity {
-    private static final String TAG = "SchoolActivity";
-
-    private School mSchool;
+public class SchoolFragment extends Fragment {
+    private static final String TAG = "SchoolFragment";
 
     private Database mDatabase;
 
+    private School mSchool;
+
+    private View mView;
+
     private MenuItem mEditIcon;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_school);
-
-        getIntentData();
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mSchool.getName());
-
-        displaySchoolData();
-
-        mDatabase = new Database(this);
-
-        addDeleteListener();
+    public SchoolFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+
+        // Get event
+        mSchool = new School();
+        String uid = getArguments().getString("uid", "");
+        mSchool.setUid(uid);
+        int index = mDatabase.schools.indexOf(mSchool);
+        mSchool = mDatabase.schools.get(index);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_school, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
+
+        addDeleteListener();
+
+        displaySchoolData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
 
         removeDeleteListener();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_edit_school)
                 .setIcon(R.drawable.ic_edit)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         mEditIcon = menu.getItem(0);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -68,31 +95,11 @@ public class SchoolActivity extends BaseActivity {
         }
     }
 
-    public void getIntentData() {
-        final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("year") && intent.hasExtra("major")
-                && intent.hasExtra("minor") && intent.hasExtra("uid")) {
-            String name = intent.getStringExtra("name");
-            String year = intent.getStringExtra("year");
-            String major = intent.getStringExtra("major");
-            String minor = intent.getStringExtra("minor");
-            String uid = intent.getStringExtra("uid");
-            mSchool = new School(name, year, major, minor, uid);
-
-            Log.d(TAG, "getIntentData: Intent accepted");
-        }
-        else {
-            finish();
-
-            Log.d(TAG, "getIntentData: Intent rejected");
-        }
-    }
-
-    public void displaySchoolData() {
-        final TextView school_name_text = findViewById(R.id.school_name_text);
-        final TextView school_year_text = findViewById(R.id.school_year_text);
-        final TextView school_major_text = findViewById(R.id.school_major_text);
-        final TextView school_minor_text = findViewById(R.id.school_minor_text);
+    private void displaySchoolData() {
+        final TextView school_name_text = mView.findViewById(R.id.school_name_text);
+        final TextView school_year_text = mView.findViewById(R.id.school_year_text);
+        final TextView school_major_text = mView.findViewById(R.id.school_major_text);
+        final TextView school_minor_text = mView.findViewById(R.id.school_minor_text);
 
         school_name_text.setText(mSchool.getName());
         school_year_text.setText(mSchool.getYear());
@@ -100,41 +107,42 @@ public class SchoolActivity extends BaseActivity {
         school_minor_text.setText(mSchool.getMinor());
     }
 
-    public void addDeleteListener() {
+    private void addDeleteListener() {
         // Add delete listener
-        final Button delete_school_button = findViewById(R.id.delete_school_button);
+        final Button delete_school_button = mView.findViewById(R.id.delete_school_button);
         delete_school_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Remove school
                 mDatabase.removeSchool(mSchool);
 
-                finish();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
-    public void removeDeleteListener() {
+    private void removeDeleteListener() {
         // Remove delete listener
-        final Button delete_school_button = findViewById(R.id.delete_school_button);
+        final Button delete_school_button = mView.findViewById(R.id.delete_school_button);
         delete_school_button.setOnClickListener(null);
 
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
-    public void startEditing() {
-        final TextView school_name_text = findViewById(R.id.school_name_text);
-        final EditText school_name_edit = findViewById(R.id.school_name_edit);
-        final TextView school_year_text = findViewById(R.id.school_year_text);
-        final EditText school_year_edit = findViewById(R.id.school_year_edit);
-        final TextView school_major_text = findViewById(R.id.school_major_text);
-        final EditText school_major_edit = findViewById(R.id.school_major_edit);
-        final TextView school_minor_text = findViewById(R.id.school_minor_text);
-        final EditText school_minor_edit = findViewById(R.id.school_minor_edit);
-        final Button delete_school_button = findViewById(R.id.delete_school_button);
-        final Button cancel_school_button = findViewById(R.id.cancel_school_button);
-        final Button update_school_button = findViewById(R.id.update_school_button);
+    private void startEditing() {
+        final TextView school_name_text = mView.findViewById(R.id.school_name_text);
+        final EditText school_name_edit = mView.findViewById(R.id.school_name_edit);
+        final TextView school_year_text = mView.findViewById(R.id.school_year_text);
+        final EditText school_year_edit = mView.findViewById(R.id.school_year_edit);
+        final TextView school_major_text = mView.findViewById(R.id.school_major_text);
+        final EditText school_major_edit = mView.findViewById(R.id.school_major_edit);
+        final TextView school_minor_text = mView.findViewById(R.id.school_minor_text);
+        final EditText school_minor_edit = mView.findViewById(R.id.school_minor_edit);
+        final Button delete_school_button = mView.findViewById(R.id.delete_school_button);
+        final Button cancel_school_button = mView.findViewById(R.id.cancel_school_button);
+        final Button update_school_button = mView.findViewById(R.id.update_school_button);
 
         // Update UI
         mEditIcon.setVisible(false);
@@ -181,8 +189,7 @@ public class SchoolActivity extends BaseActivity {
                 update_school_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(SchoolActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 displaySchoolData();
             }
@@ -211,8 +218,7 @@ public class SchoolActivity extends BaseActivity {
                 update_school_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(SchoolActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 // Set name
                 String name = school_name_edit.getText().toString().trim();

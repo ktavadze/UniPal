@@ -1,13 +1,16 @@
 package edu.ramapo.ktavadze.unipal;
 
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,8 +27,8 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class CalendarActivity extends BaseActivity implements OnDateSelectedListener, OnMonthChangedListener {
-    private static final String TAG = "CalendarActivity";
+public class CalendarFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener {
+    private static final String TAG = "CalendarFragment";
 
     private DatabaseReference mEventsData;
     private ChildEventListener mEventsListener;
@@ -33,20 +36,32 @@ public class CalendarActivity extends BaseActivity implements OnDateSelectedList
     private ArrayList<Event> mEvents;
     private HashSet<CalendarDay> mDates;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+    private View mView;
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Calendar");
+    public CalendarFragment() {
+        // Required empty public constructor
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_calendar, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         addEventsListener();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
 
         removeEventsListener();
     }
@@ -72,9 +87,10 @@ public class CalendarActivity extends BaseActivity implements OnDateSelectedList
         }
 
         // Pass date
-        Intent intent = new Intent(CalendarActivity.this, DateActivity.class);
-        intent.putExtra("date", dateString);
-        startActivity(intent);
+        DateFragment fragment = new DateFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("date", dateString);
+        ((MainActivity)getActivity()).addFragment(fragment, bundle);
 
         Log.d(TAG, "onDateSelected: Date selected: " + dateString);
     }
@@ -91,8 +107,8 @@ public class CalendarActivity extends BaseActivity implements OnDateSelectedList
 
         public EventDecorator(HashSet<CalendarDay> dates) {
             this.dates = dates;
-            this.backgroundColor = ContextCompat.getColor(CalendarActivity.this, R.color.colorAccent);
-            this.textColor = ContextCompat.getColor(CalendarActivity.this, R.color.colorPrimary);
+            this.backgroundColor = ContextCompat.getColor(getContext(), R.color.colorAccent);
+            this.textColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         }
 
         @Override
@@ -107,9 +123,9 @@ public class CalendarActivity extends BaseActivity implements OnDateSelectedList
         }
     }
 
-    public void addEventsListener() {
+    private void addEventsListener() {
         // Set calendar listeners
-        final MaterialCalendarView events_calendar = findViewById(R.id.events_calendar);
+        final MaterialCalendarView events_calendar = mView.findViewById(R.id.events_calendar);
         events_calendar.setOnDateChangedListener(this);
         events_calendar.setOnMonthChangedListener(this);
 
@@ -217,7 +233,7 @@ public class CalendarActivity extends BaseActivity implements OnDateSelectedList
         Log.d(TAG, "addEventsListener: Listener added");
     }
 
-    public void removeEventsListener() {
+    private void removeEventsListener() {
         // Remove events listener
         mEventsData.removeEventListener(mEventsListener);
 

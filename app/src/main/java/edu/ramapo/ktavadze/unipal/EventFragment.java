@@ -2,15 +2,18 @@ package edu.ramapo.ktavadze.unipal;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,53 +27,74 @@ import android.widget.TimePicker;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class EventActivity extends BaseActivity {
-    private static final String TAG = "EventActivity";
-
-    private Event mEvent;
+public class EventFragment extends Fragment {
+    private static final String TAG = "EventFragment";
 
     private Database mDatabase;
 
+    private Event mEvent;
+
+    private View mView;
+
     private MenuItem mEditIcon;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
-
-        getIntentData();
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mEvent.getName());
-
-        displayEventData();
-
-        mDatabase = new Database(this);
-        mDatabase.addCoursesListener();
-
-        addDeleteListener();
-        addToggleListener();
+    public EventFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        mDatabase.removeCoursesListener();
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+
+        // Get event
+        mEvent = new Event();
+        String uid = getArguments().getString("uid", "");
+        mEvent.setUid(uid);
+        int index = mDatabase.events.indexOf(mEvent);
+        mEvent = mDatabase.events.get(index);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_event, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
+
+        addDeleteListener();
+        addToggleListener();
+
+        displayEventData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
 
         removeDeleteListener();
         removeToggleListener();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_edit_event)
                 .setIcon(R.drawable.ic_edit)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         mEditIcon = menu.getItem(0);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -85,83 +109,25 @@ public class EventActivity extends BaseActivity {
         }
     }
 
-    public void getIntentData() {
-        final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("type") && intent.hasExtra("courseName")
-                && intent.hasExtra("date") && intent.hasExtra("time") && intent.hasExtra("uid")
-                && intent.hasExtra("complete")) {
-            String name = intent.getStringExtra("name");
-            String type = intent.getStringExtra("type");
-            String courseName = intent.getStringExtra("courseName");
-            String date = intent.getStringExtra("date");
-            String time = intent.getStringExtra("time");
-            String uid = intent.getStringExtra("uid");
-            boolean complete = intent.getBooleanExtra("complete", false);
-            mEvent = new Event(name, type, courseName, date, time, uid, complete);
-
-            Log.d(TAG, "getIntentData: Intent accepted");
-        }
-        else {
-            finish();
-
-            Log.d(TAG, "getIntentData: Intent rejected");
-        }
-    }
-
-    public void displayEventData() {
-        final TextView event_name_text = findViewById(R.id.event_name_text);
-        final TextView event_type_text = findViewById(R.id.event_type_text);
-        final TextView event_course_text = findViewById(R.id.event_course_text);
-        final TextView event_date_text = findViewById(R.id.event_date_text);
-        final TextView event_time_text = findViewById(R.id.event_time_text);
-        final TextView event_status_text = findViewById(R.id.event_status_text);
-        final ScrollView event_scroll = findViewById(R.id.event_scroll);
-        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
-
-        event_name_text.setText(mEvent.getName());
-        event_type_text.setText(mEvent.getType());
-        event_course_text.setText(mEvent.getCourseName());
-        event_date_text.setText(mEvent.getDate());
-        event_time_text.setText(mEvent.getTime());
-
-        // Display status
-        String status = "Incomplete";
-        if (mEvent.isComplete()) {
-            status = "Complete";
-        }
-        event_status_text.setText(status);
-
-        final int backgroundYellow = ContextCompat.getColor(EventActivity.this, R.color.colorSecondary);
-        final int backgroundGreen = ContextCompat.getColor(EventActivity.this, R.color.colorTertiary);
-        if (mEvent.isComplete()) {
-            event_scroll.setBackgroundColor(backgroundGreen);
-            toggle_event_button.setBackgroundColor(backgroundYellow);
-        }
-        else {
-            event_scroll.setBackgroundColor(backgroundYellow);
-            toggle_event_button.setBackgroundColor(backgroundGreen);
-        }
-    }
-
-    public void addDeleteListener() {
+    private void addDeleteListener() {
         // Add delete listener
-        final Button delete_event_button = findViewById(R.id.delete_event_button);
+        final Button delete_event_button = mView.findViewById(R.id.delete_event_button);
         delete_event_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Remove event
                 mDatabase.removeEvent(mEvent);
 
-                finish();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
-    public void addToggleListener() {
+    private void addToggleListener() {
         // Add toggle listener
-        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
+        final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
         toggle_event_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,36 +142,71 @@ public class EventActivity extends BaseActivity {
         Log.d(TAG, "addToggleListener: Listener added");
     }
 
-    public void removeDeleteListener() {
+    private void removeDeleteListener() {
         // Remove delete listener
-        final Button delete_event_button = findViewById(R.id.delete_event_button);
+        final Button delete_event_button = mView.findViewById(R.id.delete_event_button);
         delete_event_button.setOnClickListener(null);
 
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
-    public void removeToggleListener() {
+    private void removeToggleListener() {
         // Remove toggle listener
-        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
+        final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
         toggle_event_button.setOnClickListener(null);
 
         Log.d(TAG, "removeToggleListener: Listener removed");
     }
 
-    public void startEditing() {
-        final TextView event_name_text = findViewById(R.id.event_name_text);
-        final EditText event_name_edit = findViewById(R.id.event_name_edit);
-        final TextView event_type_text = findViewById(R.id.event_type_text);
-        final Spinner event_type_spinner = findViewById(R.id.event_type_spinner);
-        final TextView event_course_text = findViewById(R.id.event_course_text);
-        final Spinner event_course_spinner = findViewById(R.id.event_course_spinner);
-        final TextView event_date_text = findViewById(R.id.event_date_text);
-        final TextView event_time_text = findViewById(R.id.event_time_text);
-        final LinearLayout event_status_container = findViewById(R.id.event_status_container);
-        final Button delete_event_button = findViewById(R.id.delete_event_button);
-        final Button toggle_event_button = findViewById(R.id.toggle_event_button);
-        final Button cancel_event_button = findViewById(R.id.cancel_event_button);
-        final Button update_event_button = findViewById(R.id.update_event_button);
+    private void displayEventData() {
+        final TextView event_name_text = mView.findViewById(R.id.event_name_text);
+        final TextView event_type_text = mView.findViewById(R.id.event_type_text);
+        final TextView event_course_text = mView.findViewById(R.id.event_course_text);
+        final TextView event_date_text = mView.findViewById(R.id.event_date_text);
+        final TextView event_time_text = mView.findViewById(R.id.event_time_text);
+        final TextView event_status_text = mView.findViewById(R.id.event_status_text);
+        final ScrollView event_scroll = mView.findViewById(R.id.event_scroll);
+        final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
+
+        event_name_text.setText(mEvent.getName());
+        event_type_text.setText(mEvent.getType());
+        event_course_text.setText(mEvent.getCourseName());
+        event_date_text.setText(mEvent.getDate());
+        event_time_text.setText(mEvent.getTime());
+
+        // Display status
+        String status = "Incomplete";
+        if (mEvent.isComplete()) {
+            status = "Complete";
+        }
+        event_status_text.setText(status);
+
+        final int backgroundYellow = ContextCompat.getColor(getContext(), R.color.colorSecondary);
+        final int backgroundGreen = ContextCompat.getColor(getContext(), R.color.colorTertiary);
+        if (mEvent.isComplete()) {
+            event_scroll.setBackgroundColor(backgroundGreen);
+            toggle_event_button.setBackgroundColor(backgroundYellow);
+        }
+        else {
+            event_scroll.setBackgroundColor(backgroundYellow);
+            toggle_event_button.setBackgroundColor(backgroundGreen);
+        }
+    }
+
+    private void startEditing() {
+        final TextView event_name_text = mView.findViewById(R.id.event_name_text);
+        final EditText event_name_edit = mView.findViewById(R.id.event_name_edit);
+        final TextView event_type_text = mView.findViewById(R.id.event_type_text);
+        final Spinner event_type_spinner = mView.findViewById(R.id.event_type_spinner);
+        final TextView event_course_text = mView.findViewById(R.id.event_course_text);
+        final Spinner event_course_spinner = mView.findViewById(R.id.event_course_spinner);
+        final TextView event_date_text = mView.findViewById(R.id.event_date_text);
+        final TextView event_time_text = mView.findViewById(R.id.event_time_text);
+        final LinearLayout event_status_container = mView.findViewById(R.id.event_status_container);
+        final Button delete_event_button = mView.findViewById(R.id.delete_event_button);
+        final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
+        final Button cancel_event_button = mView.findViewById(R.id.cancel_event_button);
+        final Button update_event_button = mView.findViewById(R.id.update_event_button);
 
         // Update UI
         mEditIcon.setVisible(false);
@@ -288,7 +289,7 @@ public class EventActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // Build date picker
-                DatePickerDialog date_picker = new DatePickerDialog(EventActivity.this,
+                DatePickerDialog date_picker = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -331,7 +332,7 @@ public class EventActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // Build time picker
-                TimePickerDialog time_picker = new TimePickerDialog(EventActivity.this,
+                TimePickerDialog time_picker = new TimePickerDialog(getContext(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hour, int minute) {
@@ -394,8 +395,7 @@ public class EventActivity extends BaseActivity {
                 update_event_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(EventActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 displayEventData();
             }
@@ -428,8 +428,7 @@ public class EventActivity extends BaseActivity {
                 update_event_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(EventActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 // Set name
                 String name = event_name_edit.getText().toString().trim();

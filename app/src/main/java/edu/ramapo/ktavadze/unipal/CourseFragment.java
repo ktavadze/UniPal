@@ -1,64 +1,88 @@
 package edu.ramapo.ktavadze.unipal;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class CourseActivity extends BaseActivity {
-    private static final String TAG = "CourseActivity";
-
-    private Course mCourse;
+public class CourseFragment extends Fragment {
+    private static final String TAG = "CourseFragment";
 
     private Database mDatabase;
 
+    private Course mCourse;
+
+    private View mView;
+
     private MenuItem mEditIcon;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_course);
-
-        getIntentData();
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mCourse.getName());
-
-        displayCourseData();
-
-        mDatabase = new Database(this);
-        mDatabase.addSchoolsListener();
-
-        addDeleteListener();
+    public CourseFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        mDatabase.removeSchoolsListener();
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+
+        // Get course
+        mCourse = new Course();
+        String uid = getArguments().getString("uid", "");
+        mCourse.setUid(uid);
+        int index = mDatabase.courses.indexOf(mCourse);
+        mCourse = mDatabase.courses.get(index);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_course, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
+
+        addDeleteListener();
+
+        displayCourseData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
 
         removeDeleteListener();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_edit_course)
                 .setIcon(R.drawable.ic_edit)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         mEditIcon = menu.getItem(0);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -73,33 +97,12 @@ public class CourseActivity extends BaseActivity {
         }
     }
 
-    public void getIntentData() {
-        final Intent intent = getIntent();
-        if (intent.hasExtra("name") && intent.hasExtra("department") && intent.hasExtra("number")
-                && intent.hasExtra("section") && intent.hasExtra("schoolName") && intent.hasExtra("uid")) {
-            String name = intent.getStringExtra("name");
-            String department = intent.getStringExtra("department");
-            String number = intent.getStringExtra("number");
-            String section = intent.getStringExtra("section");
-            String schoolName = intent.getStringExtra("schoolName");
-            String uid = intent.getStringExtra("uid");
-            mCourse = new Course(name, department, number, section, schoolName, uid);
-
-            Log.d(TAG, "getIntentData: Intent accepted");
-        }
-        else {
-            finish();
-
-            Log.d(TAG, "getIntentData: Intent rejected");
-        }
-    }
-
-    public void displayCourseData() {
-        final TextView course_name_text = findViewById(R.id.course_name_text);
-        final TextView course_department_text = findViewById(R.id.course_department_text);
-        final TextView course_number_text = findViewById(R.id.course_number_text);
-        final TextView course_section_text = findViewById(R.id.course_section_text);
-        final TextView course_school_text = findViewById(R.id.course_school_text);
+    private void displayCourseData() {
+        final TextView course_name_text = mView.findViewById(R.id.course_name_text);
+        final TextView course_department_text = mView.findViewById(R.id.course_department_text);
+        final TextView course_number_text = mView.findViewById(R.id.course_number_text);
+        final TextView course_section_text = mView.findViewById(R.id.course_section_text);
+        final TextView course_school_text = mView.findViewById(R.id.course_school_text);
 
         course_name_text.setText(mCourse.getName());
         course_department_text.setText(mCourse.getDepartment());
@@ -108,44 +111,44 @@ public class CourseActivity extends BaseActivity {
         course_school_text.setText(mCourse.getSchoolName());
     }
 
-    public void addDeleteListener() {
+    private void addDeleteListener() {
         // Add delete listener
-        final Button delete_course_button = findViewById(R.id.delete_course_button);
+        final Button delete_course_button = mView.findViewById(R.id.delete_course_button);
         delete_course_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Remove course
                 mDatabase.removeCourse(mCourse);
 
-                finish();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
-    public void removeDeleteListener() {
+    private void removeDeleteListener() {
         // Remove delete listener
-        final Button delete_course_button = findViewById(R.id.delete_course_button);
+        final Button delete_course_button = mView.findViewById(R.id.delete_course_button);
         delete_course_button.setOnClickListener(null);
 
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
-    public void startEditing() {
-        final TextView course_name_text = findViewById(R.id.course_name_text);
-        final EditText course_name_edit = findViewById(R.id.course_name_edit);
-        final TextView course_department_text = findViewById(R.id.course_department_text);
-        final EditText course_department_edit = findViewById(R.id.course_department_edit);
-        final TextView course_number_text = findViewById(R.id.course_number_text);
-        final EditText course_number_edit = findViewById(R.id.course_number_edit);
-        final TextView course_section_text = findViewById(R.id.course_section_text);
-        final EditText course_section_edit = findViewById(R.id.course_section_edit);
-        final TextView course_school_text = findViewById(R.id.course_school_text);
-        final Spinner course_school_spinner = findViewById(R.id.course_school_spinner);
-        final Button delete_course_button = findViewById(R.id.delete_course_button);
-        final Button cancel_course_button = findViewById(R.id.cancel_course_button);
-        final Button update_course_button = findViewById(R.id.update_course_button);
+    private void startEditing() {
+        final TextView course_name_text = mView.findViewById(R.id.course_name_text);
+        final EditText course_name_edit = mView.findViewById(R.id.course_name_edit);
+        final TextView course_department_text = mView.findViewById(R.id.course_department_text);
+        final EditText course_department_edit = mView.findViewById(R.id.course_department_edit);
+        final TextView course_number_text = mView.findViewById(R.id.course_number_text);
+        final EditText course_number_edit = mView.findViewById(R.id.course_number_edit);
+        final TextView course_section_text = mView.findViewById(R.id.course_section_text);
+        final EditText course_section_edit = mView.findViewById(R.id.course_section_edit);
+        final TextView course_school_text = mView.findViewById(R.id.course_school_text);
+        final Spinner course_school_spinner = mView.findViewById(R.id.course_school_spinner);
+        final Button delete_course_button = mView.findViewById(R.id.delete_course_button);
+        final Button cancel_course_button = mView.findViewById(R.id.cancel_course_button);
+        final Button update_course_button = mView.findViewById(R.id.update_course_button);
 
         // Update UI
         mEditIcon.setVisible(false);
@@ -230,8 +233,7 @@ public class CourseActivity extends BaseActivity {
                 update_course_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(CourseActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 displayCourseData();
             }
@@ -263,8 +265,7 @@ public class CourseActivity extends BaseActivity {
                 update_course_button.setOnClickListener(null);
 
                 // Hide keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(CourseActivity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                ((MainActivity)getActivity()).hideKeyboard();
 
                 // Set name
                 String name = course_name_edit.getText().toString().trim();

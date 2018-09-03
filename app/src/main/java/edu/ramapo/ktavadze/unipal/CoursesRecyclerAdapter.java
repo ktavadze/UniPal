@@ -1,7 +1,7 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -75,14 +75,10 @@ public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecycler
         holder.recycler_course.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, CourseActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("department", department);
-                intent.putExtra("number", number);
-                intent.putExtra("section", section);
-                intent.putExtra("schoolName", schoolName);
-                intent.putExtra("uid", uid);
-                mContext.startActivity(intent);
+                CourseFragment fragment = new CourseFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("uid", uid);
+                ((MainActivity)mContext).addFragment(fragment, bundle);
 
                 Log.d(TAG, "onClick: Clicked on: " + name);
             }

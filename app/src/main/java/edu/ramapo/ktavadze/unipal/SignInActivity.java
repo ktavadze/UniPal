@@ -129,7 +129,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
-                    startActivity(new Intent(SignInActivity.this, DashboardActivity.class));
+                    startActivity(new Intent(SignInActivity.this, MainActivity.class));
 
                     finish();
                 }

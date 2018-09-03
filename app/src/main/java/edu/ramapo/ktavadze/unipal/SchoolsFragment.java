@@ -3,48 +3,63 @@ package edu.ramapo.ktavadze.unipal;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
-public class SchoolsActivity extends BaseActivity {
-    private static final String TAG = "SchoolsActivity";
+public class SchoolsFragment extends Fragment {
+    private static final String TAG = "SchoolsFragment";
 
     private Database mDatabase;
 
+    private View mView;
+
+    public SchoolsFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schools);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Schools");
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+    }
 
-        mDatabase = new Database(this);
-        mDatabase.addSchoolsListener();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_schools, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
 
         initRecycler();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        mDatabase.removeSchoolsListener();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_new_school)
                 .setIcon(R.drawable.ic_add)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -59,18 +74,18 @@ public class SchoolsActivity extends BaseActivity {
         }
     }
 
-    public void initRecycler() {
+    private void initRecycler() {
         // Init recycler
-        final RecyclerView schools_recycler = findViewById(R.id.schools_recycler);
+        final RecyclerView schools_recycler = mView.findViewById(R.id.schools_recycler);
         schools_recycler.setAdapter(mDatabase.schoolsAdapter);
-        schools_recycler.setLayoutManager(new LinearLayoutManager(this));
+        schools_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void actionNewSchool() {
+    private void actionNewSchool() {
         final School newSchool = new School();
 
         // Build new school dialog
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_school_new, null);
         dialogBuilder.setView(dialogView);

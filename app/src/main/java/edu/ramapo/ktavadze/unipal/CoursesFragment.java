@@ -3,53 +3,66 @@ package edu.ramapo.ktavadze.unipal;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class CoursesActivity extends BaseActivity {
-    private static final String TAG = "CoursesActivity";
+public class CoursesFragment extends Fragment {
+    private static final String TAG = "CoursesFragment";
 
     private Database mDatabase;
 
+    private View mView;
+
+    public CoursesFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_courses);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Courses");
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+    }
 
-        mDatabase = new Database(this);
-        mDatabase.addCoursesListener();
-        mDatabase.addSchoolsListener();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_courses, null);
+
+        return mView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
 
         initRecycler();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        mDatabase.removeCoursesListener();
-        mDatabase.removeSchoolsListener();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_new_course)
                 .setIcon(R.drawable.ic_add)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -64,18 +77,18 @@ public class CoursesActivity extends BaseActivity {
         }
     }
 
-    public void initRecycler() {
+    private void initRecycler() {
         // Init recycler
-        final RecyclerView courses_recycler = findViewById(R.id.courses_recycler);
+        final RecyclerView courses_recycler = mView.findViewById(R.id.courses_recycler);
         courses_recycler.setAdapter(mDatabase.coursesAdapter);
-        courses_recycler.setLayoutManager(new LinearLayoutManager(this));
+        courses_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void actionNewCourse() {
+    private void actionNewCourse() {
         final Course newCourse = new Course();
 
         // Build new course dialog
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_course_new, null);
         dialogBuilder.setView(dialogView);

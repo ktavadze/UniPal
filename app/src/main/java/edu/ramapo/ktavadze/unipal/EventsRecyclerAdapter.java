@@ -1,7 +1,7 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -128,15 +128,10 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
         holder.recycler_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, EventActivity.class);
-                intent.putExtra("name", name);
-                intent.putExtra("type", type);
-                intent.putExtra("courseName", courseName);
-                intent.putExtra("date", date);
-                intent.putExtra("time", time);
-                intent.putExtra("uid", uid);
-                intent.putExtra("complete", event.isComplete());
-                mContext.startActivity(intent);
+                EventFragment fragment = new EventFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("uid", uid);
+                ((MainActivity)mContext).addFragment(fragment, bundle);
 
                 Log.d(TAG, "onClick: Clicked on: " + name);
             }

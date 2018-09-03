@@ -11,31 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SignInActivity" />
-        <activity
-            android:name=".DashboardActivity"
-            android:launchMode="singleTask">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EventActivity" />
-        <activity android:name=".UserActivity" />
-        <activity
-            android:name=".SchoolsActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".SchoolActivity" />
-        <activity
-            android:name=".CoursesActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".CourseActivity" />
-        <activity
-            android:name=".CalendarActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".DateActivity"
-            android:launchMode="singleTask" />
     </application>
 
 </manifest>

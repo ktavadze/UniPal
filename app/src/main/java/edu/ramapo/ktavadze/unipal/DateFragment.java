@@ -1,87 +1,90 @@
 package edu.ramapo.ktavadze.unipal;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
-
 import java.util.Calendar;
 
-public class DashboardActivity extends BaseActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
-    private static final String TAG = "DashboardActivity";
-
-    private FirebaseAuth mAuth;
-    private FirebaseUser mCurrentUser;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+public class DateFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+    private static final String TAG = "DateFragment";
 
     private Database mDatabase;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+    private String mDate;
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Dashboard");
+    private View mView;
 
-        addAuthListener();
-
-        // Initialize
-        if (mCurrentUser != null) {
-            initUser();
-
-            mDatabase = new Database(this);
-            mDatabase.addEventsListener();
-            mDatabase.addCoursesListener();
-
-            initRecycler();
-        }
+    public DateFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onDestroy() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get date
+        mDate = getArguments().getString("date", "");
+
+        mDatabase = new Database(getContext());
+        mDatabase.addEventsListener(mDate);
+        mDatabase.addCoursesListener();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
 
-        removeAuthListener();
+        mDatabase.removeEventsListener();
+        mDatabase.removeCoursesListener();
+    }
 
-        if (mCurrentUser != null) {
-            mDatabase.removeEventsListener();
-            mDatabase.removeCoursesListener();
-        }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mView = inflater.inflate(R.layout.fragment_date, null);
+
+        return mView;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onStart() {
+        super.onStart();
+
+        setHasOptionsMenu(true);
+
+        initRecycler();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.add(0, 0, 0, R.string.action_new_event)
                 .setIcon(R.drawable.ic_add)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -105,8 +108,7 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
         mDatabase.eventsAdapter.removeEvent(position);
 
         // Show undo snack bar
-        ConstraintLayout dashboard_activity = findViewById(R.id.dashboard_activity);
-        Snackbar snackbar = Snackbar.make(dashboard_activity, "Event removed", Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_SHORT);
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,62 +119,24 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
         snackbar.show();
     }
 
-    public void addAuthListener() {
-        // Add auth state listener
-        mAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mAuth.getCurrentUser();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-                    Intent intent = new Intent(DashboardActivity.this, SignInActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-            }
-        };
-        mAuth.addAuthStateListener(mAuthListener);
-
-        Log.d(TAG, "addAuthListener: Listener added");
-    }
-
-    public void removeAuthListener() {
-        // remove auth listener
-        mAuth.removeAuthStateListener(mAuthListener);
-
-        Log.d(TAG, "removeAuthListener: Listener removed");
-    }
-
-    public void initUser() {
-        // Get Google provider data
-        UserInfo profile = mCurrentUser.getProviderData().get(1);
-
-        final String displayName = profile.getDisplayName();
-        final String email = profile.getEmail();
-        final String uid = profile.getUid();
-
-        User.init(displayName, email, uid);
-    }
-
-    public void initRecycler() {
+    private void initRecycler() {
         // Init recycler
-        final RecyclerView events_recycler = findViewById(R.id.events_recycler);
-        events_recycler.setAdapter(mDatabase.eventsAdapter);
-        events_recycler.setItemAnimator(new DefaultItemAnimator());
-        events_recycler.setLayoutManager(new LinearLayoutManager(this));
+        final RecyclerView date_events_recycler = mView.findViewById(R.id.date_events_recycler);
+        date_events_recycler.setAdapter(mDatabase.eventsAdapter);
+        date_events_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Attach item touch helper
         ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
                 new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
+        new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(date_events_recycler);
     }
 
-    public void actionNewEvent() {
+    private void actionNewEvent() {
         final Event newEvent = new Event();
         final Calendar cal = Calendar.getInstance();
 
         // Build new event dialog
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_event_new, null);
         dialogBuilder.setView(dialogView);
@@ -183,6 +147,7 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
         final Spinner event_type_spinner = dialogView.findViewById(R.id.event_type_spinner);
         final Spinner event_course_spinner = dialogView.findViewById(R.id.event_course_spinner);
         final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
+        event_date_pick.setVisibility(View.GONE);
         final TextView event_time_pick = dialogView.findViewById(R.id.event_time_pick);
 
         // Type
@@ -232,54 +197,12 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
             });
         }
 
-        // Date
-        event_date_pick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Build date picker
-                DatePickerDialog date_picker = new DatePickerDialog(DashboardActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int day) {
-                                // Format date
-                                month++;
-                                String date;
-                                if (month < 10 && day < 10) {
-                                    date = "0" + month + "/0" + day + "/" + year;
-                                }
-                                else if (month < 10) {
-                                    date = "0" + month + "/" + day + "/" + year;
-                                }
-                                else if (day < 10) {
-                                    date = "" + month + "/0" + day + "/" + year;
-                                }
-                                else {
-                                    date = "" + month + "/" + day + "/" + year;
-                                }
-
-                                // Set date
-                                newEvent.setDate(date);
-
-                                // Preview date
-                                event_date_pick.setText(date);
-
-                                Log.d(TAG, "onDateSet: Date set: " + date);
-                            }
-                        },
-                        cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-
-                // Show date picker
-                date_picker.getWindow();
-                date_picker.show();
-            }
-        });
-
         // Time
         event_time_pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Build time picker
-                TimePickerDialog time_picker = new TimePickerDialog(DashboardActivity.this,
+                TimePickerDialog time_picker = new TimePickerDialog(getContext(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hour, int minute) {
@@ -326,6 +249,9 @@ public class DashboardActivity extends BaseActivity implements RecyclerItemTouch
                 else {
                     newEvent.setName(name);
                 }
+
+                // Set date
+                newEvent.setDate(mDate);
 
                 // Add event
                 mDatabase.addEvent(newEvent);
