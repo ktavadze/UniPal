@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             mDatabase.addCoursesListener();
             mDatabase.addSchoolsListener();
 
-            addFragment(new DashboardFragment());
+            initDashboard();
 
             BottomNavigationView navigation = findViewById(R.id.main_navigation);
             navigation.setOnNavigationItemSelectedListener(this);
@@ -123,6 +123,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         final String uid = profile.getUid();
 
         User.init(displayName, email, uid);
+    }
+
+    private void initDashboard() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_container, new DashboardFragment())
+                    .commit();
+        }
     }
 
     private boolean addFragment(Fragment fragment) {
