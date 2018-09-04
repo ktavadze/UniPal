@@ -36,14 +36,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             initUser();
 
             mDatabase = new Database(this);
-            mDatabase.addEventsListener();
-            mDatabase.addCoursesListener();
-            mDatabase.addSchoolsListener();
+            mDatabase.addListeners();
 
-            initDashboard();
-
-            BottomNavigationView navigation = findViewById(R.id.main_navigation);
-            navigation.setOnNavigationItemSelectedListener(this);
+            initView();
         }
     }
 
@@ -54,9 +49,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         removeAuthListener();
 
         if (mCurrentUser != null) {
-            mDatabase.removeEventsListener();
-            mDatabase.removeCoursesListener();
-            mDatabase.removeSchoolsListener();
+            mDatabase.removeListeners();
         }
     }
 
@@ -79,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void addAuthListener() {
-        // Add auth state listener
+        // Add auth listener
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -115,13 +108,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         User.init(displayName, email, uid);
     }
 
-    private void initDashboard() {
+    private void initView() {
+        // Load dashboard in container
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.main_container, new DashboardFragment())
                     .commit();
         }
+
+        // Select dashboard in nav
+        BottomNavigationView navigation = findViewById(R.id.main_navigation);
+        navigation.setOnNavigationItemSelectedListener(this);
     }
 
     private boolean loadFragment(Fragment fragment) {

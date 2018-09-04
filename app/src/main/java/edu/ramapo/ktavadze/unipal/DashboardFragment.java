@@ -45,6 +45,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         super.onCreate(savedInstanceState);
 
         mDatabase = ((MainActivity)getActivity()).mDatabase;
+        mDatabase.selectAllEvents();
     }
 
     @Nullable
@@ -90,10 +91,10 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
         // Backup removed event
-        final Event event = mDatabase.events.get(position);
+        final Event event = mDatabase.selectedEvents.get(position);
 
         // Remove event
-        mDatabase.eventsAdapter.removeEvent(position);
+        mDatabase.selectedEventsAdapter.removeEvent(position);
 
         // Show undo snack bar
         Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_SHORT);
@@ -101,7 +102,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
             @Override
             public void onClick(View view) {
                 // Restore event
-                mDatabase.eventsAdapter.restoreEvent(event, position);
+                mDatabase.selectedEventsAdapter.restoreEvent(event, position);
             }
         });
         snackbar.show();
@@ -110,7 +111,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
     private void initRecycler() {
         // Init recycler
         final RecyclerView events_recycler = mView.findViewById(R.id.events_recycler);
-        events_recycler.setAdapter(mDatabase.eventsAdapter);
+        events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
         events_recycler.setItemAnimator(new DefaultItemAnimator());
         events_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
 

@@ -52,8 +52,8 @@ public class EventFragment extends Fragment {
         mEvent = new Event();
         String uid = getArguments().getString("uid", "");
         mEvent.setUid(uid);
-        int index = mDatabase.events.indexOf(mEvent);
-        mEvent = mDatabase.events.get(index);
+        int index = mDatabase.allEvents.indexOf(mEvent);
+        mEvent = mDatabase.allEvents.get(index);
     }
 
     @Nullable

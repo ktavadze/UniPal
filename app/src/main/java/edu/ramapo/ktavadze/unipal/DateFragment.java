@@ -46,17 +46,8 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
         // Get date
         mDate = getArguments().getString("date", "");
 
-        mDatabase = new Database(getContext());
-        mDatabase.addEventsListener(mDate);
-        mDatabase.addCoursesListener();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mDatabase.removeEventsListener();
-        mDatabase.removeCoursesListener();
+        mDatabase = ((MainActivity)getActivity()).mDatabase;
+        mDatabase.selectEvents(mDate);
     }
 
     @Nullable
@@ -102,10 +93,10 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
         // Backup removed event
-        final Event event = mDatabase.events.get(position);
+        final Event event = mDatabase.selectedEvents.get(position);
 
         // Remove event
-        mDatabase.eventsAdapter.removeEvent(position);
+        mDatabase.selectedEventsAdapter.removeEvent(position);
 
         // Show undo snack bar
         Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_SHORT);
@@ -113,7 +104,7 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
             @Override
             public void onClick(View view) {
                 // Restore event
-                mDatabase.eventsAdapter.restoreEvent(event, position);
+                mDatabase.selectedEventsAdapter.restoreEvent(event, position);
             }
         });
         snackbar.show();
@@ -122,7 +113,7 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
     private void initRecycler() {
         // Init recycler
         final RecyclerView date_events_recycler = mView.findViewById(R.id.date_events_recycler);
-        date_events_recycler.setAdapter(mDatabase.eventsAdapter);
+        date_events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
         date_events_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Attach item touch helper
