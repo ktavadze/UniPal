@@ -46,7 +46,6 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         super.onCreate(savedInstanceState);
 
         mDatabase = ((MainActivity)getActivity()).mDatabase;
-        mDatabase.selectAllEvents();
     }
 
     @Nullable
@@ -138,12 +137,46 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         final Button week_button = mView.findViewById(R.id.week_button);
         final Button day_button = mView.findViewById(R.id.day_button);
 
+        final int active = getResources().getColor(R.color.colorAccent);
+        final int inactive = getResources().getColor(R.color.colorPrimary);
+
+        switch (mDatabase.filter) {
+            case 99:
+                all_button.setBackgroundColor(active);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(inactive);
+                break;
+            case 31:
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(active);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(inactive);
+                break;
+            case 7:
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(active);
+                day_button.setBackgroundColor(inactive);
+                break;
+            case 1:
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(active);
+        }
+
         all_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDatabase.selectAllEvents();
 
                 events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+
+                all_button.setBackgroundColor(active);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(inactive);
             }
         });
 
@@ -153,6 +186,11 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
                 mDatabase.selectEvents(31);
 
                 events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(active);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(inactive);
             }
         });
 
@@ -162,6 +200,11 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
                 mDatabase.selectEvents(7);
 
                 events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(active);
+                day_button.setBackgroundColor(inactive);
             }
         });
 
@@ -171,6 +214,11 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
                 mDatabase.selectEvents(1);
 
                 events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+
+                all_button.setBackgroundColor(inactive);
+                month_button.setBackgroundColor(inactive);
+                week_button.setBackgroundColor(inactive);
+                day_button.setBackgroundColor(active);
             }
         });
 

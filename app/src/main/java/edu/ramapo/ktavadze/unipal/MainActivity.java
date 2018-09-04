@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             mDatabase = new Database(this);
             mDatabase.addListeners();
+            mDatabase.selectEvents(31);
 
             initView();
         }

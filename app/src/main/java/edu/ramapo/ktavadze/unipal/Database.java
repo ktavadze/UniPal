@@ -53,6 +53,8 @@ public class Database {
     public ArrayAdapter<String> schoolNamesAdapter;
     public ArrayAdapter<String> courseNamesAdapter;
 
+    public int filter;
+
     public Database(Context context) {
         this.context = context;
     }
@@ -279,12 +281,14 @@ public class Database {
     }
 
     public void selectAllEvents() {
+        filter = 99;
         selectedDates = null;
         selectedEvents = new ArrayList<>(allEvents);
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
     }
 
     public void selectEvents(final int days) {
+        filter = days;
         selectedDates = new ArrayList<>();
         selectedEvents = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
@@ -305,6 +309,7 @@ public class Database {
     }
 
     public void selectEvents(final String date) {
+        filter = 0;
         selectedDates = new ArrayList<>();
         selectedDates.add(date);
         selectedEvents = new ArrayList<>();
