@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -65,6 +66,15 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         setHasOptionsMenu(true);
 
         initRecycler();
+
+        addSelectionListeners();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        removeSelectionListeners();
     }
 
     @Override
@@ -119,6 +129,66 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
                 new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
+    }
+
+    private void addSelectionListeners() {
+        final RecyclerView events_recycler = mView.findViewById(R.id.events_recycler);
+        final Button all_button = mView.findViewById(R.id.all_button);
+        final Button month_button = mView.findViewById(R.id.month_button);
+        final Button week_button = mView.findViewById(R.id.week_button);
+        final Button day_button = mView.findViewById(R.id.day_button);
+
+        all_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatabase.selectAllEvents();
+
+                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+            }
+        });
+
+        month_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatabase.selectEvents(31);
+
+                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+            }
+        });
+
+        week_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatabase.selectEvents(7);
+
+                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+            }
+        });
+
+        day_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatabase.selectEvents(1);
+
+                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+            }
+        });
+
+        Log.d(TAG, "addSelectionListeners: Listeners added");
+    }
+
+    private void removeSelectionListeners() {
+        final Button all_button = mView.findViewById(R.id.all_button);
+        final Button month_button = mView.findViewById(R.id.month_button);
+        final Button week_button = mView.findViewById(R.id.week_button);
+        final Button day_button = mView.findViewById(R.id.day_button);
+
+        all_button.setOnClickListener(null);
+        month_button.setOnClickListener(null);
+        week_button.setOnClickListener(null);
+        day_button.setOnClickListener(null);
+
+        Log.d(TAG, "removeSelectionListeners: Listeners removed");
     }
 
     private void actionNewEvent() {

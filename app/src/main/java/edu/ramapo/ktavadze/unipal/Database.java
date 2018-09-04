@@ -12,7 +12,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Database class.
@@ -281,15 +284,24 @@ public class Database {
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
     }
 
-    public void selectEvents(final ArrayList<String> dates) {
-        selectedDates = dates;
+    public void selectEvents(final int days) {
+        selectedDates = new ArrayList<>();
         selectedEvents = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        for (int i = 0; i < days; i++) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.add(Calendar.DATE, i);
+            String date = sdf.format(calendar.getTime());
+            selectedDates.add(date);
+        }
         for (Event e : allEvents) {
-            if (dates.contains(e.getDate())) {
+            if (selectedDates.contains(e.getDate())) {
                 selectedEvents.add(e);
             }
         }
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
+
+        Log.d(TAG, "selectEvents: Selected dates: " + selectedDates.toString());
     }
 
     public void selectEvents(final String date) {
