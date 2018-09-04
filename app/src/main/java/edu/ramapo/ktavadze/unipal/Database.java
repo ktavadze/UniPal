@@ -281,7 +281,7 @@ public class Database {
     }
 
     public void selectAllEvents() {
-        filter = 99;
+        filter = 100;
         selectedDates = null;
         selectedEvents = new ArrayList<>(allEvents);
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
@@ -309,7 +309,6 @@ public class Database {
     }
 
     public void selectEvents(final String date) {
-        filter = 0;
         selectedDates = new ArrayList<>();
         selectedDates.add(date);
         selectedEvents = new ArrayList<>();

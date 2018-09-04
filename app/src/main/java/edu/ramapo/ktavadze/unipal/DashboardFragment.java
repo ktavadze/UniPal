@@ -130,7 +130,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
     }
 
-    private void addSelectionListeners() {
+    private void setFilter(int filter) {
         final RecyclerView events_recycler = mView.findViewById(R.id.events_recycler);
         final Button all_button = mView.findViewById(R.id.all_button);
         final Button month_button = mView.findViewById(R.id.month_button);
@@ -140,85 +140,76 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         final int active = getResources().getColor(R.color.colorAccent);
         final int inactive = getResources().getColor(R.color.colorPrimary);
 
-        switch (mDatabase.filter) {
-            case 99:
+        switch (filter) {
+            case 100:
+                mDatabase.selectAllEvents();
+
                 all_button.setBackgroundColor(active);
                 month_button.setBackgroundColor(inactive);
                 week_button.setBackgroundColor(inactive);
                 day_button.setBackgroundColor(inactive);
                 break;
             case 31:
+                mDatabase.selectEvents(31);
+
                 all_button.setBackgroundColor(inactive);
                 month_button.setBackgroundColor(active);
                 week_button.setBackgroundColor(inactive);
                 day_button.setBackgroundColor(inactive);
                 break;
             case 7:
+                mDatabase.selectEvents(7);
+
                 all_button.setBackgroundColor(inactive);
                 month_button.setBackgroundColor(inactive);
                 week_button.setBackgroundColor(active);
                 day_button.setBackgroundColor(inactive);
                 break;
             case 1:
+                mDatabase.selectEvents(1);
+
                 all_button.setBackgroundColor(inactive);
                 month_button.setBackgroundColor(inactive);
                 week_button.setBackgroundColor(inactive);
                 day_button.setBackgroundColor(active);
         }
 
+        events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
+    }
+
+    private void addSelectionListeners() {
+        final Button all_button = mView.findViewById(R.id.all_button);
+        final Button month_button = mView.findViewById(R.id.month_button);
+        final Button week_button = mView.findViewById(R.id.week_button);
+        final Button day_button = mView.findViewById(R.id.day_button);
+
+        setFilter(mDatabase.filter);
+
         all_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.selectAllEvents();
-
-                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
-
-                all_button.setBackgroundColor(active);
-                month_button.setBackgroundColor(inactive);
-                week_button.setBackgroundColor(inactive);
-                day_button.setBackgroundColor(inactive);
+                setFilter(100);
             }
         });
 
         month_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.selectEvents(31);
-
-                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
-
-                all_button.setBackgroundColor(inactive);
-                month_button.setBackgroundColor(active);
-                week_button.setBackgroundColor(inactive);
-                day_button.setBackgroundColor(inactive);
+                setFilter(31);
             }
         });
 
         week_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.selectEvents(7);
-
-                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
-
-                all_button.setBackgroundColor(inactive);
-                month_button.setBackgroundColor(inactive);
-                week_button.setBackgroundColor(active);
-                day_button.setBackgroundColor(inactive);
+                setFilter(7);
             }
         });
 
         day_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.selectEvents(1);
-
-                events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
-
-                all_button.setBackgroundColor(inactive);
-                month_button.setBackgroundColor(inactive);
-                week_button.setBackgroundColor(inactive);
-                day_button.setBackgroundColor(active);
+                setFilter(1);
             }
         });
 
