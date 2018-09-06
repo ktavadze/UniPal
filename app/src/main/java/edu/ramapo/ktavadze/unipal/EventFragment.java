@@ -162,6 +162,7 @@ public class EventFragment extends Fragment {
         final TextView event_name_text = mView.findViewById(R.id.event_name_text);
         final TextView event_type_text = mView.findViewById(R.id.event_type_text);
         final TextView event_course_text = mView.findViewById(R.id.event_course_text);
+        final TextView event_alarm_text = mView.findViewById(R.id.event_alarm_text);
         final TextView event_date_text = mView.findViewById(R.id.event_date_text);
         final TextView event_time_text = mView.findViewById(R.id.event_time_text);
         final TextView event_status_text = mView.findViewById(R.id.event_status_text);
@@ -171,6 +172,7 @@ public class EventFragment extends Fragment {
         event_name_text.setText(mEvent.getName());
         event_type_text.setText(mEvent.getType());
         event_course_text.setText(mEvent.getCourseName());
+        event_alarm_text.setText(mEvent.getAlarm());
         event_date_text.setText(mEvent.getDate());
         event_time_text.setText(mEvent.getTime());
 
@@ -200,6 +202,8 @@ public class EventFragment extends Fragment {
         final Spinner event_type_spinner = mView.findViewById(R.id.event_type_spinner);
         final TextView event_course_text = mView.findViewById(R.id.event_course_text);
         final Spinner event_course_spinner = mView.findViewById(R.id.event_course_spinner);
+        final TextView event_alarm_text = mView.findViewById(R.id.event_alarm_text);
+        final Spinner event_alarm_spinner = mView.findViewById(R.id.event_alarm_spinner);
         final TextView event_date_text = mView.findViewById(R.id.event_date_text);
         final TextView event_time_text = mView.findViewById(R.id.event_time_text);
         final LinearLayout event_status_container = mView.findViewById(R.id.event_status_container);
@@ -213,12 +217,14 @@ public class EventFragment extends Fragment {
         event_name_text.setVisibility(View.GONE);
         event_type_text.setVisibility(View.GONE);
         event_course_text.setVisibility(View.GONE);
+        event_alarm_text.setVisibility(View.GONE);
         event_status_container.setVisibility(View.GONE);
         delete_event_button.setVisibility(View.GONE);
         toggle_event_button.setVisibility(View.GONE);
         event_name_edit.setVisibility(View.VISIBLE);
         event_type_spinner.setVisibility(View.VISIBLE);
         event_course_spinner.setVisibility(View.VISIBLE);
+        event_alarm_spinner.setVisibility(View.VISIBLE);
         cancel_event_button.setVisibility(View.VISIBLE);
         update_event_button.setVisibility(View.VISIBLE);
 
@@ -282,6 +288,27 @@ public class EventFragment extends Fragment {
                 }
             });
         }
+
+        // Alarm
+        newEvent.setAlarm(mEvent.getAlarm());
+        index = Arrays.asList("No alarm", "On time").indexOf(mEvent.getAlarm());
+        event_alarm_spinner.setSelection(index);
+        event_alarm_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String alarm = parent.getItemAtPosition(position).toString();
+
+                // Set type
+                newEvent.setAlarm(alarm);
+
+                Log.d(TAG, "onItemSelected: Alarm selected: " + alarm);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Date
         newEvent.setDate(mEvent.getDate());
@@ -377,11 +404,13 @@ public class EventFragment extends Fragment {
                 event_name_edit.setVisibility(View.GONE);
                 event_type_spinner.setVisibility(View.GONE);
                 event_course_spinner.setVisibility(View.GONE);
+                event_alarm_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
+                event_alarm_text.setVisibility(View.VISIBLE);
                 event_status_container.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
@@ -389,6 +418,7 @@ public class EventFragment extends Fragment {
                 // Clear listeners
                 event_type_spinner.setOnItemSelectedListener(null);
                 event_course_spinner.setOnItemSelectedListener(null);
+                event_alarm_spinner.setOnItemSelectedListener(null);
                 event_date_text.setOnClickListener(null);
                 event_time_text.setOnClickListener(null);
                 cancel_event_button.setOnClickListener(null);
@@ -410,11 +440,13 @@ public class EventFragment extends Fragment {
                 event_name_edit.setVisibility(View.GONE);
                 event_type_spinner.setVisibility(View.GONE);
                 event_course_spinner.setVisibility(View.GONE);
+                event_alarm_spinner.setVisibility(View.GONE);
                 cancel_event_button.setVisibility(View.GONE);
                 update_event_button.setVisibility(View.GONE);
                 event_name_text.setVisibility(View.VISIBLE);
                 event_type_text.setVisibility(View.VISIBLE);
                 event_course_text.setVisibility(View.VISIBLE);
+                event_alarm_text.setVisibility(View.VISIBLE);
                 event_status_container.setVisibility(View.VISIBLE);
                 delete_event_button.setVisibility(View.VISIBLE);
                 toggle_event_button.setVisibility(View.VISIBLE);
@@ -422,6 +454,7 @@ public class EventFragment extends Fragment {
                 // Clear listeners
                 event_type_spinner.setOnItemSelectedListener(null);
                 event_course_spinner.setOnItemSelectedListener(null);
+                event_alarm_spinner.setOnItemSelectedListener(null);
                 event_date_text.setOnClickListener(null);
                 event_time_text.setOnClickListener(null);
                 cancel_event_button.setOnClickListener(null);
@@ -444,6 +477,9 @@ public class EventFragment extends Fragment {
 
                 // Set uid
                 newEvent.setUid(mEvent.getUid());
+
+                // Set alarm code
+                newEvent.setAlarmCode(mEvent.getAlarmCode());
 
                 // Update event
                 mEvent = newEvent;

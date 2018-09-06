@@ -7,6 +7,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * Event class.
@@ -17,6 +18,8 @@ public class Event {
     private String name;
     private String type;
     private String courseName;
+    private String alarm;
+    private int alarmCode = new Random().nextInt();
     private String date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).format(new Date());
     private String time = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
     private String uid;
@@ -67,6 +70,22 @@ public class Event {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public String getAlarm() {
+        return this.alarm;
+    }
+
+    public void setAlarm(String alarm) {
+        this.alarm = alarm;
+    }
+
+    public int getAlarmCode() {
+        return this.alarmCode;
+    }
+
+    public void setAlarmCode(int alarmCode) {
+        this.alarmCode = alarmCode;
     }
 
     public String getDate() {

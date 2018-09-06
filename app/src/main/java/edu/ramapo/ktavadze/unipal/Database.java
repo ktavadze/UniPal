@@ -187,9 +187,16 @@ public class Database {
                         selectedEvents.add(event);
                     }
                 }
-                calendarDays.add(event.getCalendarDay());
 
                 selectedEventsAdapter.notifyDataSetChanged();
+
+                // Add to calendar days
+                calendarDays.add(event.getCalendarDay());
+
+                // Schedule alarm
+                if (event.getAlarm().equals("On time")) {
+                    NotificationScheduler.scheduleAlarm(context, event);
+                }
 
                 Log.d(TAG, "onChildAdded: Event read: " + event.getName());
             }
@@ -224,11 +231,22 @@ public class Database {
                         }
                     }
                 }
+
+                selectedEventsAdapter.notifyDataSetChanged();
+
+                // Update calendar days
                 if (!newEvent.getCalendarDay().equals(oldEvent.getCalendarDay())) {
                     calendarDays.set(calendarDays.indexOf(oldEvent.getCalendarDay()), newEvent.getCalendarDay());
                 }
 
-                selectedEventsAdapter.notifyDataSetChanged();
+                // Update alarm
+                if (newEvent.getAlarm().equals("On time")) {
+                    NotificationScheduler.cancelAlarm(context, oldEvent);
+                    NotificationScheduler.scheduleAlarm(context, newEvent);
+                }
+                else {
+                    NotificationScheduler.cancelAlarm(context, oldEvent);
+                }
 
                 Log.d(TAG, "onChildChanged: Event updated: " + newEvent.getName());
             }
@@ -245,9 +263,16 @@ public class Database {
                         selectedEvents.remove(event);
                     }
                 }
-                calendarDays.remove(event.getCalendarDay());
 
                 selectedEventsAdapter.notifyDataSetChanged();
+
+                // Remove from calendar days
+                calendarDays.remove(event.getCalendarDay());
+
+                // Cancel alarm
+                if (event.getAlarm().equals("On time")) {
+                    NotificationScheduler.cancelAlarm(context, event);
+                }
 
                 Log.d(TAG, "onChildRemoved: Event removed: " + event.getName());
             }

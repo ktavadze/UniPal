@@ -245,6 +245,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         final EditText event_name_edit = dialogView.findViewById(R.id.event_name_edit);
         final Spinner event_type_spinner = dialogView.findViewById(R.id.event_type_spinner);
         final Spinner event_course_spinner = dialogView.findViewById(R.id.event_course_spinner);
+        final Spinner event_alarm_spinner = dialogView.findViewById(R.id.event_alarm_spinner);
         final TextView event_date_pick = dialogView.findViewById(R.id.event_date_pick);
         final TextView event_time_pick = dialogView.findViewById(R.id.event_time_pick);
 
@@ -294,6 +295,24 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
                 }
             });
         }
+
+        // Alarm
+        event_alarm_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String alarm = parent.getItemAtPosition(position).toString();
+
+                // Set alarm
+                newEvent.setAlarm(alarm);
+
+                Log.d(TAG, "onItemSelected: Alarm selected: " + alarm);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Date
         event_date_pick.setOnClickListener(new View.OnClickListener() {

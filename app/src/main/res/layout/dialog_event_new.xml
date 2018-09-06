@@ -28,6 +28,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp" />
 
+    <Spinner
+        android:id="@+id/event_alarm_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:entries="@array/event_alarms" />
+
     <TextView
         android:id="@+id/event_date_pick"
         android:layout_width="wrap_content"
