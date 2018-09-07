@@ -28,7 +28,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="25dp">
+                    android:paddingTop="35dp"
+                    android:paddingStart="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingBottom="35dp">
 
                     <TextView
                         android:text="Name: "
@@ -47,7 +50,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="25dp">
+                    android:paddingTop="35dp"
+                    android:paddingStart="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingBottom="35dp">
 
                     <TextView
                         android:text="Email: "
@@ -66,7 +72,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="25dp">
+                    android:paddingTop="35dp"
+                    android:paddingStart="25dp"
+                    android:paddingEnd="25dp"
+                    android:paddingBottom="35dp">
 
                     <TextView
                         android:text="ID: "
