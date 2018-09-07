@@ -291,7 +291,8 @@ public class EventFragment extends Fragment {
 
         // Alarm
         newEvent.setAlarm(mEvent.getAlarm());
-        index = Arrays.asList("No alarm", "On time").indexOf(mEvent.getAlarm());
+        index = Arrays.asList("No alarm", "On time", "One hour prior", "One day prior", "One week prior")
+                .indexOf(mEvent.getAlarm());
         event_alarm_spinner.setSelection(index);
         event_alarm_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

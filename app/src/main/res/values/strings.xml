@@ -27,5 +27,8 @@
     <string-array name="event_alarms">
         <item>No alarm</item>
         <item>On time</item>
+        <item>One hour prior</item>
+        <item>One day prior</item>
+        <item>One week prior</item>
     </string-array>
 </resources>
