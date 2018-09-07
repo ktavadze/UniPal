@@ -142,43 +142,4 @@ public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAd
     public int getItemCount() {
         return mEvents.size();
     }
-
-    public void removeEvent(int position) {
-        // Delete event from DB
-        final String uid = mEvents.get(position).getUid();
-        final DatabaseReference data = FirebaseDatabase.getInstance().getReference()
-                .child("events").child(User.getUid()).child(uid);
-        data.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                data.removeValue();
-
-                Log.d(TAG, "onDataChange: Event removed");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-    }
-
-    public void restoreEvent(final Event event, int position) {
-        // Write event to DB
-        final DatabaseReference eventsData = FirebaseDatabase.getInstance().getReference()
-                .child("events").child(User.getUid());
-        eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                eventsData.child(event.getUid()).setValue(event);
-
-                Log.d(TAG, "onDataChange: Event restored");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        });
-    }
 }

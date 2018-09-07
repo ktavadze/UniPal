@@ -29,6 +29,18 @@ public class Event {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
+    public Event(Event another) {
+        this.name = another.name;
+        this.type = another.type;
+        this.courseName = another.courseName;
+        this.alarm = another.alarm;
+        this.alarmCode = another.alarmCode;
+        this.date = another.date;
+        this.time = another.time;
+        this.uid = another.uid;
+        this.complete = another.complete;
+    }
+
     @Override
     public boolean equals(Object obj) {
         Event event = (Event) obj;

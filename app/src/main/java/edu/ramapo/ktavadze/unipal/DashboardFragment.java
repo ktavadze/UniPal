@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -99,21 +100,44 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, final int position) {
-        // Backup removed event
-        final Event event = mDatabase.selectedEvents.get(position);
+        // Backup event
+        final Event eventBackup = new Event(mDatabase.selectedEvents.get(position));
 
-        // Remove event
-        mDatabase.selectedEventsAdapter.removeEvent(position);
+        // Make snack bar
+        Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_LONG);
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
+                    // Delete event
+                    mDatabase.removeEvent(eventBackup);
+                }
+            }
 
-        // Show undo snack bar
-        Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_SHORT);
+            @Override
+            public void onShown(Snackbar sb) {
+                // Remove event locally
+                mDatabase.selectedEvents.remove(position);
+
+                mDatabase.selectedEventsAdapter.notifyDataSetChanged();
+            }
+        });
         snackbar.setAction("UNDO", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Restore event
-                mDatabase.selectedEventsAdapter.restoreEvent(event, position);
+                // Restore event locally
+                mDatabase.selectedEvents.add(position, eventBackup);
+
+                mDatabase.selectedEventsAdapter.notifyDataSetChanged();
             }
         });
+
+        // Style snack bar
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) snackbar.getView().getLayoutParams();
+        layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT;
+        snackbar.getView().setLayoutParams(layoutParams);
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
         snackbar.show();
     }
 
