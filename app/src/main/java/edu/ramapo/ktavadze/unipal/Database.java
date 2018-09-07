@@ -241,7 +241,6 @@ public class Database {
 
                 // Update alarm
                 if (newEvent.getAlarm().equals("On time")) {
-                    NotificationScheduler.cancelAlarm(context, oldEvent);
                     NotificationScheduler.scheduleAlarm(context, newEvent);
                 }
                 else {

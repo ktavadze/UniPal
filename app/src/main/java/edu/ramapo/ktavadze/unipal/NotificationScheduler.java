@@ -17,6 +17,8 @@ import static android.content.Context.ALARM_SERVICE;
 
 public class NotificationScheduler {
     public static void scheduleAlarm(Context context, Event event) {
+        cancelAlarm(context, event);
+
         String [] dateTokens = event.getDate().split("/");
         Integer month = Integer.parseInt(dateTokens[0]) - 1;
         Integer day = Integer.parseInt(dateTokens[1]);
@@ -25,7 +27,6 @@ public class NotificationScheduler {
         Integer hour = Integer.parseInt(timeTokens[0]);
         Integer minute = Integer.parseInt(timeTokens[1]);
 
-        Calendar nowCalendar = Calendar.getInstance();
         Calendar alarmCalendar = Calendar.getInstance();
         alarmCalendar.set(Calendar.MONTH, month);
         alarmCalendar.set(Calendar.DAY_OF_MONTH, day);
@@ -33,18 +34,17 @@ public class NotificationScheduler {
         alarmCalendar.set(Calendar.MINUTE, minute);
         alarmCalendar.set(Calendar.SECOND, 0);
 
-        if (alarmCalendar.before(nowCalendar)) {
-            alarmCalendar = nowCalendar;
-            alarmCalendar.add(Calendar.MINUTE, 5);
-        }
+        Calendar nowCalendar = Calendar.getInstance();
 
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("title", event.getName());
-        intent.putExtra("content", event.getType());
-        intent.putExtra("alarmCode", event.getAlarmCode());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, event.getAlarmCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(), pendingIntent);
+        if (alarmCalendar.after(nowCalendar)) {
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            intent.putExtra("title", event.getName());
+            intent.putExtra("content", event.getType());
+            intent.putExtra("alarmCode", event.getAlarmCode());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, event.getAlarmCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(), pendingIntent);
+        }
     }
 
     public static void cancelAlarm(Context context, Event event) {
