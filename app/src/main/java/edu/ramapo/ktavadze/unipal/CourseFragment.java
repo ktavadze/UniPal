@@ -60,6 +60,8 @@ public class CourseFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle(mCourse.getName());
+
         setHasOptionsMenu(true);
 
         addDeleteListener();

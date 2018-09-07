@@ -48,6 +48,8 @@ public class SchoolsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle("Schools");
+
         setHasOptionsMenu(true);
 
         initRecycler();

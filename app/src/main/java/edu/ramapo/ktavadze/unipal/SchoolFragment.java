@@ -58,6 +58,8 @@ public class SchoolFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle(mSchool.getName());
+
         setHasOptionsMenu(true);
 
         addDeleteListener();

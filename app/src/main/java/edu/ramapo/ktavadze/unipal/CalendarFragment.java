@@ -52,6 +52,8 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle("Calendar");
+
         updateDecorator();
     }
 

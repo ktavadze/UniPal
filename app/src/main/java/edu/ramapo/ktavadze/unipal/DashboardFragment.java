@@ -63,6 +63,8 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle("Dashboard");
+
         setHasOptionsMenu(true);
 
         initRecycler();

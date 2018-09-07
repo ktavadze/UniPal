@@ -37,6 +37,8 @@ public class UserFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle("User");
+
         addSignOutListener();
 
         displayUserData();

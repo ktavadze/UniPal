@@ -65,6 +65,8 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle(mDate);
+
         setHasOptionsMenu(true);
 
         initRecycler();

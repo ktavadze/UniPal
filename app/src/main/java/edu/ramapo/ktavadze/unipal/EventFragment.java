@@ -70,6 +70,8 @@ public class EventFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle(mEvent.getName());
+
         setHasOptionsMenu(true);
 
         addDeleteListener();

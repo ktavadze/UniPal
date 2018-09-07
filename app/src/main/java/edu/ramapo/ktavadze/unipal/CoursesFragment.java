@@ -51,6 +51,8 @@ public class CoursesFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        getActivity().setTitle("Courses");
+
         setHasOptionsMenu(true);
 
         initRecycler();
