@@ -18,14 +18,6 @@ public class School {
         // Default constructor required for calls to DataSnapshot.getValue(School.class)
     }
 
-    public School(String name, String year, String major, String minor, String uid) {
-        this.name = name;
-        this.year = year;
-        this.major = major;
-        this.minor = minor;
-        this.uid = uid;
-    }
-
     @Override
     public boolean equals(Object obj) {
         School school = (School) obj;

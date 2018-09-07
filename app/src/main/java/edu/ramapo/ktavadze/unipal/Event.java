@@ -29,16 +29,6 @@ public class Event {
         // Default constructor required for calls to DataSnapshot.getValue(Event.class)
     }
 
-    public Event(String name, String type, String courseName, String date, String time, String uid, boolean complete) {
-        this.name = name;
-        this.type = type;
-        this.courseName = courseName;
-        this.date = date;
-        this.time = time;
-        this.uid = uid;
-        this.complete = complete;
-    }
-
     @Override
     public boolean equals(Object obj) {
         Event event = (Event) obj;

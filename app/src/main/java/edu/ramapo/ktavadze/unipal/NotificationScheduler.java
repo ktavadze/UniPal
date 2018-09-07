@@ -87,7 +87,7 @@ public class NotificationScheduler {
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, User.getUid());
         Notification notification = builder.setContentTitle(title)
-                .setContentText(content + " " + alarmCode)
+                .setContentText(content)
                 .setAutoCancel(true)
                 .setSound(alarmSound)
                 .setSmallIcon(R.mipmap.ic_launcher_round)

@@ -19,15 +19,6 @@ public class Course {
         // Default constructor required for calls to DataSnapshot.getValue(Course.class)
     }
 
-    public Course(String name, String department, String number, String section, String schoolName, String uid) {
-        this.name = name;
-        this.department = department;
-        this.number = number;
-        this.section = section;
-        this.schoolName = schoolName;
-        this.uid = uid;
-    }
-
     @Override
     public boolean equals(Object obj) {
         Course course = (Course) obj;
