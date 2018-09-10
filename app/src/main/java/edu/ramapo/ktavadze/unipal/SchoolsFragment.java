@@ -76,6 +76,25 @@ public class SchoolsFragment extends Fragment {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    initRecycler - initializes schools recycler.
+
+    SYNOPSIS
+
+    private void initRecycler();
+
+    DESCRIPTION
+
+    Will initialize the schools recycler.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initRecycler() {
         // Init recycler
         final RecyclerView schools_recycler = mView.findViewById(R.id.schools_recycler);
@@ -83,6 +102,25 @@ public class SchoolsFragment extends Fragment {
         schools_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    /**/
+    /*
+    NAME
+
+    actionNewSchool - loads new school dialog.
+
+    SYNOPSIS
+
+    private void actionNewSchool();
+
+    DESCRIPTION
+
+    Will display the new school dialog.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void actionNewSchool() {
         final School newSchool = new School();
 

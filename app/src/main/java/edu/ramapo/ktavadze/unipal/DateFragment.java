@@ -136,6 +136,25 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
         snackbar.show();
     }
 
+    /**/
+    /*
+    NAME
+
+    initRecycler - initializes events recycler.
+
+    SYNOPSIS
+
+    private void initRecycler();
+
+    DESCRIPTION
+
+    Will initialize the events recycler.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initRecycler() {
         // Init recycler
         final RecyclerView date_events_recycler = mView.findViewById(R.id.date_events_recycler);
@@ -148,6 +167,25 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(date_events_recycler);
     }
 
+    /**/
+    /*
+    NAME
+
+    actionNewEvent - loads new event dialog.
+
+    SYNOPSIS
+
+    private void actionNewEvent();
+
+    DESCRIPTION
+
+    Will display the new event dialog.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void actionNewEvent() {
         final Event newEvent = new Event();
         final Calendar cal = Calendar.getInstance();

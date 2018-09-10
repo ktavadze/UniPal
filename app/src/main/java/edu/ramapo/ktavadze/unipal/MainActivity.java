@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     DESCRIPTION
 
-    This function will add the Firebase authentication state listener.
+    Will add the Firebase authentication state listener.
 
     RETURNS
 
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     DESCRIPTION
 
-    This function will remove the Firebase authentication state listener.
+    Will remove the Firebase authentication state listener.
 
     RETURNS
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     DESCRIPTION
 
-    This function will populate the static fields of the user class for local use.
+    Will populate the static fields of the user class for local use.
 
     RETURNS
 
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     DESCRIPTION
 
-    This function will load the dashboard fragment on launch.
+    Will load the dashboard fragment on launch.
 
     RETURNS
 

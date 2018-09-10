@@ -99,20 +99,25 @@ public class CourseFragment extends Fragment {
         }
     }
 
-    private void displayCourseData() {
-        final TextView course_name_text = mView.findViewById(R.id.course_name_text);
-        final TextView course_department_text = mView.findViewById(R.id.course_department_text);
-        final TextView course_number_text = mView.findViewById(R.id.course_number_text);
-        final TextView course_section_text = mView.findViewById(R.id.course_section_text);
-        final TextView course_school_text = mView.findViewById(R.id.course_school_text);
+    /**/
+    /*
+    NAME
 
-        course_name_text.setText(mCourse.getName());
-        course_department_text.setText(mCourse.getDepartment());
-        course_number_text.setText(mCourse.getNumber());
-        course_section_text.setText(mCourse.getSection());
-        course_school_text.setText(mCourse.getSchoolName());
-    }
+    addDeleteListener - adds delete listener.
 
+    SYNOPSIS
+
+    private void addDeleteListener();
+
+    DESCRIPTION
+
+    Will add the click listener to the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addDeleteListener() {
         // Add delete listener
         final Button delete_course_button = mView.findViewById(R.id.delete_course_button);
@@ -129,6 +134,25 @@ public class CourseFragment extends Fragment {
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeDeleteListener - removes delete listener.
+
+    SYNOPSIS
+
+    private boolean removeDeleteListener();
+
+    DESCRIPTION
+
+    Will remove the click listener from the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeDeleteListener() {
         // Remove delete listener
         final Button delete_course_button = mView.findViewById(R.id.delete_course_button);
@@ -137,6 +161,59 @@ public class CourseFragment extends Fragment {
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    displayCourseData - displays course info.
+
+    SYNOPSIS
+
+    private void displayCourseData();
+
+    DESCRIPTION
+
+    Will display the data for the current course.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
+    private void displayCourseData() {
+        final TextView course_name_text = mView.findViewById(R.id.course_name_text);
+        final TextView course_department_text = mView.findViewById(R.id.course_department_text);
+        final TextView course_number_text = mView.findViewById(R.id.course_number_text);
+        final TextView course_section_text = mView.findViewById(R.id.course_section_text);
+        final TextView course_school_text = mView.findViewById(R.id.course_school_text);
+
+        course_name_text.setText(mCourse.getName());
+        course_department_text.setText(mCourse.getDepartment());
+        course_number_text.setText(mCourse.getNumber());
+        course_section_text.setText(mCourse.getSection());
+        course_school_text.setText(mCourse.getSchoolName());
+    }
+
+    /**/
+    /*
+    NAME
+
+    startEditing - starts editing course.
+
+    SYNOPSIS
+
+    private void startEditing();
+
+    DESCRIPTION
+
+    Will update UI to allow editing of course information and define click listeners for the
+    cancel and update buttons.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void startEditing() {
         final TextView course_name_text = mView.findViewById(R.id.course_name_text);
         final EditText course_name_edit = mView.findViewById(R.id.course_name_edit);

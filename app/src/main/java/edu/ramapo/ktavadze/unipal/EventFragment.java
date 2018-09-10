@@ -111,6 +111,25 @@ public class EventFragment extends Fragment {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    addDeleteListener - adds delete listener.
+
+    SYNOPSIS
+
+    private void addDeleteListener();
+
+    DESCRIPTION
+
+    Will add the click listener to the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addDeleteListener() {
         // Add delete listener
         final Button delete_event_button = mView.findViewById(R.id.delete_event_button);
@@ -127,6 +146,25 @@ public class EventFragment extends Fragment {
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    addToggleListener - adds toggle listener.
+
+    SYNOPSIS
+
+    private void addToggleListener();
+
+    DESCRIPTION
+
+    Will add the click listener to the toggle button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addToggleListener() {
         // Add toggle listener
         final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
@@ -144,6 +182,25 @@ public class EventFragment extends Fragment {
         Log.d(TAG, "addToggleListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeDeleteListener - removes delete listener.
+
+    SYNOPSIS
+
+    private boolean removeDeleteListener();
+
+    DESCRIPTION
+
+    Will remove the click listener from the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeDeleteListener() {
         // Remove delete listener
         final Button delete_event_button = mView.findViewById(R.id.delete_event_button);
@@ -152,6 +209,25 @@ public class EventFragment extends Fragment {
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeToggleListener - removes toggle listener.
+
+    SYNOPSIS
+
+    private boolean removeToggleListener();
+
+    DESCRIPTION
+
+    Will remove the click listener from the toggle button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeToggleListener() {
         // Remove toggle listener
         final Button toggle_event_button = mView.findViewById(R.id.toggle_event_button);
@@ -160,6 +236,25 @@ public class EventFragment extends Fragment {
         Log.d(TAG, "removeToggleListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    displayEventData - displays event info.
+
+    SYNOPSIS
+
+    private void displayEventData();
+
+    DESCRIPTION
+
+    Will display the data for the current event.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void displayEventData() {
         final TextView event_name_text = mView.findViewById(R.id.event_name_text);
         final TextView event_type_text = mView.findViewById(R.id.event_type_text);
@@ -197,6 +292,26 @@ public class EventFragment extends Fragment {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    startEditing - starts editing course.
+
+    SYNOPSIS
+
+    private void startEditing();
+
+    DESCRIPTION
+
+    Will update UI to allow editing of event information and define click listeners for the
+    cancel and update buttons.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void startEditing() {
         final TextView event_name_text = mView.findViewById(R.id.event_name_text);
         final EditText event_name_edit = mView.findViewById(R.id.event_name_edit);

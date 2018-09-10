@@ -112,6 +112,25 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    updateDecorator - updates calendar decorator.
+
+    SYNOPSIS
+
+    private void updateDecorator();
+
+    DESCRIPTION
+
+    Will update the decorator used to highlight calendar dates.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void updateDecorator() {
         // Set listeners
         final MaterialCalendarView events_calendar = mView.findViewById(R.id.events_calendar);

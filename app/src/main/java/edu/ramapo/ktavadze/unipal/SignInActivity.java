@@ -152,7 +152,7 @@ public class SignInActivity extends AppCompatActivity {
 
     DESCRIPTION
 
-    This function will add the click listener to the Google sign in button.
+    Will add the click listener to the Google sign in button.
 
     RETURNS
 
@@ -184,7 +184,7 @@ public class SignInActivity extends AppCompatActivity {
 
     DESCRIPTION
 
-    This function will remove the click listener from the Google sign in button.
+    Will remove the click listener from the Google sign in button.
 
     RETURNS
 
@@ -211,7 +211,7 @@ public class SignInActivity extends AppCompatActivity {
 
     DESCRIPTION
 
-    This function will add the Firebase authentication state listener.
+    Will add the Firebase authentication state listener.
 
     RETURNS
 
@@ -248,7 +248,7 @@ public class SignInActivity extends AppCompatActivity {
 
     DESCRIPTION
 
-    This function will remove the Firebase authentication state listener.
+    Will remove the Firebase authentication state listener.
 
     RETURNS
 

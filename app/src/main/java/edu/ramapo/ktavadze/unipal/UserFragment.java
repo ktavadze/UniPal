@@ -51,6 +51,25 @@ public class UserFragment extends Fragment {
         removeSignOutListener();
     }
 
+    /**/
+    /*
+    NAME
+
+    addSignOutListener - adds sign out listener.
+
+    SYNOPSIS
+
+    private void addSignOutListener();
+
+    DESCRIPTION
+
+    Will add the click listener to the sign out button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addSignOutListener() {
         // Add sign out listener
         final Button sign_out_button = mView.findViewById(R.id.sign_out_button);
@@ -68,6 +87,25 @@ public class UserFragment extends Fragment {
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeSignOutListener - removes sign out listener.
+
+    SYNOPSIS
+
+    private boolean removeSignOutListener();
+
+    DESCRIPTION
+
+    Will remove the click listener from the sign out button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeSignOutListener() {
         // Remove sign out listener
         final Button sign_out_button = mView.findViewById(R.id.sign_out_button);
@@ -76,6 +114,25 @@ public class UserFragment extends Fragment {
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    displayUserData - displays user info.
+
+    SYNOPSIS
+
+    private void displayUserData();
+
+    DESCRIPTION
+
+    Will display the data for the current user.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void displayUserData() {
         final TextView user_name_text = mView.findViewById(R.id.user_name_text);
         final TextView user_email_text = mView.findViewById(R.id.user_email_text);

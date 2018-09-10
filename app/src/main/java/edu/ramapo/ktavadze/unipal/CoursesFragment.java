@@ -79,6 +79,25 @@ public class CoursesFragment extends Fragment {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    initRecycler - initializes courses recycler.
+
+    SYNOPSIS
+
+    private void initRecycler();
+
+    DESCRIPTION
+
+    Will initialize the courses recycler.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initRecycler() {
         // Init recycler
         final RecyclerView courses_recycler = mView.findViewById(R.id.courses_recycler);
@@ -86,6 +105,25 @@ public class CoursesFragment extends Fragment {
         courses_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    /**/
+    /*
+    NAME
+
+    actionNewCourse - loads new course dialog.
+
+    SYNOPSIS
+
+    private void actionNewCourse();
+
+    DESCRIPTION
+
+    Will display the new course dialog.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void actionNewCourse() {
         final Course newCourse = new Course();
 

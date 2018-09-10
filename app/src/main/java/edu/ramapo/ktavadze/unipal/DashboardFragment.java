@@ -143,6 +143,25 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         snackbar.show();
     }
 
+    /**/
+    /*
+    NAME
+
+    initRecycler - initializes events recycler.
+
+    SYNOPSIS
+
+    private void initRecycler();
+
+    DESCRIPTION
+
+    Will initialize the events recycler.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initRecycler() {
         // Init recycler
         final RecyclerView events_recycler = mView.findViewById(R.id.events_recycler);
@@ -156,6 +175,26 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(events_recycler);
     }
 
+    /**/
+    /*
+    NAME
+
+    setFilter - sets events filter.
+
+    SYNOPSIS
+
+    private void setFilter(int filter);
+    filter--> the integer value of the filter to be applied.
+
+    DESCRIPTION
+
+    Will set and apply the specified filter to the events recycler.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void setFilter(int filter) {
         final RecyclerView events_recycler = mView.findViewById(R.id.events_recycler);
         final Button all_button = mView.findViewById(R.id.all_button);
@@ -166,6 +205,7 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         final int active = getResources().getColor(R.color.colorAccent);
         final int inactive = getResources().getColor(R.color.colorPrimary);
 
+        // Select events
         switch (filter) {
             case 100:
                 mDatabase.selectAllEvents();
@@ -200,9 +240,29 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
                 day_button.setBackgroundColor(active);
         }
 
+        // Set adapter
         events_recycler.setAdapter(mDatabase.selectedEventsAdapter);
     }
 
+    /**/
+    /*
+    NAME
+
+    addSelectionListeners - adds listeners to filter buttons.
+
+    SYNOPSIS
+
+    private void addSelectionListeners();
+
+    DESCRIPTION
+
+    Will add click listeners to the filter buttons.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addSelectionListeners() {
         final Button all_button = mView.findViewById(R.id.all_button);
         final Button month_button = mView.findViewById(R.id.month_button);
@@ -242,6 +302,25 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         Log.d(TAG, "addSelectionListeners: Listeners added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeSelectionListeners - removes listeners from filter buttons.
+
+    SYNOPSIS
+
+    private void removeSelectionListeners();
+
+    DESCRIPTION
+
+    Will remove click listeners from the filter buttons.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeSelectionListeners() {
         final Button all_button = mView.findViewById(R.id.all_button);
         final Button month_button = mView.findViewById(R.id.month_button);
@@ -256,6 +335,25 @@ public class DashboardFragment extends Fragment implements RecyclerItemTouchHelp
         Log.d(TAG, "removeSelectionListeners: Listeners removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    actionNewEvent - loads new event dialog.
+
+    SYNOPSIS
+
+    private void actionNewEvent();
+
+    DESCRIPTION
+
+    Will display the new event dialog.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void actionNewEvent() {
         final Event newEvent = new Event();
         final Calendar cal = Calendar.getInstance();

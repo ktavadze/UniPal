@@ -97,18 +97,25 @@ public class SchoolFragment extends Fragment {
         }
     }
 
-    private void displaySchoolData() {
-        final TextView school_name_text = mView.findViewById(R.id.school_name_text);
-        final TextView school_year_text = mView.findViewById(R.id.school_year_text);
-        final TextView school_major_text = mView.findViewById(R.id.school_major_text);
-        final TextView school_minor_text = mView.findViewById(R.id.school_minor_text);
+    /**/
+    /*
+    NAME
 
-        school_name_text.setText(mSchool.getName());
-        school_year_text.setText(mSchool.getYear());
-        school_major_text.setText(mSchool.getMajor());
-        school_minor_text.setText(mSchool.getMinor());
-    }
+    addDeleteListener - adds delete listener.
 
+    SYNOPSIS
+
+    private void addDeleteListener();
+
+    DESCRIPTION
+
+    Will add the click listener to the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addDeleteListener() {
         // Add delete listener
         final Button delete_school_button = mView.findViewById(R.id.delete_school_button);
@@ -125,6 +132,25 @@ public class SchoolFragment extends Fragment {
         Log.d(TAG, "addDeleteListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeDeleteListener - removes delete listener.
+
+    SYNOPSIS
+
+    private boolean removeDeleteListener();
+
+    DESCRIPTION
+
+    Will remove the click listener from the delete button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeDeleteListener() {
         // Remove delete listener
         final Button delete_school_button = mView.findViewById(R.id.delete_school_button);
@@ -133,6 +159,57 @@ public class SchoolFragment extends Fragment {
         Log.d(TAG, "removeDeleteListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    displaySchoolData - displays school info.
+
+    SYNOPSIS
+
+    private void displaySchoolData();
+
+    DESCRIPTION
+
+    Will display the data for the current school.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
+    private void displaySchoolData() {
+        final TextView school_name_text = mView.findViewById(R.id.school_name_text);
+        final TextView school_year_text = mView.findViewById(R.id.school_year_text);
+        final TextView school_major_text = mView.findViewById(R.id.school_major_text);
+        final TextView school_minor_text = mView.findViewById(R.id.school_minor_text);
+
+        school_name_text.setText(mSchool.getName());
+        school_year_text.setText(mSchool.getYear());
+        school_major_text.setText(mSchool.getMajor());
+        school_minor_text.setText(mSchool.getMinor());
+    }
+
+    /**/
+    /*
+    NAME
+
+    startEditing - starts editing school.
+
+    SYNOPSIS
+
+    private void startEditing();
+
+    DESCRIPTION
+
+    Will update UI to allow editing of school information and define click listeners for the
+    cancel and update buttons.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void startEditing() {
         final TextView school_name_text = mView.findViewById(R.id.school_name_text);
         final EditText school_name_edit = mView.findViewById(R.id.school_name_edit);
