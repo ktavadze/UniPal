@@ -99,7 +99,7 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
         final Event eventBackup = new Event(mDatabase.selectedEvents.get(position));
 
         // Make snack bar
-        Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(mView, "Event removed", Snackbar.LENGTH_SHORT);
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
