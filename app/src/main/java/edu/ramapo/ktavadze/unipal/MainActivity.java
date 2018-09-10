@@ -72,6 +72,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    addAuthListener - adds authentication listener.
+
+    SYNOPSIS
+
+    private void addAuthListener();
+
+    DESCRIPTION
+
+    This function will add the Firebase authentication state listener.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addAuthListener() {
         // Add auth listener
         mAuth = FirebaseAuth.getInstance();
@@ -91,6 +110,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Log.d(TAG, "addAuthListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeAuthListener - removes authentication listener.
+
+    SYNOPSIS
+
+    private void removeAuthListener();
+
+    DESCRIPTION
+
+    This function will remove the Firebase authentication state listener.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeAuthListener() {
         // remove auth listener
         mAuth.removeAuthStateListener(mAuthListener);
@@ -98,6 +136,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Log.d(TAG, "removeAuthListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    initUser - initializes user.
+
+    SYNOPSIS
+
+    private void initUser();
+
+    DESCRIPTION
+
+    This function will populate the static fields of the user class for local use.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initUser() {
         // Get Google provider data
         UserInfo profile = mCurrentUser.getProviderData().get(1);
@@ -109,6 +166,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         User.init(displayName, email, uid);
     }
 
+    /**/
+    /*
+    NAME
+
+    initView - initializes view.
+
+    SYNOPSIS
+
+    private void initView();
+
+    DESCRIPTION
+
+    This function will load the dashboard fragment on launch.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void initView() {
         // Load dashboard in container
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -123,6 +199,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navigation.setOnNavigationItemSelectedListener(this);
     }
 
+    /**/
+    /*
+    NAME
+
+    loadFragment - loads fragment.
+
+    SYNOPSIS
+
+    private boolean loadFragment(Fragment fragment);
+    fragment--> the fragment to be loaded into the main container.
+
+    DESCRIPTION
+
+    Will load the specified fragment into the main container.
+
+    RETURNS
+
+    Returns a boolean value depending on whether or not the fragment was successfully loaded.
+    */
+    /**/
     private boolean loadFragment(Fragment fragment) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment != null && !currentFragment.getClass().equals(fragment.getClass())) {
@@ -136,6 +232,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+    /**/
+    /*
+    NAME
+
+    addFragment - adds fragment.
+
+    SYNOPSIS
+
+    public void addFragment(Fragment fragment, Bundle bundle);
+    fragment--> the fragment to be added onto the main container.
+    bundle--> the data to be passed to the fragment.
+
+    DESCRIPTION
+
+    Will add the specified fragment onto the loaded fragment, passing along the required data.
+    Differs from loadFragment in that the new fragment is added on TOP of the loaded fragment,
+    rather than replacing it in the main container.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void addFragment(Fragment fragment, Bundle bundle) {
         if (fragment != null && bundle != null) {
             fragment.setArguments(bundle);
@@ -147,6 +266,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    hideKeyboard - hides keyboard.
+
+    SYNOPSIS
+
+    public void hideKeyboard();
+
+    DESCRIPTION
+
+    Will hide the keyboard from view.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager)getSystemService(MainActivity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);

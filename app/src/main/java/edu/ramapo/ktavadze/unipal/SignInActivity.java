@@ -75,6 +75,26 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    firebaseAuthWithGoogle - Firebase authentication using Google account.
+
+    SYNOPSIS
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct);
+    acct--> the Google account to be used with Firebase.
+
+    DESCRIPTION
+
+    Will perform Firebase authentication using the provided Google account.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle: " + acct.getId());
 
@@ -96,11 +116,49 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
+    /**/
+    /*
+    NAME
+
+    signIn - Google sign in.
+
+    SYNOPSIS
+
+    private void signIn();
+
+    DESCRIPTION
+
+    Will perform Google sign in.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /**/
+    /*
+    NAME
+
+    addSignInListener - adds sign in button listener.
+
+    SYNOPSIS
+
+    private void addSignInListener();
+
+    DESCRIPTION
+
+    This function will add the click listener to the Google sign in button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addSignInListener() {
         // Add sign in listener
         SignInButton sign_in_button = findViewById(R.id.sign_in_button);
@@ -114,6 +172,25 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(TAG, "addSignInListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeSignInListener - removes sign in button listener.
+
+    SYNOPSIS
+
+    private void removeSignInListener();
+
+    DESCRIPTION
+
+    This function will remove the click listener from the Google sign in button.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeSignInListener() {
         // Remove sign in listener
         SignInButton sign_in_button = findViewById(R.id.sign_in_button);
@@ -122,6 +199,25 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(TAG, "removeSignInListener: Listener removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    addAuthListener - adds authentication listener.
+
+    SYNOPSIS
+
+    private void addAuthListener();
+
+    DESCRIPTION
+
+    This function will add the Firebase authentication state listener.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addAuthListener() {
         // Add auth listener
         mAuth = FirebaseAuth.getInstance();
@@ -140,6 +236,25 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(TAG, "addAuthListener: Listener added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeAuthListener - removes authentication listener.
+
+    SYNOPSIS
+
+    private void removeAuthListener();
+
+    DESCRIPTION
+
+    This function will remove the Firebase authentication state listener.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void removeAuthListener() {
         // Remove auth listener
         mAuth.removeAuthStateListener(mAuthListener);
