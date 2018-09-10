@@ -60,7 +60,7 @@ public class NotificationScheduler {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, event.getAlarmCode(),
                     intent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmCalendar.getTimeInMillis(), pendingIntent);
 
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.US);
             Log.d(TAG, "scheduleAlarm: Alarm scheduled: " + sdf.format(alarmCalendar.getTime()));
