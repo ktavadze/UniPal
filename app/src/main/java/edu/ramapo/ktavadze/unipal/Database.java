@@ -251,7 +251,7 @@ public class Database {
                 calendarDays.add(event.getCalendarDay());
 
                 // Schedule alarm
-                if (!event.getAlarm().equals("No alarm")) {
+                if (!event.getAlarm().equals("No alarm") && !event.isComplete()) {
                     AlarmScheduler.scheduleAlarm(context, event);
                 }
 
@@ -297,7 +297,7 @@ public class Database {
                 }
 
                 // Update alarm
-                if (newEvent.getAlarm().equals("No alarm")) {
+                if (newEvent.getAlarm().equals("No alarm") || newEvent.isComplete()) {
                     AlarmScheduler.cancelAlarm(context, oldEvent);
                 }
                 else {
@@ -326,7 +326,7 @@ public class Database {
                 calendarDays.remove(event.getCalendarDay());
 
                 // Cancel alarm
-                if (!event.getAlarm().equals("No alarm")) {
+                if (!event.getAlarm().equals("No alarm") && !event.isComplete()) {
                     AlarmScheduler.cancelAlarm(context, event);
                 }
 
