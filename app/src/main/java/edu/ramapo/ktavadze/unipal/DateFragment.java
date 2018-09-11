@@ -27,7 +27,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
-public class DateFragment extends Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class DateFragment extends Fragment implements RecyclerEventTouchHelper.RecyclerEventTouchHelperListener {
     private static final String TAG = "DateFragment";
 
     private Database mDatabase;
@@ -163,7 +163,7 @@ public class DateFragment extends Fragment implements RecyclerItemTouchHelper.Re
 
         // Attach item touch helper
         ItemTouchHelper.SimpleCallback recyclerTouchHelperCallback =
-                new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+                new RecyclerEventTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(recyclerTouchHelperCallback).attachToRecyclerView(date_events_recycler);
     }
 

@@ -5,10 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
-    private RecyclerItemTouchHelperListener listener;
+public class RecyclerEventTouchHelper extends ItemTouchHelper.SimpleCallback {
+    private RecyclerEventTouchHelperListener listener;
 
-    public RecyclerItemTouchHelper(int dragDirs, int swipeDirs, RecyclerItemTouchHelperListener listener) {
+    public RecyclerEventTouchHelper(int dragDirs, int swipeDirs, RecyclerEventTouchHelperListener listener) {
         super(dragDirs, swipeDirs);
         this.listener = listener;
     }
@@ -56,7 +56,7 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
         return super.convertToAbsoluteDirection(flags, layoutDirection);
     }
 
-    public interface RecyclerItemTouchHelperListener {
+    public interface RecyclerEventTouchHelperListener {
         void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position);
     }
 }
