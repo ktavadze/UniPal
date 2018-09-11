@@ -126,6 +126,26 @@ public class Event {
         this.complete = complete;
     }
 
+    /**/
+    /*
+    NAME
+
+    getCalendarDay - gets calendar day.
+
+    SYNOPSIS
+
+    public CalendarDay getCalendarDay();
+
+    DESCRIPTION
+
+    Will parse the event date (string) and use it to produce a matching CalendarDay to be used for
+    highlighting non-empty dates in the calendar view.
+
+    RETURNS
+
+    Returns a CalendarDay representation of the event date.
+    */
+    /**/
     @Exclude
     public CalendarDay getCalendarDay() {
         String [] dateTokens = this.date.split("/");

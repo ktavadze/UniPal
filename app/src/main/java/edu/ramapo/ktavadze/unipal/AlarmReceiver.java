@@ -21,6 +21,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("title");
         String content = intent.getStringExtra("content");
         int alarmCode = intent.getIntExtra("alarmCode", 13);
-        NotificationScheduler.showNotification(context, title, content, alarmCode);
+        AlarmScheduler.showNotification(context, title, content, alarmCode);
     }
 }

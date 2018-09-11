@@ -18,10 +18,32 @@ import java.util.Locale;
 
 import static android.content.Context.ALARM_SERVICE;
 
-public class NotificationScheduler {
-    private static final String TAG = "NotificationScheduler";
+public class AlarmScheduler {
+    private static final String TAG = "AlarmScheduler";
 
+    /**/
+    /*
+    NAME
+
+    scheduleAlarm - schedules alarm.
+
+    SYNOPSIS
+
+    public static void scheduleAlarm(Context context, Event event);
+    context--> the context to be used for intent creation and other purposes.
+    event--> the event for which the alarm is being scheduled.
+
+    DESCRIPTION
+
+    Will schedule an alarm for the specified event.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public static void scheduleAlarm(Context context, Event event) {
+        // Cancel any previous alarms scheduled for the specified event
         cancelAlarm(context, event);
 
         String [] dateTokens = event.getDate().split("/");
@@ -32,6 +54,7 @@ public class NotificationScheduler {
         Integer hour = Integer.parseInt(timeTokens[0]);
         Integer minute = Integer.parseInt(timeTokens[1]);
 
+        // Set alarm time
         Calendar alarmCalendar = Calendar.getInstance();
         alarmCalendar.set(Calendar.MONTH, month);
         alarmCalendar.set(Calendar.DAY_OF_MONTH, day);
@@ -50,6 +73,7 @@ public class NotificationScheduler {
                 alarmCalendar.add(Calendar.WEEK_OF_YEAR, -1);
         }
 
+        // Get current time
         Calendar nowCalendar = Calendar.getInstance();
 
         if (alarmCalendar.after(nowCalendar)) {
@@ -67,6 +91,27 @@ public class NotificationScheduler {
         }
     }
 
+    /**/
+    /*
+    NAME
+
+    cancelAlarm - cancels alarm.
+
+    SYNOPSIS
+
+    public static void cancelAlarm(Context context, Event event);
+    context--> the context to be used for intent creation and other purposes.
+    event--> the event for which the alarm is being canceled.
+
+    DESCRIPTION
+
+    Will cancel the alarm for the specified event.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public static void cancelAlarm(Context context, Event event) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, event.getAlarmCode(),
@@ -76,6 +121,29 @@ public class NotificationScheduler {
         pendingIntent.cancel();
     }
 
+    /**/
+    /*
+    NAME
+
+    showNotification - shows notification.
+
+    SYNOPSIS
+
+    public static void showNotification(Context context, String title, String content, int alarmCode);
+    context--> the context to be used for intent creation and other purposes.
+    title--> the title of the notification.
+    content--> the content of the notification.
+    alarmCode--> the unique integer code associated with the specified alarm.
+
+    DESCRIPTION
+
+    Will display the notification in the device notification drawer.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public static void showNotification(Context context, String title, String content, int alarmCode) {
         Intent notificationIntent = new Intent(context, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

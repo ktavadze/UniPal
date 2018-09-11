@@ -59,6 +59,25 @@ public class Database {
         this.context = context;
     }
 
+    /**/
+    /*
+    NAME
+
+    addSchoolsListener - adds schools listener.
+
+    SYNOPSIS
+
+    private void addSchoolsListener();
+
+    DESCRIPTION
+
+    Will add a child event listener to the schools list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addSchoolsListener() {
         schools = new ArrayList<>();
         schoolsAdapter = new SchoolsRecyclerAdapter(context, schools);
@@ -114,6 +133,25 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    addCoursesListener - adds courses listener.
+
+    SYNOPSIS
+
+    private void addCoursesListener();
+
+    DESCRIPTION
+
+    Will add a child event listener to the courses list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addCoursesListener() {
         courses = new ArrayList<>();
         coursesAdapter = new CoursesRecyclerAdapter(context, courses);
@@ -169,6 +207,25 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    addEventsListener - adds events listener.
+
+    SYNOPSIS
+
+    private void addEventsListener();
+
+    DESCRIPTION
+
+    Will add a child event listener to the events list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private void addEventsListener() {
         allEvents = new ArrayList<>();
         selectedEvents = new ArrayList<>();
@@ -195,7 +252,7 @@ public class Database {
 
                 // Schedule alarm
                 if (!event.getAlarm().equals("No alarm")) {
-                    NotificationScheduler.scheduleAlarm(context, event);
+                    AlarmScheduler.scheduleAlarm(context, event);
                 }
 
                 Log.d(TAG, "onChildAdded: Event read: " + event.getName());
@@ -241,10 +298,10 @@ public class Database {
 
                 // Update alarm
                 if (newEvent.getAlarm().equals("No alarm")) {
-                    NotificationScheduler.cancelAlarm(context, oldEvent);
+                    AlarmScheduler.cancelAlarm(context, oldEvent);
                 }
                 else {
-                    NotificationScheduler.scheduleAlarm(context, newEvent);
+                    AlarmScheduler.scheduleAlarm(context, newEvent);
                 }
 
                 Log.d(TAG, "onChildChanged: Event updated: " + newEvent.getName());
@@ -270,7 +327,7 @@ public class Database {
 
                 // Cancel alarm
                 if (!event.getAlarm().equals("No alarm")) {
-                    NotificationScheduler.cancelAlarm(context, event);
+                    AlarmScheduler.cancelAlarm(context, event);
                 }
 
                 Log.d(TAG, "onChildRemoved: Event removed: " + event.getName());
@@ -288,6 +345,25 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    addListeners - adds listeners.
+
+    SYNOPSIS
+
+    public void addListeners();
+
+    DESCRIPTION
+
+    Will add listeners to the lists associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void addListeners() {
         addSchoolsListener();
         addCoursesListener();
@@ -296,6 +372,25 @@ public class Database {
         Log.d(TAG, "addListeners: Listeners added");
     }
 
+    /**/
+    /*
+    NAME
+
+    removeListeners - removes listeners.
+
+    SYNOPSIS
+
+    public void removeListeners();
+
+    DESCRIPTION
+
+    Will remove listeners from the lists associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void removeListeners() {
         schoolsData.removeEventListener(schoolsListener);
         coursesData.removeEventListener(coursesListener);
@@ -304,6 +399,25 @@ public class Database {
         Log.d(TAG, "removeListeners: Listeners removed");
     }
 
+    /**/
+    /*
+    NAME
+
+    selectAllEvents - selects all events.
+
+    SYNOPSIS
+
+    public void selectAllEvents();
+
+    DESCRIPTION
+
+    Will select all events associated with the current user.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void selectAllEvents() {
         filter = 100;
         selectedDates = null;
@@ -311,6 +425,26 @@ public class Database {
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
     }
 
+    /**/
+    /*
+    NAME
+
+    selectEvents - selects events.
+
+    SYNOPSIS
+
+    public void selectEvents(final int days);
+    days--> the number of days ahead of the current day to select events for.
+
+    DESCRIPTION
+
+    Will select events as far ahead as the number of days specified.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void selectEvents(final int days) {
         filter = days;
         selectedDates = new ArrayList<>();
@@ -332,6 +466,26 @@ public class Database {
         Log.d(TAG, "selectEvents: Selected dates: " + selectedDates.toString());
     }
 
+    /**/
+    /*
+    NAME
+
+    selectEvents - selects events.
+
+    SYNOPSIS
+
+    public void selectEvents(final String date);
+    date--> the date to select events for.
+
+    DESCRIPTION
+
+    Will select events matching the specified date.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void selectEvents(final String date) {
         selectedDates = new ArrayList<>();
         selectedDates.add(date);
@@ -344,6 +498,26 @@ public class Database {
         selectedEventsAdapter = new EventsRecyclerAdapter(context, selectedEvents);
     }
 
+    /**/
+    /*
+    NAME
+
+    addSchool - adds school.
+
+    SYNOPSIS
+
+    public void addSchool(final School school);
+    school--> the school to be added.
+
+    DESCRIPTION
+
+    Will add the specified school to the schools list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void addSchool(final School school) {
         schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -363,6 +537,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    updateSchool - updates school.
+
+    SYNOPSIS
+
+    public void updateSchool(final School school);
+    school--> the school to be updated.
+
+    DESCRIPTION
+
+    Will update the specified school in the schools list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void updateSchool(final School school) {
         schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -379,6 +573,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    removeSchool - removes school.
+
+    SYNOPSIS
+
+    public void removeSchool(final School school);
+    school--> the school to be removed.
+
+    DESCRIPTION
+
+    Will remove the specified school from the schools list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void removeSchool(final School school) {
         schoolsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -395,6 +609,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    addCourse - adds course.
+
+    SYNOPSIS
+
+    public void addCourse(final Course course);
+    course--> the course to be added.
+
+    DESCRIPTION
+
+    Will add the specified course to the courses list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void addCourse(final Course course) {
         coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -414,6 +648,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    updateCourse - updates course.
+
+    SYNOPSIS
+
+    public void updateCourse(final Course course);
+    course--> the course to be updated.
+
+    DESCRIPTION
+
+    Will update the specified course in the courses list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void updateCourse(final Course course) {
         coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -430,6 +684,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    removeCourse - removes course.
+
+    SYNOPSIS
+
+    public void removeCourse(final Course course);
+    course--> the course to be removed.
+
+    DESCRIPTION
+
+    Will remove the specified course from the courses list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void removeCourse(final Course course) {
         coursesData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -446,6 +720,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    addEvent - adds event.
+
+    SYNOPSIS
+
+    public void addEvent(final Event event);
+    event--> the event to be added.
+
+    DESCRIPTION
+
+    Will add the specified event to the events list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void addEvent(final Event event) {
         eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -465,6 +759,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    updateEvent - updates event.
+
+    SYNOPSIS
+
+    public void updateEvent(final Event event);
+    event--> the event to be updated.
+
+    DESCRIPTION
+
+    Will update the specified event in the events list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void updateEvent(final Event event) {
         eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -481,6 +795,26 @@ public class Database {
         });
     }
 
+    /**/
+    /*
+    NAME
+
+    removeEvent - removes event.
+
+    SYNOPSIS
+
+    public void removeEvent(final Event event);
+    event--> the event to be removed.
+
+    DESCRIPTION
+
+    Will remove the specified event from the events list associated with the current user in the DB.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     public void removeEvent(final Event event) {
         eventsData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
