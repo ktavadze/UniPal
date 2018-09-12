@@ -16,6 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+/**
+ * SchoolsFragment Class to implement the schools view.
+ */
+
 public class SchoolsFragment extends Fragment {
     private static final String TAG = "SchoolsFragment";
 

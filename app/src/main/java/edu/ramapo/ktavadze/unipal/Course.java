@@ -3,7 +3,7 @@ package edu.ramapo.ktavadze.unipal;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
- * Course class.
+ * Course Class to implement courses.
  */
 
 @IgnoreExtraProperties

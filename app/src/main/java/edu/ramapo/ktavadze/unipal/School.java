@@ -3,7 +3,7 @@ package edu.ramapo.ktavadze.unipal;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 /**
- * School class.
+ * School Class to implement schools.
  */
 
 @IgnoreExtraProperties

@@ -5,6 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+/**
+ * RecyclerEventTouchHelper Class to facilitate swipe-to-delete functionality for recycler events.
+ */
+
 public class RecyclerEventTouchHelper extends ItemTouchHelper.SimpleCallback {
     private RecyclerEventTouchHelperListener listener;
 

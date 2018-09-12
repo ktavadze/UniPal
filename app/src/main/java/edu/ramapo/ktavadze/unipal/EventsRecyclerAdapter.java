@@ -23,6 +23,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * EventsRecyclerAdapter Class to facilitate events recycler functionality.
+ */
+
 public class EventsRecyclerAdapter extends RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder> {
     private static final String TAG = "EventsRecyclerAdapter";
 

@@ -20,6 +20,10 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
+/**
+ * CalendarFragment Class to implement the calendar view.
+ */
+
 public class CalendarFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener {
     private static final String TAG = "CalendarFragment";
 
@@ -90,6 +94,10 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     public void onMonthChanged(MaterialCalendarView materialCalendarView, CalendarDay calendarDay) {
         Log.d(TAG, "onMonthChanged: Month changed: " + (calendarDay.getMonth() + 1));
     }
+
+    /**
+     * EventDecorator Class to decorate dates of interest.
+     */
 
     private class EventDecorator implements DayViewDecorator {
         private final int textColor;

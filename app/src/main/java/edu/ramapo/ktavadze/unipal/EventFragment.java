@@ -27,6 +27,10 @@ import android.widget.TimePicker;
 import java.util.Arrays;
 import java.util.Calendar;
 
+/**
+ * EventFragment Class to implement the event view.
+ */
+
 public class EventFragment extends Fragment {
     private static final String TAG = "EventFragment";
 

@@ -27,6 +27,10 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+/**
+ * DateFragment Class to implement the date view.
+ */
+
 public class DateFragment extends Fragment implements RecyclerEventTouchHelper.RecyclerEventTouchHelperListener {
     private static final String TAG = "DateFragment";
 

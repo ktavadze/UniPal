@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * UserFragment Class to implement the user view.
+ */
+
 public class UserFragment extends Fragment {
     private static final String TAG = "EventFragment";
 

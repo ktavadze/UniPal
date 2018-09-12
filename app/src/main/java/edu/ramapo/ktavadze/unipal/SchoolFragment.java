@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * SchoolFragment Class to implement the school view.
+ */
+
 public class SchoolFragment extends Fragment {
     private static final String TAG = "SchoolFragment";
 

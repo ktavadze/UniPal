@@ -21,6 +21,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+/**
+ * SignInActivity Class to implement the sign in view.
+ */
+
 public class SignInActivity extends AppCompatActivity {
     private static final String TAG = "SignInActivity";
 

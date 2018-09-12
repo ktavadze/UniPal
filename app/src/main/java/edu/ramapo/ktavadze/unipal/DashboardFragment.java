@@ -31,6 +31,10 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+/**
+ * DashboardFragment Class to implement the dashboard view.
+ */
+
 public class DashboardFragment extends Fragment implements RecyclerEventTouchHelper.RecyclerEventTouchHelperListener {
     private static final String TAG = "DashboardFragment";
 

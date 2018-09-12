@@ -10,7 +10,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 
 /**
- * User class.
+ * User Class to implement users.
+ * Note: most members/methods are static for ease of access.
  */
 
 @IgnoreExtraProperties
@@ -45,6 +46,25 @@ public class User {
         return uid;
     }
 
+    /**/
+    /*
+    NAME
+
+    registerUser - registers user.
+
+    SYNOPSIS
+
+    private static void registerUser();
+
+    DESCRIPTION
+
+    Will register the user in the database, if it doesn't already exist.
+
+    RETURNS
+
+    N/A
+    */
+    /**/
     private static void registerUser() {
         userData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

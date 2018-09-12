@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * SchoolsRecyclerAdapter Class to facilitate schools recycler functionality.
+ */
+
 public class SchoolsRecyclerAdapter extends RecyclerView.Adapter<SchoolsRecyclerAdapter.ViewHolder> {
     private static final String TAG = "SchoolsRecyclerAdapter";
 

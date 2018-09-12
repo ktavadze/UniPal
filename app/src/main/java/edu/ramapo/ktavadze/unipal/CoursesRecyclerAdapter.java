@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * CoursesRecyclerAdapter Class to facilitate courses recycler functionality.
+ */
+
 public class CoursesRecyclerAdapter extends RecyclerView.Adapter<CoursesRecyclerAdapter.ViewHolder> {
     private static final String TAG = "CoursesRecyclerAdapter";
 

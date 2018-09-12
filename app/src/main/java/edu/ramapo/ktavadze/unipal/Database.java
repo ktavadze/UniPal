@@ -18,7 +18,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
- * Database class.
+ * Database Class to read/write data from/to the Firebase database.
+ * Note: several members are public for ease of access.
  */
 
 public class Database {

@@ -18,6 +18,11 @@ import java.util.Locale;
 
 import static android.content.Context.ALARM_SERVICE;
 
+/**
+ * AlarmScheduler Class to schedule/cancel alarms and display notifications.
+ * Note: all methods are static for ease of access.
+ */
+
 public class AlarmScheduler {
     private static final String TAG = "AlarmScheduler";
 

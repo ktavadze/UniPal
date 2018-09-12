@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Random;
 
 /**
- * Event class.
+ * Event Class to implement events.
  */
 
 @IgnoreExtraProperties

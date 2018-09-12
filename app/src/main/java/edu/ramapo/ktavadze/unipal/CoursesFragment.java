@@ -19,6 +19,10 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+/**
+ * CoursesFragment Class to implement the courses view.
+ */
+
 public class CoursesFragment extends Fragment {
     private static final String TAG = "CoursesFragment";
 
